@@ -1,0 +1,20 @@
+DATASET_MULTIBAR
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_multi_bar
+COLOR	#ff0000
+FIELD_COLORS	#ff0000,#0000ff
+FIELD_LABELS	v1,v2
+
+DATA
+strain 001	1	1
+strain 002	2	3
+strain 003	3	5
+strain 004	4	7
+strain 005	5	9
+strain 006	6	11
+strain 007	7	13
+strain 008	8	15
+strain 009	9	17
+strain 010	10	19

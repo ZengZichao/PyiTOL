@@ -1,0 +1,10 @@
+COLLAPSE
+
+SEPARATOR TAB
+
+
+DATA
+strain_001
+strain_002
+strain_003
+strain_004

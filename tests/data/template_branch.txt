@@ -1,0 +1,16 @@
+TEMPLATE_NAME test_branch
+
+DATASET DATASET_BRANCHES
+separator TAB
+color LABEL,#000000
+
+columns 2
+id	color
+A	#4dbbd5
+B	#e64b35
+C	#3c5484
+D	#f39b7f
+E	#8491b4
+F	#00a087
+G	#91d1c2
+H	#b4d2e7

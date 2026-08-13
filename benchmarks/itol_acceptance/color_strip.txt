@@ -1,0 +1,40 @@
+DATASET_COLORSTRIP
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_color_strip
+COLOR	#ff0000
+
+DATA
+strain 001	#E41A1C	cat0
+strain 002	#377EB8	cat1
+strain 003	#4DAF4A	cat2
+strain 004	#984EA3	cat3
+strain 005	#FF7F00	cat4
+strain 006	#E41A1C	cat0
+strain 007	#377EB8	cat1
+strain 008	#4DAF4A	cat2
+strain 009	#984EA3	cat3
+strain 010	#FF7F00	cat4
+strain 011	#E41A1C	cat0
+strain 012	#377EB8	cat1
+strain 013	#4DAF4A	cat2
+strain 014	#984EA3	cat3
+strain 015	#FF7F00	cat4
+strain 016	#E41A1C	cat0
+strain 017	#377EB8	cat1
+strain 018	#4DAF4A	cat2
+strain 019	#984EA3	cat3
+strain 020	#FF7F00	cat4
+strain 021	#E41A1C	cat0
+strain 022	#377EB8	cat1
+strain 023	#4DAF4A	cat2
+strain 024	#984EA3	cat3
+strain 025	#FF7F00	cat4
+strain 026	#E41A1C	cat0
+strain 027	#377EB8	cat1
+strain 028	#4DAF4A	cat2
+strain 029	#984EA3	cat3
+strain 030	#FF7F00	cat4
+strain 031	#E41A1C	cat0
+strain 032	#377EB8	cat1

@@ -1,0 +1,4 @@
+rank,group,member_count,lca_node,members
+phylum,Actinobacteria,3,internal_1,F|G|H
+phylum,Firmicutes,2,internal_1,B|E
+phylum,Proteobacteria,3,internal_2,A|C|D

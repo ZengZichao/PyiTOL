@@ -1,0 +1,14 @@
+DATASET_TANGLEGRAM
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_tanglegram
+COLOR	#ff0000
+
+DATA
+strain 001	strain 001
+strain 002	strain 002
+strain 003	strain 003
+strain 004	strain 004
+strain 005	strain 005
+strain 006	strain 006

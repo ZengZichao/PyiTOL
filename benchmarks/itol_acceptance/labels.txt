@@ -1,0 +1,16 @@
+LABELS
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_labels
+COLOR	#ff0000
+
+DATA
+strain 001	note_0
+strain 002	note_1
+strain 003	note_2
+strain 004	note_3
+strain 005	note_4
+strain 006	note_5
+strain 007	note_6
+strain 008	note_7

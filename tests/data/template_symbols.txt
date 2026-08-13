@@ -1,0 +1,17 @@
+TEMPLATE_NAME test_symbols
+
+DATASET DATASET_SYMBOLS
+separator TAB
+color LABEL,#000000
+shape_size 30
+
+columns 5
+id	type	value	color	label
+A	diamond	30	#4dbbd5	Proteobacteria
+B	diamond	30	#b4d2e7	Firmicutes
+C	diamond	30	#4dbbd5	Proteobacteria
+D	diamond	30	#4dbbd5	Proteobacteria
+E	diamond	30	#b4d2e7	Firmicutes
+F	diamond	30	#e64b35	Actinobacteria
+G	diamond	30	#e64b35	Actinobacteria
+H	diamond	30	#e64b35	Actinobacteria

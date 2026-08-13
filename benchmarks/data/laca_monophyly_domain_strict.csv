@@ -1,0 +1,3 @@
+group,status,lca_node,member_count,extra_nodes,missing_nodes,subgroups,extra_count,missing_count,polytomy_details
+Archaea,monophyletic,internal_1,350,,,,0,0,
+Bacteria,monophyletic,internal_1,350,,,,0,0,

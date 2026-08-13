@@ -1,0 +1,76 @@
+site_name: PyiTOL 文档
+site_description: PyiTOL - iTOL 可视化全流程自动化工具文档
+site_author: Zichao Zeng
+theme:
+  name: material
+  language: zh
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/OWNER/pyitol
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - 中文文档:
+    - 首页: index.md
+    - 快速开始:
+      - 10分钟入门: tutorials/quickstart.md
+      - 模板类型概览: tutorials/templates.md
+      - 分类分析教程: tutorials/taxonomy.md
+    - CLI 参考: cli.md
+    - 模板子命令参考: templates-reference.md
+    - API 指南: api.md
+    - 错误码参考: error_codes.md
+    - 故障排除: troubleshooting.md
+    - 开发:
+      - 贡献指南: contributing.md
+  - English:
+    - Home: index_en.md
+    - Tutorials:
+      - Quick Start: tutorials/quickstart_en.md
+      - Template Types: tutorials/templates_en.md
+      - Taxonomy Analysis: tutorials/taxonomy_en.md
+    - CLI Reference: cli_en.md
+    - Template Subcommands: templates-reference_en.md
+    - API Guide: api_en.md
+    - Error Codes: error_codes_en.md
+    - Troubleshooting: troubleshooting_en.md
+    - Development:
+      - Contributing: contributing_en.md

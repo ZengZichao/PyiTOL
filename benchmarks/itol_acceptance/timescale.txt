@@ -1,0 +1,10 @@
+DATASET_TIMESCALE
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_timescale
+COLOR	#ff0000
+
+DATA
+100	50	#999999	#ffffff	epoch1	normal
+50	0	#FF0000	#00ff00	epoch2	bold

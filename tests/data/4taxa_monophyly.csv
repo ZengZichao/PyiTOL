@@ -1,0 +1,4 @@
+group,status,lca_node,member_count,extra_nodes,missing_nodes,subgroups
+Actinobacteria,monophyletic,internal_1,3,,,
+Firmicutes,paraphyletic,internal_1,2,A|C|D,,
+Proteobacteria,paraphyletic,internal_2,3,E,,

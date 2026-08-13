@@ -1,0 +1,19 @@
+DATASET_EXTERNALSHAPE
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_externalshape
+COLOR	#ff0000
+FIELD_LABELS	v1,v2
+FIELD_COLORS	#ff0000,#00ff00
+FIELD_SHAPES	1,2
+
+DATA
+strain 001	5	10
+strain 002	5	10
+strain 003	5	10
+strain 004	5	10
+strain 005	5	10
+strain 006	5	10
+strain 007	5	10
+strain 008	5	10

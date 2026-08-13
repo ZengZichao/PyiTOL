@@ -1,0 +1,157 @@
+[
+  {
+    "type": "alignment",
+    "status": "SUCCESS",
+    "detail": "5824722161261521785772678"
+  },
+  {
+    "type": "arrows",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file arrows.txt: Failed to identify the type of file: DATASET_ARROWS. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "binary",
+    "status": "SUCCESS",
+    "detail": "5824722161261891785772681"
+  },
+  {
+    "type": "boxplot",
+    "status": "SUCCESS",
+    "detail": "5824722161262021785772682"
+  },
+  {
+    "type": "branch",
+    "status": "SUCCESS",
+    "detail": "5824722161262071785772683"
+  },
+  {
+    "type": "collapse",
+    "status": "SUCCESS",
+    "detail": "5824722161262141785772684"
+  },
+  {
+    "type": "color_strip",
+    "status": "SUCCESS",
+    "detail": "5824722161262201785772685"
+  },
+  {
+    "type": "connection",
+    "status": "SUCCESS",
+    "detail": "5824722161262301785772686"
+  },
+  {
+    "type": "domains",
+    "status": "SUCCESS",
+    "detail": "5824722161262361785772687"
+  },
+  {
+    "type": "externalshape",
+    "status": "SUCCESS",
+    "detail": "5824722161262431785772689"
+  },
+  {
+    "type": "gradient",
+    "status": "SUCCESS",
+    "detail": "5824722161262531785772690"
+  },
+  {
+    "type": "heatmap",
+    "status": "SUCCESS",
+    "detail": "5824722161262671785772691"
+  },
+  {
+    "type": "image",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: WARNING: DATASET_IMAGE is not supported in batch mode yet. Please contact ivica@letunic.com to request support for it.\nERR 5: Parsing file leaf.png: Failed to i"
+  },
+  {
+    "type": "labels",
+    "status": "SUCCESS",
+    "detail": "5824722161262871785772694"
+  },
+  {
+    "type": "linechart",
+    "status": "SUCCESS",
+    "detail": "5824722161262931785772695"
+  },
+  {
+    "type": "manual",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file manual.txt: Failed to identify the type of file: DATASET_MANUAL. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "meme",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file meme.txt: Failed to identify the type of file: DATASET_MEME. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "multi_bar",
+    "status": "SUCCESS",
+    "detail": "5824722161263351785772699"
+  },
+  {
+    "type": "pie",
+    "status": "SUCCESS",
+    "detail": "5824722161263411785772700"
+  },
+  {
+    "type": "placement",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file placement.txt: Failed to identify the type of file: DATASET_PLACEMENT. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "popup_info",
+    "status": "SUCCESS",
+    "detail": "5824722161263731785772704"
+  },
+  {
+    "type": "prune",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file prune.txt: Failed to identify the type of file: PRUNE. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "range",
+    "status": "SUCCESS",
+    "detail": "5824722161264081785772706"
+  },
+  {
+    "type": "simple_bar",
+    "status": "SUCCESS",
+    "detail": "5824722161264131785772707"
+  },
+  {
+    "type": "spacing",
+    "status": "SUCCESS",
+    "detail": "5824722161264221785772709"
+  },
+  {
+    "type": "style",
+    "status": "SUCCESS",
+    "detail": "5824722161264341785772709"
+  },
+  {
+    "type": "symbol",
+    "status": "SUCCESS",
+    "detail": "5824722161264391785772711"
+  },
+  {
+    "type": "tanglegram",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file tanglegram.txt: Failed to identify the type of file: DATASET_TANGLEGRAM. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "text",
+    "status": "SUCCESS",
+    "detail": "5824722161264821785772714"
+  },
+  {
+    "type": "timescale",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file timescale.txt: Failed to identify the type of file: DATASET_TIMESCALE. Please use the templates provided on the help pages."
+  },
+  {
+    "type": "treestyle",
+    "status": "FAIL",
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file treestyle.txt: Failed to identify the type of file: DATASET_TREESTYLE. Please use the templates provided on the help pages."
+  }
+]

@@ -1,0 +1,19 @@
+TEMPLATE_NAME test_bar
+
+DATASET DATASET_SIMPLEBAR
+separator TAB
+color LABEL,#000000
+bar_color #3c5484
+bar_width 50
+internal 0
+
+columns 2
+id	bar_height
+A	4.6
+B	4.2
+C	4.9
+D	4.6
+E	2.8
+F	4.4
+G	8.7
+H	3.3

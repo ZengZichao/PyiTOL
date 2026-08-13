@@ -1,0 +1,23 @@
+DATASET_HEATMAP
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_heatmap
+COLOR	#ff0000
+FIELD_LABELS	v1,v2,v3
+COLOR_MIN	#ffffff
+COLOR_MID	#ffff00
+COLOR_MAX	#ff0000
+USE_MID_COLOR	1
+
+DATA
+strain 001	0	1	2
+strain 002	1	2	3
+strain 003	2	3	4
+strain 004	3	4	0
+strain 005	4	0	1
+strain 006	0	1	2
+strain 007	1	2	3
+strain 008	2	3	4
+strain 009	3	4	0
+strain 010	4	0	1

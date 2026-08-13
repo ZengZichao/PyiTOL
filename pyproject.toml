@@ -1,0 +1,163 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "setuptools_scm>=8.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyitol"
+dynamic = ["version"]
+description = "A Python CLI tool for iTOL phylogenetic tree visualization automation"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [
+    {name = "Zichao Zeng", email = "zengzichao@sjtu.edu.cn"}
+]
+keywords = ["phylogenetics", "visualization", "iTOL", "bioinformatics", "Newick", "tree"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Operating System :: OS Independent",
+]
+
+# CI test matrix: python: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+dependencies = [
+    "typer>=0.15.0,<1.0",
+    "rich~=13.0",
+    "pandas~=2.0",
+    "requests~=2.32",
+    "pydantic~=2.5",
+    "PyYAML~=6.0",
+    "dendropy>=4.6,<6.0",
+    "scipy~=1.11",
+    "numpy>=1.24,<3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "ruff>=0.15",
+    "mypy>=1.0.0",
+]
+memory = [
+    "psutil>=5.9.0",
+]
+excel = [
+    "openpyxl>=3.1.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/OWNER/pyitol"
+Documentation = "https://github.com/OWNER/pyitol"
+Repository = "https://github.com/OWNER/pyitol"
+Issues = "https://github.com/OWNER/pyitol/issues"
+Changelog = "https://github.com/OWNER/pyitol/blob/main/CHANGELOG.md"
+
+[project.scripts]
+pyitol = "pyitol.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pyitol = ["py.typed"]
+
+[tool.setuptools_scm]
+# Git hash injection for version
+write_to = "src/pyitol/_version.py"
+version_scheme = "guess-next-dev"
+local_scheme = "node-and-date"
+fallback_version = "1.0.0"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+# Extended rule sets beyond ruff's defaults (E4/E7/E9/F).
+# Adds import sorting, bug/security detection, modern-syntax upgrades,
+# simplification, and type-annotation coverage checks.
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "W",    # pycodestyle warnings
+    "I",    # isort / import sorting
+    "B",    # flake8-bugbear (logic bugs)
+    "C4",   # flake8-comprehensions
+    "S",    # flake8-bandit (security)
+    "UP",   # pyupgrade (modern syntax)
+    "RUF",  # ruff-specific lints
+    "SIM",  # flake8-simplify
+    "ANN",  # type-annotation coverage
+]
+ignore = [
+    "ANN401",  # allow `Any` as an escape hatch for genuinely dynamic types
+    # Chinese project: these flag legitimate full-width punctuation (full-width
+    # quotes, dashes, ellipses) that are standard in Chinese prose/docstrings.
+    "RUF001",  # ambiguous-unicode-character-string
+    "RUF002",  # ambiguous-unicode-character-comment
+    "RUF003",  # ambiguous-unicode-character-docstring
+]
+
+[tool.ruff.lint.per-file-ignores]
+# CLI layer (Typer command callbacks): ~690 sites lack annotations. Auto-adding
+# them is risky because a Typer callback's parameter annotation *is* its CLI
+# argument contract (e.g. annotating `count` as int flips a str option to an
+# int flag). This is an intentional, tracked, incremental goal — remove these
+# ignores as annotations land. Non-CLI layers are fully annotated.
+# CLI layer also uses Typer.Option in argument defaults (B008) and wraps
+# low-level exceptions into user-facing errors (B904); both are intentional
+# Typer/CLI patterns, not actionable lint here.
+"src/pyitol/cli/*" = ["ANN001", "ANN201", "ANN202", "ANN204", "ANN003", "ANN206", "B008", "B904"]
+# Tests intentionally use loose annotations; annotation coverage is not enforced here.
+# Tests use `assert` per pytest convention; S101 is not an issue there.
+# Tests use `assert` per pytest convention (S101) and reference /tmp paths (S108);
+# both are standard testing patterns, not actionable lint here.
+"tests/*" = ["ANN", "S101", "S108"]
+"tests/**" = ["ANN", "S101", "S108"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=pyitol --cov-fail-under=80"
+markers = [
+    "integration: marks tests that require real iTOL API credentials",
+    "slow: marks tests that take a long time to run",
+    "stress: marks performance/stress tests",
+    "concurrency: marks tests for concurrent/thread-safety scenarios",
+]
+
+[tool.mypy]
+python_version = "3.11"
+show_error_codes = true
+warn_unused_configs = true
+
+# Third-party packages without type stubs or py.typed markers are exempted
+# per-module rather than globally, so genuine typing errors in our own code
+# remain visible under `mypy src/pyitol`.
+[[tool.mypy.overrides]]
+module = [
+    "dendropy.*",
+    "yaml.*",
+    "scipy.*",
+    "pandas.*",
+    "psutil.*",
+    "typer.*",
+    "pydantic.*",
+    "requests.*",
+    "urllib3.*",
+    "rich.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "pyitol.cli.*"
+disallow_untyped_defs = false
+check_untyped_defs = false

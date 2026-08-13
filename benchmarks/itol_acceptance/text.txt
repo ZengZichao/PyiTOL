@@ -1,0 +1,16 @@
+DATASET_TEXT
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_text
+COLOR	#ff0000
+
+DATA
+strain 001	txt0
+strain 002	txt1
+strain 003	txt2
+strain 004	txt3
+strain 005	txt4
+strain 006	txt5
+strain 007	txt6
+strain 008	txt7

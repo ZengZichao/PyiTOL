@@ -1,0 +1,99 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the software and the underlying tools."
+title: "PyiTOL"
+version: 1.0.0
+date-released: 2026-08-13
+authors:
+  - name: "Zichao Zeng"
+    orcid: "https://orcid.org/0000-0001-6553-970X"
+repository-code: "https://github.com/OWNER/pyitol"
+license: MIT
+type: software
+contact:
+  - email: "zengzichao@sjtu.edu.cn"
+keywords:
+  - phylogenetics
+  - visualization
+  - iTOL
+  - bioinformatics
+  - Newick
+references:
+  - type: article
+    authors:
+      - family-names: "Letunic"
+        given-names: "Ivica"
+      - family-names: "Bork"
+        given-names: "Peer"
+    title: "Interactive Tree Of Life (iTOL) v5: an online tool for phylogenetic tree display and annotation"
+    year: 2021
+    journal: "Nucleic Acids Research"
+    volume: 49
+    issue: "W1"
+    pages: "W293-W296"
+    doi: "10.1093/nar/gkab301"
+  - type: article
+    authors:
+      - family-names: "Sukumaran"
+        given-names: "Jeet"
+      - family-names: "Holder"
+        given-names: "Mark T."
+    title: "DendroPy: a Python library for phylogenetic computing"
+    year: 2010
+    journal: "Bioinformatics"
+    volume: 26
+    issue: 12
+    pages: "1569-1571"
+    doi: "10.1093/bioinformatics/btq228"
+  - type: article
+    authors:
+      - family-names: "Moreno"
+        given-names: "Matthew Andres"
+      - family-names: "Holder"
+        given-names: "Mark T."
+      - family-names: "Sukumaran"
+        given-names: "Jeet"
+    title: "DendroPy 5: a mature Python library for phylogenetic computing"
+    year: 2024
+    journal: "Journal of Open Source Software"
+    volume: 9
+    issue: 101
+    pages: "6943"
+    doi: "10.21105/joss.06943"
+  - type: article
+    authors:
+      - family-names: "Zhou"
+        given-names: "Tong"
+      - family-names: "Xu"
+        given-names: "Kuidong"
+      - family-names: "Zhao"
+        given-names: "Feng"
+      - family-names: "Liu"
+        given-names: "Weiyue"
+      - family-names: "Li"
+        given-names: "Longzhao"
+      - family-names: "Hua"
+        given-names: "Zhongyi"
+      - family-names: "Zhou"
+        given-names: "Xin"
+    title: "itol.toolkit accelerates working with iTOL (Interactive Tree Of Life) by an automated generation of annotation files"
+    year: 2023
+    journal: "Bioinformatics"
+    volume: 39
+    issue: 6
+    pages: "btad339"
+    doi: "10.1093/bioinformatics/btad339"
+  - type: article
+    authors:
+      - family-names: "Huerta-Cepas"
+        given-names: "Jaime"
+      - family-names: "Serra"
+        given-names: "Ferran"
+      - family-names: "Bork"
+        given-names: "Peer"
+    title: "ETE 3: Reconstruction, analysis, and visualization of phylogenomic data"
+    year: 2016
+    journal: "Molecular Biology and Evolution"
+    volume: 33
+    issue: 6
+    pages: "1635-1638"
+    doi: "10.1093/molbev/msw046"

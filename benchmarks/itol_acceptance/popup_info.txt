@@ -1,0 +1,14 @@
+POPUP_INFO
+
+SEPARATOR TAB
+
+
+DATA
+strain 001	info 0	<b>tip</b> strain 001
+strain 002	info 1	<b>tip</b> strain 002
+strain 003	info 2	<b>tip</b> strain 003
+strain 004	info 3	<b>tip</b> strain 004
+strain 005	info 4	<b>tip</b> strain 005
+strain 006	info 5	<b>tip</b> strain 006
+strain 007	info 6	<b>tip</b> strain 007
+strain 008	info 7	<b>tip</b> strain 008

@@ -1,0 +1,14 @@
+TREE_COLORS
+
+SEPARATOR TAB
+
+
+DATA
+strain 001	branch	#ff0000	normal
+strain 002	branch	#ff0000	normal
+strain 003	branch	#ff0000	normal
+strain 004	branch	#ff0000	normal
+strain 005	branch	#ff0000	normal
+strain 006	branch	#ff0000	normal
+strain 007	branch	#ff0000	normal
+strain 008	branch	#ff0000	normal

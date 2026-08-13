@@ -1,0 +1,17 @@
+TEMPLATE_NAME genus_colors
+
+DATASET DATASET_COLORSTRIP
+separator TAB
+color LABEL,#000000
+stripWidth 50
+
+columns 3
+id	value	color
+A	Escherichia	#4dbbd5
+B	Bacillus	#e64b35
+C	Salmonella	#3c5484
+D	Shigella	#f39b7f
+E	Staphylococcus	#8491b4
+F	Mycobacterium	#00a087
+G	Streptomyces	#91d1c2
+H	Corynebacterium	#b4d2e7

@@ -1,0 +1,16 @@
+DATASET_PLACEMENT
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_placement
+COLOR	#ff0000
+
+DATA
+strain 001	0.5	1	pl0	#ff0000
+strain 002	0.5	2	pl1	#ff0000
+strain 003	0.5	3	pl2	#ff0000
+strain 004	0.5	4	pl3	#ff0000
+strain 005	0.5	5	pl4	#ff0000
+strain 006	0.5	6	pl5	#ff0000
+strain 007	0.5	7	pl6	#ff0000
+strain 008	0.5	8	pl7	#ff0000

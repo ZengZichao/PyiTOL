@@ -1,0 +1,19 @@
+DATASET_BINARY
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_binary
+COLOR	#ff0000
+FIELD_LABELS	f1,f2
+FIELD_COLORS	#ff0000,#00ff00
+FIELD_SHAPES	1,2
+
+DATA
+strain 001	1	0
+strain 002	1	0
+strain 003	1	0
+strain 004	1	0
+strain 005	1	0
+strain 006	1	0
+strain 007	1	0
+strain 008	1	0

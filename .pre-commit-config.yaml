@@ -1,0 +1,13 @@
+# Pre-commit hooks for PyiTOL.
+# Install once with:  pip install pre-commit && pre-commit install
+# Run all on demand:  pre-commit run --all-files
+#
+# Mirrors the CI gates (ruff lint + ruff format) so issues are caught locally
+# before push, instead of only failing in CI.
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.5
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format

@@ -1,0 +1,1089 @@
+{
+  "replicates": [
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 2048,
+      "seed": 0,
+      "wall_time_s": 1.222,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 38,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 2048,
+      "seed": 1,
+      "wall_time_s": 1.143,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 38,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 2048,
+      "seed": 2,
+      "wall_time_s": 1.169,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 38,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 2048,
+      "seed": 3,
+      "wall_time_s": 0.7,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 38,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 2048,
+      "seed": 4,
+      "wall_time_s": 0.711,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 38,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 8192,
+      "seed": 0,
+      "wall_time_s": 1.682,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 422,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 8192,
+      "seed": 1,
+      "wall_time_s": 1.854,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 422,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 8192,
+      "seed": 2,
+      "wall_time_s": 2.073,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 422,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 8192,
+      "seed": 3,
+      "wall_time_s": 1.881,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 422,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "balanced",
+      "n_leaves": 8192,
+      "seed": 4,
+      "wall_time_s": 2.035,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 422,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 60,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 30,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 30,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 30,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        30,
+        30
+      ]
+    },
+    {
+      "tree_kind": "random",
+      "n_leaves": 2048,
+      "seed": 0,
+      "wall_time_s": 1.548,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 11,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 22,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 11,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 11,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 11,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        11,
+        11
+      ]
+    },
+    {
+      "tree_kind": "random",
+      "n_leaves": 2048,
+      "seed": 1,
+      "wall_time_s": 1.129,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 11,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 20,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 10,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 10,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 10,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        10,
+        10
+      ]
+    },
+    {
+      "tree_kind": "random",
+      "n_leaves": 2048,
+      "seed": 2,
+      "wall_time_s": 1.219,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 11,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 21,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 10,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 10,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 10,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        10,
+        10
+      ]
+    },
+    {
+      "tree_kind": "random",
+      "n_leaves": 4096,
+      "seed": 0,
+      "wall_time_s": 0.929,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 22,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 44,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 22,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 22,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 22,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        22,
+        22
+      ]
+    },
+    {
+      "tree_kind": "random",
+      "n_leaves": 4096,
+      "seed": 1,
+      "wall_time_s": 1.013,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 22,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 44,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 21,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 21,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 21,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        21,
+        21
+      ]
+    },
+    {
+      "tree_kind": "random",
+      "n_leaves": 4096,
+      "seed": 2,
+      "wall_time_s": 1.023,
+      "confusion": {
+        "monophyletic": {
+          "monophyletic": 24,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "paraphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 46,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "polyphyletic": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 23,
+          "incomplete_sampling": 0,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "incomplete_sampling": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 23,
+          "data_insufficient": 0,
+          "other": 0
+        },
+        "data_insufficient": {
+          "monophyletic": 0,
+          "paraphyletic": 0,
+          "polyphyletic": 0,
+          "incomplete_sampling": 0,
+          "data_insufficient": 23,
+          "other": 0
+        }
+      },
+      "subgroup_count_correct": [
+        23,
+        23
+      ]
+    }
+  ],
+  "summary": {
+    "confusion_matrix": {
+      "monophyletic": {
+        "monophyletic": 2401,
+        "paraphyletic": 0,
+        "polyphyletic": 0,
+        "incomplete_sampling": 0,
+        "data_insufficient": 0,
+        "other": 0
+      },
+      "paraphyletic": {
+        "monophyletic": 0,
+        "paraphyletic": 797,
+        "polyphyletic": 0,
+        "incomplete_sampling": 0,
+        "data_insufficient": 0,
+        "other": 0
+      },
+      "polyphyletic": {
+        "monophyletic": 0,
+        "paraphyletic": 0,
+        "polyphyletic": 397,
+        "incomplete_sampling": 0,
+        "data_insufficient": 0,
+        "other": 0
+      },
+      "incomplete_sampling": {
+        "monophyletic": 0,
+        "paraphyletic": 0,
+        "polyphyletic": 0,
+        "incomplete_sampling": 397,
+        "data_insufficient": 0,
+        "other": 0
+      },
+      "data_insufficient": {
+        "monophyletic": 0,
+        "paraphyletic": 0,
+        "polyphyletic": 0,
+        "incomplete_sampling": 0,
+        "data_insufficient": 397,
+        "other": 0
+      }
+    },
+    "per_class": {
+      "monophyletic": {
+        "tp": 2401,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "paraphyletic": {
+        "tp": 797,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "polyphyletic": {
+        "tp": 397,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "incomplete_sampling": {
+        "tp": 397,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "data_insufficient": {
+        "tp": 397,
+        "fp": 0,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "overall_accuracy": 1.0,
+    "groups_scored": 4389,
+    "per_tree_kind": {
+      "balanced": {
+        "confusion_matrix": {
+          "monophyletic": {
+            "monophyletic": 2300,
+            "paraphyletic": 0,
+            "polyphyletic": 0,
+            "incomplete_sampling": 0,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "paraphyletic": {
+            "monophyletic": 0,
+            "paraphyletic": 600,
+            "polyphyletic": 0,
+            "incomplete_sampling": 0,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "polyphyletic": {
+            "monophyletic": 0,
+            "paraphyletic": 0,
+            "polyphyletic": 300,
+            "incomplete_sampling": 0,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "incomplete_sampling": {
+            "monophyletic": 0,
+            "paraphyletic": 0,
+            "polyphyletic": 0,
+            "incomplete_sampling": 300,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "data_insufficient": {
+            "monophyletic": 0,
+            "paraphyletic": 0,
+            "polyphyletic": 0,
+            "incomplete_sampling": 0,
+            "data_insufficient": 300,
+            "other": 0
+          }
+        },
+        "per_class": {
+          "monophyletic": {
+            "tp": 2300,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "paraphyletic": {
+            "tp": 600,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "polyphyletic": {
+            "tp": 300,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "incomplete_sampling": {
+            "tp": 300,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "data_insufficient": {
+            "tp": 300,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "overall_accuracy": 1.0,
+        "groups_scored": 3800
+      },
+      "random": {
+        "confusion_matrix": {
+          "monophyletic": {
+            "monophyletic": 101,
+            "paraphyletic": 0,
+            "polyphyletic": 0,
+            "incomplete_sampling": 0,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "paraphyletic": {
+            "monophyletic": 0,
+            "paraphyletic": 197,
+            "polyphyletic": 0,
+            "incomplete_sampling": 0,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "polyphyletic": {
+            "monophyletic": 0,
+            "paraphyletic": 0,
+            "polyphyletic": 97,
+            "incomplete_sampling": 0,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "incomplete_sampling": {
+            "monophyletic": 0,
+            "paraphyletic": 0,
+            "polyphyletic": 0,
+            "incomplete_sampling": 97,
+            "data_insufficient": 0,
+            "other": 0
+          },
+          "data_insufficient": {
+            "monophyletic": 0,
+            "paraphyletic": 0,
+            "polyphyletic": 0,
+            "incomplete_sampling": 0,
+            "data_insufficient": 97,
+            "other": 0
+          }
+        },
+        "per_class": {
+          "monophyletic": {
+            "tp": 101,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "paraphyletic": {
+            "tp": 197,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "polyphyletic": {
+            "tp": 97,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "incomplete_sampling": {
+            "tp": 97,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          },
+          "data_insufficient": {
+            "tp": 97,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0
+          }
+        },
+        "overall_accuracy": 1.0,
+        "groups_scored": 589
+      }
+    },
+    "subgroup_count_accuracy": 1.0,
+    "subgroup_count_checked": 397
+  }
+}

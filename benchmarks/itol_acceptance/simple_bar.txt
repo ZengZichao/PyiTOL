@@ -1,0 +1,19 @@
+DATASET_SIMPLEBAR
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_simple_bar
+COLOR	#ff0000
+BAR_SHIFT	0
+
+DATA
+strain 001	1
+strain 002	2
+strain 003	3
+strain 004	4
+strain 005	5
+strain 006	6
+strain 007	7
+strain 008	8
+strain 009	9
+strain 010	10

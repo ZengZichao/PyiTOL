@@ -1,0 +1,14 @@
+DATASET_ARROWS
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_arrows
+COLOR	#ff0000
+
+DATA
+strain_001	0|10|#ff0000|#0000ff|a|#000000|5|5|2|2
+strain_002	0|10|#ff0000|#0000ff|a|#000000|5|5|2|2
+strain_003	0|10|#ff0000|#0000ff|a|#000000|5|5|2|2
+strain_004	0|10|#ff0000|#0000ff|a|#000000|5|5|2|2
+strain_005	0|10|#ff0000|#0000ff|a|#000000|5|5|2|2
+strain_006	0|10|#ff0000|#0000ff|a|#000000|5|5|2|2

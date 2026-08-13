@@ -1,0 +1,10 @@
+SPACING
+
+SEPARATOR TAB
+
+
+DATA
+strain 001	2
+strain 002	2
+strain 003	2
+strain 004	2

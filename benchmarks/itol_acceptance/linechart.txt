@@ -1,0 +1,15 @@
+DATASET_LINECHART
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_linechart
+COLOR	#ff0000
+CHART_COLORS	#ff0000
+
+DATA
+strain 001	-1|-2 0|0 1|2 2|4
+strain 002	-1|-2 0|0 1|2 2|4
+strain 003	-1|-2 0|0 1|2 2|4
+strain 004	-1|-2 0|0 1|2 2|4
+strain 005	-1|-2 0|0 1|2 2|4
+strain 006	-1|-2 0|0 1|2 2|4

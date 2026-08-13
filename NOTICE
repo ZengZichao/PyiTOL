@@ -1,0 +1,133 @@
+PyiTOL
+Copyright (c) 2025-2026 Zichao Zeng
+
+This product is licensed under the MIT License (see LICENSE).
+
+This product includes or references the following third-party software packages.
+Each package retains its own copyright and license. Users and redistributors
+should consult the respective licenses for terms and conditions.
+
+===============================================================================
+Runtime Dependencies
+===============================================================================
+
+typer
+  License: MIT
+  Copyright (c) Sebastian Ramirez
+  Homepage: https://github.com/tiangolo/typer
+
+rich
+  License: MIT
+  Copyright (c) Will McGugan
+  Homepage: https://github.com/Textualize/rich
+
+pandas
+  License: BSD-3-Clause
+  Copyright (c) 2008-2024, AQR Capital Management, LLC, Lambda Foundry, Inc.,
+  PyData Development Team and individual contributors
+  Homepage: https://pandas.pydata.org/
+
+dendropy
+  License: BSD-3-Clause
+  Copyright (c) 2010-2024, Jeet Sukumaran, Mark T Holder, and Matthew Andres Moreno
+  Homepage: https://dendropy.org/
+
+numpy
+  License: BSD-3-Clause
+  Copyright (c) 2005-2024, NumPy Developers
+  Homepage: https://numpy.org/
+
+requests
+  License: Apache-2.0
+  Copyright (c) 2013 Kenneth Reitz and individual contributors
+  Homepage: https://requests.readthedocs.io/
+
+PyYAML
+  License: MIT
+  Copyright (c) 2017-2024 Ingy döt Net
+  Copyright (c) 2006 Kirill Simonov
+  Homepage: https://pyyaml.org/
+
+pydantic
+  License: MIT
+  Copyright (c) 2017 to present, Pydantic Services Inc.
+  Homepage: https://pydantic.dev/
+
+===============================================================================
+Optional Dependencies (benchmark / development only)
+===============================================================================
+
+scipy
+  License: BSD-3-Clause
+  Copyright (c) 2001-2002 Enthought, Inc.; 2003-2024 SciPy Developers
+  Homepage: https://scipy.org/
+
+pytest
+  License: BSD-3-Clause
+  Copyright (c) 2004 Holger Krekel and others
+  Homepage: https://pytest.org/
+
+psutil
+  License: BSD-3-Clause
+  Copyright (c) 2009, Jay Loden, Dave Daeschler, Giampaolo Rodola'
+  Homepage: https://github.com/giampaolo/psutil
+
+ete3 (benchmark comparison only, not a runtime dependency)
+  License: GPL-3.0-or-later
+  Copyright (c) 2008-2017 Jaime Huerta-Cepas and others
+  Homepage: https://etetoolkit.org/
+  Note: Used only in benchmarks/benchmark_monophyly_comparison.py for
+  performance comparison. Not distributed with PyiTOL. The GPL-3.0
+  license of ete3 does not affect PyiTOL's MIT license because ete3 is
+  neither included in nor distributed as part of PyiTOL.
+
+ete4 (benchmark comparison only, not a runtime dependency)
+  License: GPL-3.0-or-later
+  Copyright (c) 2008-present Jaime Huerta-Cepas, Jordi Burguet-Castell, and others
+  Homepage: https://etetoolkit.org/
+  Note: Same as ete3 above.
+
+===============================================================================
+Referenced Software (not included in distribution)
+===============================================================================
+
+itol.toolkit (R package)
+  License: MIT
+  Copyright (c) 2023 Tong Zhou
+  Homepage: https://github.com/TongZhou2017/itol.toolkit
+  Note: PyiTOL provides equivalent functionality to several itol.toolkit
+  functions but is an independent implementation in Python. No code from
+  itol.toolkit is included in PyiTOL.
+
+iTOL API (itolapi, Python package)
+  License: MIT
+  Copyright (c) 2013 Albert Wang
+  Homepage: https://github.com/albertyw/itolapi
+  Note: PyiTOL's api/client.py is an independent implementation that
+  communicates with the same iTOL batch endpoints. No code from itolapi
+  is included in PyiTOL.
+
+iTOL (Interactive Tree Of Life)
+  Homepage: https://itol.embl.de/
+  Note: PyiTOL automates interactions with the iTOL web service but is
+  not affiliated with iTOL. Users should cite the iTOL publications.
+
+===============================================================================
+Color Palettes
+===============================================================================
+
+Paul Tol's color schemes
+  Source: https://personal.sron.nl/~pault/
+  Note: Color values used under Paul Tol's qualitative color scheme guidance.
+
+Wong (2011) color palette
+  Source: Wong, B. (2011). Points of view: Color blindness. Nature Methods, 8, 441.
+  Note: Color values from Wong's published color-blind-safe palette.
+
+Okabe & Ito (2008) color palette
+  Source: Okabe, M. & Ito, K. (2008). Color Universal Design.
+  Note: Color values from Okabe & Ito's published color-blind-safe palette.
+
+IBM Design Colors
+  Source: IBM Design Language color palette
+  Note: Color values from IBM's publicly available design color guidelines.

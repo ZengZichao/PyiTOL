@@ -1,0 +1,17 @@
+TEMPLATE_NAME test_color_strip
+
+DATASET DATASET_COLORSTRIP
+separator TAB
+color LABEL,#000000
+stripWidth 50
+
+columns 3
+id	value	color
+A	Proteobacteria	#4dbbd5
+B	Firmicutes	#b4d2e7
+C	Proteobacteria	#4dbbd5
+D	Proteobacteria	#4dbbd5
+E	Firmicutes	#b4d2e7
+F	Actinobacteria	#e64b35
+G	Actinobacteria	#e64b35
+H	Actinobacteria	#e64b35

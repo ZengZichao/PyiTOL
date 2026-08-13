@@ -1,0 +1,12 @@
+DATASET_IMAGE
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_image
+COLOR	#ff0000
+
+DATA
+strain 001	leaf.png
+strain 002	leaf.png
+strain 003	leaf.png
+strain 004	leaf.png

@@ -1,0 +1,18 @@
+DATASET_PIECHART
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_pie
+COLOR	#ff0000
+
+DATA
+strain 001	1	5
+strain 002	2	4
+strain 003	3	3
+strain 004	4	2
+strain 005	5	1
+strain 006	6	5
+strain 007	7	4
+strain 008	8	3
+strain 009	9	2
+strain 010	10	1

@@ -1,0 +1,14 @@
+DATASET_STYLE
+
+SEPARATOR TAB
+
+DATASET_LABEL	accept_style
+COLOR	#ff0000
+
+DATA
+strain 001	label	leaf	#ff0000	1	normal
+strain 002	label	leaf	#ff0000	1	normal
+strain 003	label	leaf	#ff0000	1	normal
+strain 004	label	leaf	#ff0000	1	normal
+strain 005	label	leaf	#ff0000	1	normal
+strain 006	label	leaf	#ff0000	1	normal

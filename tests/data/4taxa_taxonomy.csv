@@ -1,0 +1,9 @@
+id,phylum,genus,species,genome_size,gc_content
+A,Proteobacteria,Escherichia,coli,4.6,50.8
+B,Firmicutes,Bacillus,subtilis,4.2,43.5
+C,Proteobacteria,Salmonella,typhimurium,4.9,52.2
+D,Proteobacteria,Shigella,flexneri,4.6,50.5
+E,Firmicutes,Staphylococcus,aureus,2.8,33.0
+F,Actinobacteria,Mycobacterium,tuberculosis,4.4,65.6
+G,Actinobacteria,Streptomyces,coelicolor,8.7,72.1
+H,Actinobacteria,Corynebacterium,glutamicum,3.3,54.0

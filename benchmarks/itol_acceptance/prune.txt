@@ -1,0 +1,9 @@
+PRUNE
+
+SEPARATOR TAB
+
+
+DATA
+strain 001
+strain 002
+strain 003

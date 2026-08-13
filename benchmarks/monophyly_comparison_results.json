@@ -1,0 +1,134 @@
+[
+  {
+    "n_leaves": 1000,
+    "pyitol_full": {
+      "min_s": 0.42800562499905936,
+      "median_s": 0.4331354999994801,
+      "max_s": 0.46114541699898837,
+      "peak_mem_bytes": 2635712,
+      "note": "10-field structured output (functional benchmark)"
+    },
+    "pyitol_light": {
+      "min_s": 0.058502959000179544,
+      "median_s": 0.05875554100020963,
+      "max_s": 0.05934762500146462,
+      "peak_mem_bytes": 138024,
+      "note": "Boolean-only MRCA+descendants (equal-task benchmark)"
+    },
+    "pyitol_inmem": {
+      "min_s": 0.3598707499986631,
+      "median_s": 0.366971666999234,
+      "max_s": 0.3679313329994329,
+      "peak_mem_bytes": 1093371,
+      "note": "full 10-field mode on pre-parsed tree (matched scope with DendroPy)"
+    },
+    "ete3": {
+      "min_s": 0.2538512079991051,
+      "median_s": 0.26902904200142075,
+      "max_s": 0.27058437499908905,
+      "peak_mem_bytes": 2551279
+    },
+    "ete4": {
+      "min_s": 0.08270674999948824,
+      "median_s": 0.09151162499983911,
+      "max_s": 0.10947866599963163,
+      "peak_mem_bytes": 751560,
+      "note": "ETE v4; check_monophyly(prop='name'); NaN if ete4 unavailable"
+    },
+    "dendropy": {
+      "min_s": 0.05904550000013842,
+      "median_s": 0.06027679100043315,
+      "max_s": 0.07151608399908582,
+      "peak_mem_bytes": 78096,
+      "note": "is_rooted=True set before mrca()"
+    }
+  },
+  {
+    "n_leaves": 10000,
+    "pyitol_full": {
+      "min_s": 4.546093499999188,
+      "median_s": 4.569072291998964,
+      "max_s": 4.71740308399967,
+      "peak_mem_bytes": 37622485,
+      "note": "10-field structured output (functional benchmark)"
+    },
+    "pyitol_light": {
+      "min_s": 2.3253580420005164,
+      "median_s": 2.3572116249997634,
+      "max_s": 2.4174063750015193,
+      "peak_mem_bytes": 1805656,
+      "note": "Boolean-only MRCA+descendants (equal-task benchmark)"
+    },
+    "pyitol_inmem": {
+      "min_s": 4.0126795420001145,
+      "median_s": 4.047774791999473,
+      "max_s": 4.218199875000209,
+      "peak_mem_bytes": 23386987,
+      "note": "full 10-field mode on pre-parsed tree (matched scope with DendroPy)"
+    },
+    "ete3": {
+      "min_s": 3.305388374999893,
+      "median_s": 3.3587024589996872,
+      "max_s": 3.421686083000168,
+      "peak_mem_bytes": 29179024
+    },
+    "ete4": {
+      "min_s": 0.8487747090002813,
+      "median_s": 0.9284371249996184,
+      "max_s": 0.9623573330009094,
+      "peak_mem_bytes": 8300568,
+      "note": "ETE v4; check_monophyly(prop='name'); NaN if ete4 unavailable"
+    },
+    "dendropy": {
+      "min_s": 2.293068000000858,
+      "median_s": 2.3131832080016466,
+      "max_s": 2.3382868749995396,
+      "peak_mem_bytes": 1187728,
+      "note": "is_rooted=True set before mrca()"
+    }
+  },
+  {
+    "n_leaves": 50000,
+    "pyitol_full": {
+      "min_s": 22.987608416999137,
+      "median_s": 25.20012541700089,
+      "max_s": 26.85238679199938,
+      "peak_mem_bytes": 460459609,
+      "note": "10-field structured output (functional benchmark)"
+    },
+    "pyitol_light": {
+      "min_s": 71.95766575000016,
+      "median_s": 88.2536726670005,
+      "max_s": 93.63884566599882,
+      "peak_mem_bytes": 7842104,
+      "note": "Boolean-only MRCA+descendants (equal-task benchmark)"
+    },
+    "pyitol_inmem": {
+      "min_s": 20.682354874999874,
+      "median_s": 21.903634874999625,
+      "max_s": 21.966553416999886,
+      "peak_mem_bytes": 387207487,
+      "note": "full 10-field mode on pre-parsed tree (matched scope with DendroPy)"
+    },
+    "ete3": {
+      "min_s": 20.958644541999092,
+      "median_s": 21.28484274999937,
+      "max_s": 21.297908541999277,
+      "peak_mem_bytes": 145857224
+    },
+    "ete4": {
+      "min_s": 4.963499334000517,
+      "median_s": 5.4762197919990285,
+      "max_s": 5.68405999999959,
+      "peak_mem_bytes": 39317032,
+      "note": "ETE v4; check_monophyly(prop='name'); NaN if ete4 unavailable"
+    },
+    "dendropy": {
+      "min_s": 86.22934020799948,
+      "median_s": 110.14823041700038,
+      "max_s": 135.9007837500012,
+      "peak_mem_bytes": 4743056,
+      "note": "is_rooted=True set before mrca()"
+    }
+  }
+]

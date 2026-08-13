@@ -1,0 +1,48 @@
+# Build-context exclusions for the PyiTOL Docker image.
+# Keeps secrets (.git, .env, credentials), test/benchmark/docs assets, and
+# tool caches out of the docker build context — smaller context, faster build,
+# and no accidental leak of .git history into the image.
+
+# VCS / secrets
+.git
+.gitignore
+.env
+.env.example
+*.key
+.itolapi.key
+
+# Tests & dev/CI assets
+tests/
+benchmarks/
+.github/
+.pre-commit-config.yaml
+
+# Docs & examples (not needed at runtime)
+docs/
+examples/
+notebooks/
+*.md
+CITATION.cff
+CODE_OF_CONDUCT.md
+CODE_OF_CONDUCT_CN.md
+CONTRIBUTING.md
+GOVERNANCE.md
+GOVERNANCE_CN.md
+NOTICE
+mkdocs.yml
+config.example.yaml
+AGENTS.md
+AGENTS_CN.md
+CHANGELOG.md
+CHANGELOG_CN.md
+PyiTOL_review_*.md
+
+# Python caches / build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
