@@ -55,11 +55,11 @@ excel = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/OWNER/pyitol"
-Documentation = "https://github.com/OWNER/pyitol"
-Repository = "https://github.com/OWNER/pyitol"
-Issues = "https://github.com/OWNER/pyitol/issues"
-Changelog = "https://github.com/OWNER/pyitol/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/ZengZichao/PyiTOL"
+Documentation = "https://github.com/ZengZichao/PyiTOL"
+Repository = "https://github.com/ZengZichao/PyiTOL"
+Issues = "https://github.com/ZengZichao/PyiTOL/issues"
+Changelog = "https://github.com/ZengZichao/PyiTOL/blob/main/CHANGELOG.md"
 
 [project.scripts]
 pyitol = "pyitol.cli.main:main"

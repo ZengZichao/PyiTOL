@@ -6,7 +6,7 @@ name: Publish to PyPI
 # Prerequisites (one-time, in your PyPI account):
 #   PyPI -> Account settings -> Publishing -> Add a new trusted publisher
 #     - PyPI project name: pyitol
-#     - Owner: <your GitHub owner, i.e. the OWNER placeholder value>
+#     - Owner: ZengZichao
 #     - Repository name: pyitol
 #     - Workflow name: publish.yml
 #     - Environment name: (leave blank or set to "pypi")

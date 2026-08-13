@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI](https://img.shields.io/pypi/v/pyitol.svg)](https://pypi.org/project/pyitol)
-[![CI](https://github.com/OWNER/pyitol/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/pyitol/actions/workflows/ci.yml)
+[![CI](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml)
 
 [English](README.md) | 中文
 
@@ -117,7 +117,7 @@ pip install pyitol
 从源码安装：
 
 ```bash
-git clone https://github.com/OWNER/pyitol.git
+git clone https://github.com/ZengZichao/PyiTOL.git
 cd pyitol
 pip install -e ".[dev]"
 ```
@@ -718,8 +718,8 @@ PyiTOL/
 
 ## 联系与支持
 
-- **GitHub Issues**: [报告问题或建议](https://github.com/OWNER/pyitol/issues)
-- **GitHub Discussions**: [社区讨论](https://github.com/OWNER/pyitol/discussions)
+- **GitHub Issues**: [报告问题或建议](https://github.com/ZengZichao/PyiTOL/issues)
+- **GitHub Discussions**: [社区讨论](https://github.com/ZengZichao/PyiTOL/discussions)
 - **邮箱**: zengzichao@sjtu.edu.cn
 - **维护者**: Zichao Zeng
 

@@ -6,7 +6,7 @@ date-released: 2026-08-13
 authors:
   - name: "Zichao Zeng"
     orcid: "https://orcid.org/0000-0001-6553-970X"
-repository-code: "https://github.com/OWNER/pyitol"
+repository-code: "https://github.com/ZengZichao/PyiTOL"
 license: MIT
 type: software
 contact:

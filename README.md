@@ -3,7 +3,7 @@
 [![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI](https://img.shields.io/pypi/v/pyitol.svg)](https://pypi.org/project/pyitol)
-[![CI](https://github.com/OWNER/pyitol/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/pyitol/actions/workflows/ci.yml)
+[![CI](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml)
 
 English | [中文](README_CN.md)
 
@@ -115,7 +115,7 @@ pip install pyitol
 From source:
 
 ```bash
-git clone https://github.com/OWNER/pyitol.git
+git clone https://github.com/ZengZichao/PyiTOL.git
 cd pyitol
 pip install -e ".[dev]"
 ```
@@ -630,8 +630,8 @@ See [CITATION.cff](CITATION.cff) for machine-readable citation metadata.
 
 ## Contact & Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/OWNER/pyitol/issues)
-- **GitHub Discussions**: [Community discussions](https://github.com/OWNER/pyitol/discussions)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/ZengZichao/PyiTOL/issues)
+- **GitHub Discussions**: [Community discussions](https://github.com/ZengZichao/PyiTOL/discussions)
 - **Email**: zengzichao@sjtu.edu.cn
 - **Maintainer**: Zichao Zeng
 

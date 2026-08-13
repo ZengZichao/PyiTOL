@@ -24,7 +24,7 @@ Thank you for your interest in contributing to PyiTOL!
 
 ```bash
 # Clone your fork
-git clone https://github.com/OWNER/pyitol.git
+git clone https://github.com/ZengZichao/PyiTOL.git
 cd pyitol
 
 # Create a virtual environment (recommended)

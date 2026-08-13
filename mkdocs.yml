@@ -31,7 +31,7 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/OWNER/pyitol
+      link: https://github.com/ZengZichao/PyiTOL
 
 markdown_extensions:
   - pymdownx.highlight:
