@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import typer
 
@@ -44,7 +43,7 @@ def template_tree_colors(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于着色的列名"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("tree_colors"),
     color_type: str = typer.Option("clade", "--color-type", help="着色类型: clade/label/branch/width/range/gradient"),
     width_value: str = typer.Option("3", "--width-value", help="分支线宽度(仅width类型)"),
@@ -177,13 +176,13 @@ def template_branch_gradient(
 def _do_collapse(
     ctx: typer.Context,
     output: str,
-    node_ids: Optional[str],
+    node_ids: str | None,
     label: str,
     separator: str,
-    taxon: Optional[str] = None,
-    rank: Optional[str] = None,
-    taxonomy_path: Optional[str] = None,
-    tree_path: Optional[str] = None,
+    taxon: str | None = None,
+    rank: str | None = None,
+    taxonomy_path: str | None = None,
+    tree_path: str | None = None,
     id_column: str = "id",
     strict: bool = False,
     force: bool = False,
@@ -265,13 +264,13 @@ def template_collapse(
     output: str = _common_output_option(),
     force: bool = typer.Option(False, "--force", "-f", help="覆盖已存在的输出文件"),
     no_clobber: bool = typer.Option(False, "--no-clobber", help="跳过已存在的输出文件"),
-    node_ids: Optional[str] = typer.Option(None, "--node-ids", "-n", help="要折叠的节点ID,逗号分隔"),
+    node_ids: str | None = typer.Option(None, "--node-ids", "-n", help="要折叠的节点ID,逗号分隔"),
     label: str = _common_label_option("collapse"),
     separator: str = _common_separator_option(),
-    taxon: Optional[str] = typer.Option(None, "--taxon", help="要折叠的类群名称(需配合 --taxonomy 和 --tree)"),
-    rank: Optional[str] = typer.Option(None, "--rank", help="分类等级(如 Phylum, Class)"),
-    taxonomy_path: Optional[str] = typer.Option(None, "--taxonomy", "-t", help="分类表格文件路径"),
-    tree_path: Optional[str] = typer.Option(None, "--tree", "-r", help="树文件路径"),
+    taxon: str | None = typer.Option(None, "--taxon", help="要折叠的类群名称(需配合 --taxonomy 和 --tree)"),
+    rank: str | None = typer.Option(None, "--rank", help="分类等级(如 Phylum, Class)"),
+    taxonomy_path: str | None = typer.Option(None, "--taxonomy", "-t", help="分类表格文件路径"),
+    tree_path: str | None = typer.Option(None, "--tree", "-r", help="树文件路径"),
     id_column: str = typer.Option("id", "--id-column", help="ID列名"),
     strict: bool = typer.Option(False, "--strict", help="严格模式: 非单系群时终止(默认跳过)"),
 ):
@@ -354,7 +353,7 @@ def template_ranges(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于分组的列名"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("ranges"),
     id_column: str = _common_id_column_option(),
     separator: str = _common_separator_option(),
@@ -401,7 +400,7 @@ def template_highlight(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于分组的列名"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("highlight"),
     id_column: str = _common_id_column_option(),
     separator: str = _common_separator_option(),
@@ -450,7 +449,7 @@ def template_style(
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于样式分类的列名"),
     style_type: str = typer.Option("branch", "--style-type", help="样式类型: branch/label/label_background"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     line_style: str = typer.Option("normal", "--line-style", help="线型: normal/dashed/dotted"),
     font: str = typer.Option("Arial", "--font", help="字体名称"),
     size: str = typer.Option("1", "--size", help="大小因子"),

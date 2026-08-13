@@ -2,7 +2,7 @@
 
 import json
 from pathlib import Path
-from typing import Optional, cast
+from typing import cast
 
 import typer
 
@@ -50,7 +50,7 @@ def template_color_strip(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于分类的列名"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("color_strip"),
     strip_width: str = typer.Option("50", "--strip-width", help="色带宽度"),
     id_column: str = _common_id_column_option(),
@@ -89,7 +89,7 @@ def template_branch(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于分支着色的列名"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("branch"),
     id_column: str = _common_id_column_option(),
     separator: str = _common_separator_option(),
@@ -160,8 +160,8 @@ def template_multi_bar(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     columns: str = typer.Option(..., "--columns", "-c", help="数值列名,逗号分隔"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色列表JSON"),
-    field_labels: Optional[str] = typer.Option(None, "--field-labels", help="字段标签,逗号分隔"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色列表JSON"),
+    field_labels: str | None = typer.Option(None, "--field-labels", help="字段标签,逗号分隔"),
     label: str = _common_label_option("multi_bar"),
     width: str = typer.Option("1000", "--width", help="图表宽度"),
     alignment: str = typer.Option("center", "--alignment", help="对齐方式"),
@@ -174,7 +174,7 @@ def template_multi_bar(
     if checked is None:
         return
     output = str(checked)
-    color_list = cast(Optional[list[str]], _parse_colors(colors))
+    color_list = cast(list[str] | None, _parse_colors(colors))
     field_label_list = [s.strip() for s in field_labels.split(",") if s.strip()] if field_labels else None
     path = generate_multibar_template(
         output,
@@ -202,7 +202,7 @@ def template_heatmap(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     columns: str = typer.Option(..., "--columns", "-c", help="数值列名,逗号分隔"),
-    gradient: Optional[str] = typer.Option(None, "--gradient", help="颜色渐变,逗号分隔的色值"),
+    gradient: str | None = typer.Option(None, "--gradient", help="颜色渐变,逗号分隔的色值"),
     label: str = _common_label_option("heatmap"),
     id_column: str = _common_id_column_option(),
     separator: str = _common_separator_option(),
@@ -239,7 +239,7 @@ def template_symbols(
     tree_path: str = _common_tree_option(),
     column: str = typer.Option(..., "--column", "-c", help="用于符号分类的列名"),
     symbol_type: str = typer.Option("diamond", "--symbol-type", help="符号类型: diamond/circle/square/triangle/star"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("symbols"),
     size: str = typer.Option("30", "--size", help="符号大小"),
     id_column: str = _common_id_column_option(),
@@ -277,7 +277,7 @@ def template_pie(
     taxonomy_path: str = _common_taxonomy_option(),
     tree_path: str = _common_tree_option(),
     columns: str = typer.Option(..., "--columns", "-c", help="数值列名,逗号分隔"),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色列表JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色列表JSON"),
     label: str = _common_label_option("pie"),
     pie_size: str = typer.Option("50", "--pie-size", help="饼图大小"),
     id_column: str = _common_id_column_option(),
@@ -289,7 +289,7 @@ def template_pie(
     if checked is None:
         return
     output = str(checked)
-    color_list = cast(Optional[list[str]], _parse_colors(colors))
+    color_list = cast(list[str] | None, _parse_colors(colors))
     path = generate_pie_template(
         output,
         taxonomy_path,
@@ -318,7 +318,7 @@ def template_boxplot(
     median_column: str = typer.Option("median", "--median", help="中位数列名"),
     q3_column: str = typer.Option("q3", "--q3", help="第三四分位数列名"),
     max_column: str = typer.Option("maximum", "--max", help="最大值列名"),
-    extremes_columns: Optional[str] = typer.Option(None, "--extremes", help="极端值列名,逗号分隔"),
+    extremes_columns: str | None = typer.Option(None, "--extremes", help="极端值列名,逗号分隔"),
     label: str = _common_label_option("boxplot"),
     color: str = typer.Option("#00ff00", "--color", help="箱线图颜色"),
     width: str = typer.Option("1500", "--width", help="图表宽度"),
@@ -513,7 +513,7 @@ def template_domains(
     no_clobber: bool = typer.Option(False, "--no-clobber", help="跳过已存在的输出文件"),
     data_file: str = typer.Option(..., "--data", "-d", help="域数据文件路径(JSON格式)"),
     color: str = typer.Option("#ff00aa", "--color", help="默认颜色"),
-    scale: Optional[str] = typer.Option(None, "--scale", help="尺度"),
+    scale: str | None = typer.Option(None, "--scale", help="尺度"),
     label: str = _common_label_option("domains"),
     separator: str = _common_separator_option(),
 ):
@@ -616,7 +616,7 @@ def template_external_shape(
     shape_type: str = typer.Option(
         "circle", "--shape-type", help="形状类型: circle/square/star/triangle_right/triangle_left/checkmark"
     ),
-    colors: Optional[str] = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
+    colors: str | None = typer.Option(None, "--colors", help="自定义颜色映射JSON"),
     label: str = _common_label_option("external_shape"),
     size: str = typer.Option("20", "--size", help="形状大小"),
     id_column: str = _common_id_column_option(),

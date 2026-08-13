@@ -428,7 +428,7 @@ def _build_tip_to_group_mapping(tax_df: pd.DataFrame, rank: str) -> dict[str, st
     if rank not in tax_df.columns:
         return {}
     sub = tax_df[["id", rank]].dropna(subset=[rank])
-    return dict(zip(sub["id"].astype(str), sub[rank].astype(str)))
+    return dict(zip(sub["id"].astype(str), sub[rank].astype(str), strict=True))
 
 
 def check_monophyly(

@@ -381,7 +381,7 @@ def check_delimiter_conflict(data: pd.DataFrame, separator: str = "TAB") -> list
         mask = str_df.apply(lambda col: col.str.contains(sep_char, regex=False, na=False))
 
     conflict_rows, conflict_cols = mask.values.nonzero()
-    for row_idx, col_idx in zip(conflict_rows, conflict_cols):
+    for row_idx, col_idx in zip(conflict_rows, conflict_cols, strict=True):
         col_name = data.columns[col_idx]
         val_str = str(data.iat[row_idx, col_idx]) if pd.notna(data.iat[row_idx, col_idx]) else ""
         errors.append(_get_error_message(ErrorCode.DELIMITER_CONFLICT, row_idx, col_name, sep_char, val_str[:50]))

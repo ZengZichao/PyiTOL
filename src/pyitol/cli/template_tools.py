@@ -1,8 +1,9 @@
 """Template tools - unified create, bundle, and validate commands."""
 
 import json
+from collections.abc import Callable
 from pathlib import Path
-from typing import Annotated, Any, Callable, Optional, cast
+from typing import Annotated, Any, cast
 
 import pandas as pd
 import typer
@@ -730,23 +731,23 @@ def template_create(
     ctx: typer.Context,
     template_type: Annotated[str, typer.Argument(help=_TEMPLATE_TYPE_HELP)],
     output: Annotated[str, typer.Option("--output", "-o", help="输出模板文件路径")] = "config_template.txt",
-    taxonomy: Annotated[Optional[str], typer.Option("--taxonomy", "-t", help="分类信息表格文件路径")] = None,
-    tree: Annotated[Optional[str], typer.Option("--tree", "-r", help="Newick格式系统发育树文件路径")] = None,
-    column: Annotated[Optional[str], typer.Option("--column", "-c", help="数据列名")] = None,
-    columns: Annotated[Optional[str], typer.Option("--columns", help="多个数据列名,逗号分隔")] = None,
-    colors: Annotated[Optional[str], typer.Option("--colors", help="自定义颜色映射JSON或列表")] = None,
+    taxonomy: Annotated[str | None, typer.Option("--taxonomy", "-t", help="分类信息表格文件路径")] = None,
+    tree: Annotated[str | None, typer.Option("--tree", "-r", help="Newick格式系统发育树文件路径")] = None,
+    column: Annotated[str | None, typer.Option("--column", "-c", help="数据列名")] = None,
+    columns: Annotated[str | None, typer.Option("--columns", help="多个数据列名,逗号分隔")] = None,
+    colors: Annotated[str | None, typer.Option("--colors", help="自定义颜色映射JSON或列表")] = None,
     label: Annotated[str, typer.Option("--label", "-l", help="数据集标签")] = "dataset",
     id_column: Annotated[str, typer.Option("--id-column", help="ID列名")] = "id",
     separator: Annotated[str, typer.Option("--separator", "-s", help="数据分隔符: TAB/SPACE/COMMA")] = "TAB",
-    palette: Annotated[Optional[str], typer.Option("--palette", help="配色预设")] = None,
+    palette: Annotated[str | None, typer.Option("--palette", help="配色预设")] = None,
     # Type-specific options
     strip_width: Annotated[str, typer.Option("--strip-width", help="色带宽度")] = "50",
     bar_color: Annotated[str, typer.Option("--bar-color", help="柱状图颜色")] = "#3c5484",
     bar_width: Annotated[str, typer.Option("--bar-width", help="柱状图宽度")] = "50",
-    field_labels: Annotated[Optional[str], typer.Option("--field-labels", help="字段标签,逗号分隔")] = None,
+    field_labels: Annotated[str | None, typer.Option("--field-labels", help="字段标签,逗号分隔")] = None,
     width: Annotated[str, typer.Option("--width", help="图表宽度")] = "1000",
     alignment: Annotated[str, typer.Option("--alignment", help="对齐方式")] = "center",
-    gradient: Annotated[Optional[str], typer.Option("--gradient", help="颜色渐变,逗号分隔的色值")] = None,
+    gradient: Annotated[str | None, typer.Option("--gradient", help="颜色渐变,逗号分隔的色值")] = None,
     symbol_type: Annotated[str, typer.Option("--symbol-type", help="符号类型")] = "diamond",
     size: Annotated[str, typer.Option("--size", help="符号/形状大小")] = "30",
     pie_size: Annotated[str, typer.Option("--pie-size", help="饼图大小")] = "50",
@@ -755,21 +756,21 @@ def template_create(
     median_column: Annotated[str, typer.Option("--median", help="中位数列名")] = "median",
     q3_column: Annotated[str, typer.Option("--q3", help="第三四分位数列名")] = "q3",
     max_column: Annotated[str, typer.Option("--max", help="最大值列名")] = "maximum",
-    extremes: Annotated[Optional[str], typer.Option("--extremes", help="极端值列名,逗号分隔")] = None,
+    extremes: Annotated[str | None, typer.Option("--extremes", help="极端值列名,逗号分隔")] = None,
     color_min: Annotated[str, typer.Option("--color-min", help="最小值颜色")] = "#ff0000",
     color_max: Annotated[str, typer.Option("--color-max", help="最大值颜色")] = "#0000ff",
     use_mid_color: Annotated[bool, typer.Option("--use-mid-color", help="使用中间颜色")] = False,
     color_mid: Annotated[str, typer.Option("--color-mid", help="中间颜色")] = "#ffff00",
-    connections: Annotated[Optional[str], typer.Option("--connections", help="连接数据(文件路径或逗号分隔对)")] = None,
+    connections: Annotated[str | None, typer.Option("--connections", help="连接数据(文件路径或逗号分隔对)")] = None,
     color: Annotated[str, typer.Option("--color", help="默认颜色")] = "#ff0000",
     line_width: Annotated[str, typer.Option("--line-width", help="连线/线条宽度")] = "2",
     line_type: Annotated[str, typer.Option("--line-type", help="连线类型: solid/dotted/dashed")] = "solid",
     arrow_head_size: Annotated[str, typer.Option("--arrow-head-size", help="箭头大小")] = "1",
-    label_column: Annotated[Optional[str], typer.Option("--label-column", help="标签列名")] = None,
+    label_column: Annotated[str | None, typer.Option("--label-column", help="标签列名")] = None,
     title_column: Annotated[str, typer.Option("--title-column", help="标题列名")] = "title",
     content_column: Annotated[str, typer.Option("--content-column", help="内容列名")] = "content",
-    data_file: Annotated[Optional[str], typer.Option("--data-file", "-d", help="数据文件路径")] = None,
-    scale: Annotated[Optional[str], typer.Option("--scale", help="尺度")] = None,
+    data_file: Annotated[str | None, typer.Option("--data-file", "-d", help="数据文件路径")] = None,
+    scale: Annotated[str | None, typer.Option("--scale", help="尺度")] = None,
     field_colors: Annotated[str, typer.Option("--field-colors", help="字段颜色,逗号分隔")] = "#ff0000,#00ff00,#0000ff",
     field_shapes: Annotated[str, typer.Option("--field-shapes", help="字段形状,逗号分隔(1-6)")] = "1,2,3",
     show_internal: Annotated[str, typer.Option("--show-internal", help="是否显示内部节点: 0/1")] = "1",
@@ -780,25 +781,25 @@ def template_create(
         str, typer.Option("--color-type", help="着色类型: clade/label/branch/width/range/gradient")
     ] = "clade",
     width_value: Annotated[str, typer.Option("--width-value", help="分支线宽度(仅width类型)")] = "3",
-    node_ids: Annotated[Optional[str], typer.Option("--node-ids", "-n", help="节点ID,逗号分隔")] = None,
+    node_ids: Annotated[str | None, typer.Option("--node-ids", "-n", help="节点ID,逗号分隔")] = None,
     style_type: Annotated[str, typer.Option("--style-type", help="样式类型: branch/label/label_background")] = "branch",
     line_style: Annotated[str, typer.Option("--line-style", help="线型: normal/dashed/dotted")] = "normal",
     font: Annotated[str, typer.Option("--font", help="字体名称")] = "Arial",
     arrow_size: Annotated[str, typer.Option("--arrow-size", help="箭头大小")] = "30",
-    image_column: Annotated[Optional[str], typer.Option("--image-column", help="图像文件名列名")] = None,
-    url_column: Annotated[Optional[str], typer.Option("--url-column", help="图像URL列名")] = None,
+    image_column: Annotated[str | None, typer.Option("--image-column", help="图像文件名列名")] = None,
+    url_column: Annotated[str | None, typer.Option("--url-column", help="图像URL列名")] = None,
     image_width: Annotated[str, typer.Option("--image-width", help="图像宽度")] = "50",
-    alignment_column: Annotated[Optional[str], typer.Option("--alignment-column", help="序列比对列名")] = None,
+    alignment_column: Annotated[str | None, typer.Option("--alignment-column", help="序列比对列名")] = None,
     position_column: Annotated[
-        Optional[str], typer.Option("--position-column", "-p", help="折线图位置列名(默认行号)")
+        str | None, typer.Option("--position-column", "-p", help="折线图位置列名(默认行号)")
     ] = None,
     color_scheme: Annotated[str, typer.Option("--color-scheme", help="颜色方案: nucleotide/amino_acid")] = "nucleotide",
     spacing: Annotated[str, typer.Option("--spacing", help="放置点间距/节点间距因子")] = "5",
     scale_position: Annotated[str, typer.Option("--scale-position", help="刻度位置: top/bottom/both")] = "bottom",
     show_labels: Annotated[str, typer.Option("--show-labels", help="是否显示标签: 0/1")] = "1",
-    custom_header: Annotated[Optional[str], typer.Option("--custom-header", help="自定义头部JSON")] = None,
-    taxon: Annotated[Optional[str], typer.Option("--taxon", help="类群名称(用于collapse)")] = None,
-    rank: Annotated[Optional[str], typer.Option("--rank", help="分类等级(用于collapse)")] = None,
+    custom_header: Annotated[str | None, typer.Option("--custom-header", help="自定义头部JSON")] = None,
+    taxon: Annotated[str | None, typer.Option("--taxon", help="类群名称(用于collapse)")] = None,
+    rank: Annotated[str | None, typer.Option("--rank", help="分类等级(用于collapse)")] = None,
     force: Annotated[bool, typer.Option("--force", "-f", help="覆盖已存在的输出文件")] = False,
     no_clobber: Annotated[bool, typer.Option("--no-clobber", help="跳过已存在的输出文件")] = False,
 ):
@@ -1509,7 +1510,7 @@ def _bundle_spacing(gen, df, item, column, blabel, separator, tip_order_map, con
     schema = create_schema("spacing", label=blabel, separator=separator)
     node_ids = item.get("node_ids", [])
     factors = item.get("factors", ["1.0"] * len(node_ids))
-    data = [{"id": nid, "factor": f} for nid, f in zip(node_ids, factors)]
+    data = [{"id": nid, "factor": f} for nid, f in zip(node_ids, factors, strict=False)]
     schema.columns = ["id", "factor"]
     schema.data_rows = data
     gen.add_schema(schema)

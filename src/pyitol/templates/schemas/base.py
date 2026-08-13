@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import warnings
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
-from typing import Callable
 
 from pyitol.exceptions import TemplateTypeError
 

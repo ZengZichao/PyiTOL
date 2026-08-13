@@ -6,7 +6,7 @@ import os
 import sys
 from collections.abc import Callable
 from pathlib import Path
-from typing import Optional, TypedDict, cast
+from typing import TypedDict, cast
 
 import pandas as pd
 import typer
@@ -355,7 +355,7 @@ def validate_command(
         result = validate_inputs(
             tree_path=tree,
             metadata_path=taxonomy,
-            template_paths=cast(Optional[list[str | Path]], templates),
+            template_paths=cast(list[str | Path] | None, templates),
             colors=colors,
         )
 

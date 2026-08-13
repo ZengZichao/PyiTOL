@@ -1,7 +1,6 @@
 """Template advanced commands - linechart, image, alignment, tanglegram, etc."""
 
 import json
-from typing import Optional
 
 import typer
 
@@ -253,7 +252,7 @@ def template_manual(
     data_file: str = typer.Option(..., "--data-file", "-d", help="自定义数据CSV文件"),
     label: str = _common_label_option("manual"),
     color: str = typer.Option("#ff0000", "--color", help="默认颜色"),
-    custom_header: Optional[str] = typer.Option(None, "--custom-header", help='自定义头部JSON,如 {"KEY":"VALUE"}'),
+    custom_header: str | None = typer.Option(None, "--custom-header", help='自定义头部JSON,如 {"KEY":"VALUE"}'),
     separator: str = _common_separator_option(),
 ):
     """生成手动注释模板 - 自定义数据格式的自由注释。"""
