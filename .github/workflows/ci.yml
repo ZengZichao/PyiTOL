@@ -17,6 +17,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       PYTHONIOENCODING: utf-8
+      # Force UTF-8 mode on all platforms (incl. Windows, whose default text
+      # encoding is cp1252). This makes every read_text()/open() in the test
+      # suite decode source files with non-ASCII (e.g. Chinese docstrings)
+      # correctly without having to annotate each call with encoding="utf-8".
+      PYTHONUTF8: "1"
 
     steps:
       - uses: actions/checkout@v4
