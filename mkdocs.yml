@@ -1,6 +1,7 @@
 site_name: PyiTOL 文档
 site_description: PyiTOL - iTOL 可视化全流程自动化工具文档
 site_author: Zichao Zeng
+site_url: https://zengzichao.github.io/PyiTOL/
 theme:
   name: material
   language: zh
