@@ -3,7 +3,7 @@
 ## 安装问题
 
 ### `pip install pyitol` 失败
-- 确保 Python 版本 >= 3.9
+- 确保 Python 版本 >= 3.10
 - 如果安装 dendropy 失败，尝试先安装：`pip install setuptools>=68.0`
 
 ### 导入错误 `ModuleNotFoundError: No module named 'pyitol'`

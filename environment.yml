@@ -4,7 +4,7 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python>=3.9
+  - python>=3.10
   - pip
   - typer>=0.15.0,<1.0
   - rich>=13.0.0,<14.0.0

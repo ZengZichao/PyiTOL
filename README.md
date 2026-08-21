@@ -1,6 +1,6 @@
 # PyiTOL
 
-[![Python](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI](https://img.shields.io/pypi/v/pyitol.svg)](https://pypi.org/project/pyitol)
 [![CI](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml)

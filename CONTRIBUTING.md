@@ -17,7 +17,7 @@ Thank you for your interest in contributing to PyiTOL!
 ## Development Setup / 开发环境配置
 
 **Prerequisites / 前置条件:**
-- Python 3.9 or later
+- Python 3.10 or later
 - Git
 
 **Setup steps / 配置步骤:**
