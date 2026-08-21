@@ -111,7 +111,34 @@ twine upload --repository testpypi dist/*     # 按提示输入 TestPyPI 的 use
 
 ---
 
-## 4. 故障排查 / 回滚
+## 4. Zenodo DOI（论文引用）
+
+### 4.1 一次性配置（网页操作）
+1. 登录 https://zenodo.org（建议直接用 GitHub 账号登录）。
+2. **Settings → GitHub → Connect GitHub account**（或 Sync now），同步仓库列表。
+3. 找到 `<owner>/pyitol`，点击开关 **Enable**。
+4. 仓库根目录已含 `.zenodo.json`（标题 / 作者 / ORCID / license / 关键词，Zenodo 归档时自动读取），无需额外设置。
+
+### 4.2 触发与验证
+- 每次发布 GitHub **Release** 时，Zenodo 自动抓取仓库快照并生成 DOI（约 1 分钟内，可在 Zenodo 记录页看到）。
+- ⚠️ Zenodo 只响应 **Release**，不响应 tag 推送。而 GitHub 推 tag 不会自动建 Release，需显式创建：
+  ```bash
+  gh release create v1.0.0 --generate-notes
+  ```
+- ⚠️ 钩子必须**先启用、后建 Release**，否则该 Release 不会自动归档。
+- 查询 DOI：
+  ```bash
+  curl -s "https://zenodo.org/api/records?q=pyitol" | jq '.hits.hits[].doi'
+  ```
+
+### 4.3 DOI 语义
+- **版本 DOI**（每个 Release 一个）：`10.5281/zenodo.<id>`，指向该次快照。
+- **概念 DOI**（整个软件系列，不随版本变化）：`10.5281/zenodo.<conceptid>`，**论文引用推荐用概念 DOI**。
+- v1.0.0 首发记录：版本 DOI `10.5281/zenodo.22043046`，概念 DOI `10.5281/zenodo.22043045`。
+
+---
+
+## 5. 故障排查 / 回滚
 
 - **误发错版本**：PyPI 不允许覆盖同一版本号，只能发新的 `patch` 版本（如 `v1.0.1`）。无法删除已发版本，**发布前务必演练**。
 - **publish.yml 失败**：多在 Actions 日志看原因。常见：Trusted Publisher 的 owner/repo/workflow 任一不匹配 → 核对 1.4。
