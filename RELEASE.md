@@ -133,8 +133,9 @@ twine upload --repository testpypi dist/*     # 按提示输入 TestPyPI 的 use
 
 ### 4.3 DOI 语义
 - **版本 DOI**（每个 Release 一个）：`10.5281/zenodo.<id>`，指向该次快照。
-- **概念 DOI**（整个软件系列，不随版本变化）：`10.5281/zenodo.<conceptid>`，**论文引用推荐用概念 DOI**。
+- **概念 DOI**（整个软件系列，不随版本变化）：`10.5281/zenodo.<conceptid>`，始终解析到最新版本。
 - v1.0.0 首发记录：版本 DOI `10.5281/zenodo.22043046`，概念 DOI `10.5281/zenodo.22043045`。
+- **论文引用决定**：Bioinformatics 投稿论文引用 **版本 DOI**（`10.5281/zenodo.22043046`），与论文中实际测试的 v1.0.0 快照严格对应（正文摘要与参考文献 [33]）；一般性引用可选用概念 DOI。
 
 ---
 

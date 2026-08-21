@@ -1,8 +1,9 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite both the software and the underlying tools."
 title: "PyiTOL"
-version: 1.0.0
-date-released: 2026-08-13
+version: 1.0.1
+date-released: 2026-08-21
+doi: 10.5281/zenodo.22043046
 authors:
   - name: "Zichao Zeng"
     orcid: "https://orcid.org/0000-0001-6553-970X"

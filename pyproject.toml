@@ -55,7 +55,7 @@ excel = [
 
 [project.urls]
 Homepage = "https://github.com/ZengZichao/PyiTOL"
-Documentation = "https://github.com/ZengZichao/PyiTOL"
+Documentation = "https://zengzichao.github.io/PyiTOL/"
 Repository = "https://github.com/ZengZichao/PyiTOL"
 Issues = "https://github.com/ZengZichao/PyiTOL/issues"
 Changelog = "https://github.com/ZengZichao/PyiTOL/blob/main/CHANGELOG.md"
