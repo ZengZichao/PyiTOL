@@ -73,7 +73,7 @@ PyiTOL Feature System:
 pip install -e .
 ```
 
-Dependencies: Python 3.9+, typer, pandas, dendropy, numpy, requests, pydantic, PyYAML, rich, scipy
+Dependencies: Python 3.10+, typer, pandas, dendropy, numpy, requests, pydantic, PyYAML, rich, scipy
 
 ## Quick Verification
 

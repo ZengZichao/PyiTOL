@@ -4,7 +4,7 @@
 
 ## 前提条件
 
-- Python 3.9+
+- Python 3.10+
 - iTOL API Key（在 https://itol.embl.de/ 注册后获取）
 
 ## 步骤1：安装

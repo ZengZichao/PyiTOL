@@ -73,7 +73,7 @@ PyiTOL 功能体系：
 pip install -e .
 ```
 
-依赖：Python 3.9+, typer, pandas, dendropy, numpy, requests, pydantic, PyYAML, rich, scipy
+依赖：Python 3.10+, typer, pandas, dendropy, numpy, requests, pydantic, PyYAML, rich, scipy
 
 ## 快速验证
 

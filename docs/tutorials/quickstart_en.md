@@ -4,7 +4,7 @@ This tutorial walks you through your first use of PyiTOL in 10 minutes, producin
 
 ## Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - iTOL API Key (obtained after registering at https://itol.embl.de/)
 
 ## Step 1: Installation
