@@ -18,7 +18,7 @@ if _SRC_DIR.is_dir():
 import csv
 import random
 
-from _bench_utils import build_balanced_newick_str  # noqa: E402
+from _bench_utils import bench_provenance, build_balanced_newick_str  # noqa: E402
 
 from pyitol.core.monophyly import check_monophyly
 
@@ -106,6 +106,10 @@ def main():
             "iqr_s": iqr,
             "peak_mem_bytes": peak,
         })
+
+    prov = bench_provenance()
+    for r in all_results:
+        r["_provenance"] = prov
 
     out_path = args.outdir / "extreme_scale_results.json"
     out_path.write_text(json.dumps(all_results, indent=2), encoding="utf-8")

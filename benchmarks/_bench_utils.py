@@ -11,6 +11,16 @@ from pathlib import Path
 
 import dendropy
 
+import pyitol
+
+
+def bench_provenance() -> dict:
+    """Return {pyitol_version, git_commit} for result attribution."""
+    return {
+        "pyitol_version": getattr(pyitol, "__version__", "unknown"),
+        "git_commit": pyitol.get_git_hash() or "unknown",
+    }
+
 
 def build_balanced_newick(n: int) -> dendropy.Tree:
     """Build a balanced binary tree with exactly *n* leaves.

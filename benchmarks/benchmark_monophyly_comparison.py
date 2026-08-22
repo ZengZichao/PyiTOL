@@ -57,6 +57,8 @@ from pyitol.core.monophyly import (  # noqa: E402
     clear_tip_index_cache,
 )
 
+from _bench_utils import bench_provenance  # noqa: E402
+
 DEFAULT_SIZES = [1_000, 10_000, 50_000]
 REPEATS = 3
 NUM_GROUPS = 20  # number of taxonomic groups in the synthetic taxonomy
@@ -556,6 +558,9 @@ def main():
     )
 
     if args.output:
+        prov = bench_provenance()
+        for r in results:
+            r["_provenance"] = prov
         out = Path(args.output)
         out.parent.mkdir(parents=True, exist_ok=True)
         with open(out, "w", encoding="utf-8") as fh:

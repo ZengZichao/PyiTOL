@@ -22,6 +22,8 @@ import requests
 from pyitol.api.client import ITOLAPIClient
 from pyitol.templates.generator import TemplateGenerator
 
+from _bench_utils import bench_provenance
+
 ROOT = Path(__file__).parent.parent
 TREE_SRC = ROOT / 'examples' / 'data' / 'synthetic_32tips.nwk'
 WORK = Path(__file__).parent / 'itol_acceptance'
@@ -226,6 +228,10 @@ def main() -> None:
         results.append({'type': type_name, 'status': status, 'detail': detail})
         print(f'{type_name:16s} {status:8s} {detail[:80]}', flush=True)
         time.sleep(0.5)
+
+    prov = bench_provenance()
+    for r in results:
+        r['_provenance'] = prov
 
     out_json = WORK / 'acceptance_results.json'
     out_json.write_text(json.dumps(results, indent=2))

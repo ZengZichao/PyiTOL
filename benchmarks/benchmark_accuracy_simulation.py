@@ -42,6 +42,8 @@ import sys
 import time
 from pathlib import Path
 
+from _bench_utils import bench_provenance
+
 OUT_DIR = Path(__file__).parent / 'accuracy_results'
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -441,7 +443,9 @@ def main() -> None:
             print(f"random   n={n_leaves} seed={seed} wall={r['wall_time_s']}s")
     summary = summarize(results)
     out = OUT_DIR / 'accuracy_summary.json'
-    out.write_text(json.dumps({'replicates': results, 'summary': summary}, indent=2))
+    out.write_text(json.dumps(
+        {'replicates': results, 'summary': summary, '_provenance': bench_provenance()},
+        indent=2))
     print(json.dumps(summary, indent=2))
 
 

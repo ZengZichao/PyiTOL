@@ -74,7 +74,7 @@ pyitol = ["py.typed"]
 write_to = "src/pyitol/_version.py"
 version_scheme = "guess-next-dev"
 local_scheme = "node-and-date"
-fallback_version = "1.0.0"
+fallback_version = "1.0.2"
 
 [tool.ruff]
 target-version = "py310"

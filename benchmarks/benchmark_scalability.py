@@ -36,7 +36,7 @@ if _SRC_DIR.is_dir():
 
 import dendropy
 
-from _bench_utils import build_balanced_newick  # noqa: E402  -- project dependency
+from _bench_utils import bench_provenance, build_balanced_newick  # noqa: E402  -- project dependency
 
 from pyitol.templates.generator import (  # noqa: E402
     generate_color_strip_template,
@@ -514,6 +514,9 @@ def main() -> None:
 
     # Save JSON
     if args.output:
+        prov = bench_provenance()
+        for r in results:
+            r["_provenance"] = prov
         out_path = Path(args.output)
         out_path.parent.mkdir(parents=True, exist_ok=True)
         with open(out_path, "w", encoding="utf-8") as fh:
