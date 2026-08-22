@@ -2,156 +2,280 @@
   {
     "type": "alignment",
     "status": "SUCCESS",
-    "detail": "5824722161261521785772678"
+    "detail": "2121352146373661787394392",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "arrows",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file arrows.txt: Failed to identify the type of file: DATASET_ARROWS. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file arrows.txt: Failed to identify the type of file: DATASET_ARROWS. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "binary",
     "status": "SUCCESS",
-    "detail": "5824722161261891785772681"
+    "detail": "2121352146375071787394398",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "boxplot",
     "status": "SUCCESS",
-    "detail": "5824722161262021785772682"
+    "detail": "2121352146375131787394400",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "branch",
     "status": "SUCCESS",
-    "detail": "5824722161262071785772683"
+    "detail": "2121352146375191787394401",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "collapse",
     "status": "SUCCESS",
-    "detail": "5824722161262141785772684"
+    "detail": "2121352146375341787394402",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "color_strip",
     "status": "SUCCESS",
-    "detail": "5824722161262201785772685"
+    "detail": "2121352146375441787394403",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "connection",
     "status": "SUCCESS",
-    "detail": "5824722161262301785772686"
+    "detail": "2121352146376831787394405",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "domains",
     "status": "SUCCESS",
-    "detail": "5824722161262361785772687"
+    "detail": "2121352146379041787394406",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "externalshape",
     "status": "SUCCESS",
-    "detail": "5824722161262431785772689"
+    "detail": "2121352146379131787394407",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "gradient",
     "status": "SUCCESS",
-    "detail": "5824722161262531785772690"
+    "detail": "2121352146379261787394409",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "heatmap",
     "status": "SUCCESS",
-    "detail": "5824722161262671785772691"
+    "detail": "2121352146379371787394410",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "image",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: WARNING: DATASET_IMAGE is not supported in batch mode yet. Please contact ivica@letunic.com to request support for it.\nERR 5: Parsing file leaf.png: Failed to i"
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: WARNING: DATASET_IMAGE is not supported in batch mode yet. Please contact ivica@letunic.com to request support for it.\nERR 5: Parsing file leaf.png: Failed to i",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "labels",
     "status": "SUCCESS",
-    "detail": "5824722161262871785772694"
+    "detail": "2121352146383891787394421",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "linechart",
     "status": "SUCCESS",
-    "detail": "5824722161262931785772695"
+    "detail": "2121352146383971787394423",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "manual",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file manual.txt: Failed to identify the type of file: DATASET_MANUAL. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file manual.txt: Failed to identify the type of file: DATASET_MANUAL. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "meme",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file meme.txt: Failed to identify the type of file: DATASET_MEME. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file meme.txt: Failed to identify the type of file: DATASET_MEME. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "multi_bar",
     "status": "SUCCESS",
-    "detail": "5824722161263351785772699"
+    "detail": "2121352146386221787394431",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "pie",
     "status": "SUCCESS",
-    "detail": "5824722161263411785772700"
+    "detail": "2121352146386361787394433",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "placement",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file placement.txt: Failed to identify the type of file: DATASET_PLACEMENT. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file placement.txt: Failed to identify the type of file: DATASET_PLACEMENT. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "popup_info",
     "status": "SUCCESS",
-    "detail": "5824722161263731785772704"
+    "detail": "2121352146389201787394438",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "prune",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file prune.txt: Failed to identify the type of file: PRUNE. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file prune.txt: Failed to identify the type of file: PRUNE. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "range",
     "status": "SUCCESS",
-    "detail": "5824722161264081785772706"
+    "detail": "2121352146391721787394443",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "simple_bar",
     "status": "SUCCESS",
-    "detail": "5824722161264131785772707"
+    "detail": "2121352146391841787394444",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "spacing",
     "status": "SUCCESS",
-    "detail": "5824722161264221785772709"
+    "detail": "2121352146391951787394445",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "style",
     "status": "SUCCESS",
-    "detail": "5824722161264341785772709"
+    "detail": "2121352146392111787394447",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "symbol",
     "status": "SUCCESS",
-    "detail": "5824722161264391785772711"
+    "detail": "2121352146393061787394448",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "tanglegram",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file tanglegram.txt: Failed to identify the type of file: DATASET_TANGLEGRAM. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file tanglegram.txt: Failed to identify the type of file: DATASET_TANGLEGRAM. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "text",
     "status": "SUCCESS",
-    "detail": "5824722161264821785772714"
+    "detail": "2121352146394361787394452",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "timescale",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file timescale.txt: Failed to identify the type of file: DATASET_TIMESCALE. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file timescale.txt: Failed to identify the type of file: DATASET_TIMESCALE. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   },
   {
     "type": "treestyle",
     "status": "FAIL",
-    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file treestyle.txt: Failed to identify the type of file: DATASET_TREESTYLE. Please use the templates provided on the help pages."
+    "detail": "[iTOL API] \u64cd\u4f5c\u5931\u8d25:  | RAW: ERR 5: Parsing file treestyle.txt: Failed to identify the type of file: DATASET_TREESTYLE. Please use the templates provided on the help pages.",
+    "_provenance": {
+      "pyitol_version": "1.0.2",
+      "git_commit": "7f7c765"
+    }
   }
 ]
