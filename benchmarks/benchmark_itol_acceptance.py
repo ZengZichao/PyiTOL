@@ -211,17 +211,17 @@ def main() -> None:
                 import zipfile as _zip
                 buf = _io.BytesIO()
                 with _zip.ZipFile(buf, 'w') as z:
-                    # iTOL 要求 zip 内树文件名与 treeName 一致（.tree 后缀），
-                    # 否则服务端误报 "ERR 0: Please provide your iTOL API key"，
-                    # 掩盖真实的解析错误信息。
+                    # 树文件名与 treeName 对齐（.tree 后缀），与主上传路径保持一致。
                     z.write(tree_path, f'pyitol_accept_{type_name}.tree')
                     z.write(out, out.name)
                     if type_name == 'image':
                         z.write(png, 'leaf.png')
                 buf.seek(0)
+                # 用客户端解析后的 key（兼容 --api-key / 环境变量 / key 文件三种来源），
+                # 避免 args.api_key 为空时服务端误报 "ERR 0: Please provide your iTOL API key"。
                 r = requests.post(client.UPLOAD_URL,
                                   files={'zipFile': ('upload.zip', buf)},
-                                  data={'APIkey': args.api_key,
+                                  data={'APIkey': client.api_key,
                                         'treeName': f'pyitol_accept_{type_name}',
                                         'projectName': args.project},
                                   timeout=120)
