@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.3] - 2026-08-26
+
+### Added
+- Template scalability benchmark extended to 50,000 leaves (supports Table S7
+  of the manuscript).
+
+### Changed
+- **Validator**: duplicate tip labels are now reported as hard errors (both the
+  raw-Newick pre-parse check and the parsed-tree check) instead of warnings.
+  Duplicate labels silently collapse distinct leaves in set-based monophyly
+  diagnostics, so such inputs must be rejected before classification.
+- **API client**: retries of non-idempotent POST requests now log an explicit
+  warning that the server may have already processed the previous attempt
+  (`_LoggingRetry`), because iTOL batch endpoints expose no idempotency keys.
+
 ## [1.0.2] - 2026-08-22
 
 ### Added

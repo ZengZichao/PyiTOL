@@ -4,10 +4,10 @@ try:
     from ._version import version as __version__
 except ImportError:  # pragma: no cover
     # Fallback when the package is run from source without setuptools_scm.
-    __version__ = "1.0.2"
+    __version__ = "1.0.3"
 
 __license__ = "MIT"
-__release_date__ = "2026-08-22"
+__release_date__ = "2026-08-26"
 
 
 def get_git_hash() -> str:
