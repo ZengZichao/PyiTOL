@@ -144,15 +144,30 @@ class _LoggingRetry(Retry):
     resource. Users must check the target project for duplicate uploads.
     """
 
-    def increment(self, method=None, url=None, *args, **kwargs):  # type: ignore[override]
-        if method and method.upper() == "POST":
+    def increment(
+        self,
+        method: str | None = None,
+        url: str | None = None,
+        response: object | None = None,
+        error: Exception | None = None,
+        _pool: object | None = None,
+        _stacktrace: object | None = None,
+    ) -> Retry:
+        if method is not None and method.upper() == "POST":
             logger.warning(
                 "Retrying POST request to %s; the previous attempt may already "
                 "have been processed by the server. Verify the iTOL project for "
                 "duplicate trees/datasets after this run.",
                 url,
             )
-        return super().increment(method=method, url=url, *args, **kwargs)
+        return super().increment(
+            method=method,
+            url=url,
+            response=response,
+            error=error,
+            _pool=_pool,
+            _stacktrace=_stacktrace,
+        )
 
 
 class ITOLAPIClient:
