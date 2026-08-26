@@ -10,6 +10,7 @@ import time
 import zipfile
 from pathlib import Path
 from types import TracebackType
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import requests
@@ -18,6 +19,11 @@ from urllib3.util.retry import Retry
 
 from pyitol.exceptions import APIError, APIKeyError, ExportError, UploadError
 from pyitol.utils.reporter import translate_itol_api_error
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
+    from urllib3.connectionpool import ConnectionPool
+    from urllib3.response import BaseHTTPResponse
 
 logger = logging.getLogger(__name__)
 
@@ -148,11 +154,11 @@ class _LoggingRetry(Retry):
         self,
         method: str | None = None,
         url: str | None = None,
-        response: object | None = None,
+        response: BaseHTTPResponse | None = None,
         error: Exception | None = None,
-        _pool: object | None = None,
-        _stacktrace: object | None = None,
-    ) -> Retry:
+        _pool: ConnectionPool | None = None,
+        _stacktrace: TracebackType | None = None,
+    ) -> Self:
         if method is not None and method.upper() == "POST":
             logger.warning(
                 "Retrying POST request to %s; the previous attempt may already "
