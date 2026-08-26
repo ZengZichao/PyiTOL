@@ -999,7 +999,9 @@ def _check_raw_newick_duplicates(raw: str, result: dict[str, Any]) -> None:
 
     if duplicates:
         dup_sample = list(duplicates.keys())[:5]
-        result["warnings"].append(
+        # Hard error: duplicate tip labels silently collapse distinct leaves in
+        # set-based operations (tip index keeps only one node per label).
+        result["errors"].append(
             f"Duplicate tip names in Newick: {len(duplicates)} duplicates, e.g.: {', '.join(dup_sample)}"
         )
 
@@ -1030,7 +1032,9 @@ def _validate_single_tree(tree: dendropy.Tree, result: dict[str, Any], tree_inde
         seen.add(label)
     if duplicates:
         dup_sample = list(duplicates)[:5]
-        result["warnings"].append(
+        # Hard error: duplicate tip labels silently collapse distinct leaves in
+        # set-based operations (tip index keeps only one node per label).
+        result["errors"].append(
             f"{prefix}Duplicate tip names: {len(duplicates)} duplicates, e.g.: {', '.join(dup_sample)}"
         )
 

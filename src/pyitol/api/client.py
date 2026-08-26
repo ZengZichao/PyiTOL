@@ -136,6 +136,25 @@ def parse_delete_response(response_text: str) -> tuple[bool, str]:
     return False, text
 
 
+class _LoggingRetry(Retry):
+    """Retry strategy that warns whenever a non-idempotent POST is retried.
+
+    The iTOL batch endpoints have no idempotency keys: when a POST upload is
+    retried after a lost response, the server may already have created the
+    resource. Users must check the target project for duplicate uploads.
+    """
+
+    def increment(self, method=None, url=None, *args, **kwargs):  # type: ignore[override]
+        if method and method.upper() == "POST":
+            logger.warning(
+                "Retrying POST request to %s; the previous attempt may already "
+                "have been processed by the server. Verify the iTOL project for "
+                "duplicate trees/datasets after this run.",
+                url,
+            )
+        return super().increment(method=method, url=url, *args, **kwargs)
+
+
 class ITOLAPIClient:
     """Client for iTOL batch upload/export/delete APIs with retry support."""
 
@@ -187,7 +206,7 @@ class ITOLAPIClient:
 
         # Configure session with retry strategy
         self.session = requests.Session()
-        retry_strategy = Retry(
+        retry_strategy = _LoggingRetry(
             total=max_retries,
             backoff_factor=backoff_factor,
             status_forcelist=[429, 500, 502, 503, 504],
