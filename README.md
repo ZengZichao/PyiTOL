@@ -116,7 +116,7 @@ From source:
 
 ```bash
 git clone https://github.com/ZengZichao/PyiTOL.git
-cd pyitol
+cd PyiTOL
 pip install -e ".[dev]"
 ```
 
@@ -617,6 +617,7 @@ PyiTOL/
 
 If you use PyiTOL in your research, please cite:
 
+- **PyiTOL**: Zeng, Z. (2026). PyiTOL: reproducible Python workflows for iTOL annotation and taxonomic monophyly assessment. *bioRxiv*. doi:10.64898/2026.08.27.747471
 - **iTOL**: Letunic, I., & Bork, P. (2021). Interactive Tree Of Life (iTOL) v5. *Nucleic Acids Research*, 49(W1), W293-W296. doi:10.1093/nar/gkab301
 - **DendroPy**: Sukumaran, J., & Holder, M. T. (2010). DendroPy. *Bioinformatics*, 26(12), 1569-1571. doi:10.1093/bioinformatics/btq228
 - **DendroPy 5**: Moreno, M. A., Holder, M. T., & Sukumaran, J. (2024). DendroPy 5: a mature Python library for phylogenetic computing. *Journal of Open Source Software*, 9(101), 6943. doi:10.21105/joss.06943

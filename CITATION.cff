@@ -21,6 +21,14 @@ keywords:
 references:
   - type: article
     authors:
+      - family-names: "Zeng"
+        given-names: "Zichao"
+    title: "PyiTOL: reproducible Python workflows for iTOL annotation and taxonomic monophyly assessment"
+    year: 2026
+    journal: "bioRxiv"
+    doi: "10.64898/2026.08.27.747471"
+  - type: article
+    authors:
       - family-names: "Letunic"
         given-names: "Ivica"
       - family-names: "Bork"
