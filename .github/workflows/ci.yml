@@ -2,9 +2,16 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main]
   pull_request:
     branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -13,6 +20,13 @@ jobs:
       matrix:
         python-version: ['3.10', '3.11', '3.12', '3.13']
         os: [ubuntu-latest, macos-latest, windows-latest]
+        exclude:
+          # macOS runner 排队延迟最高（实测可占整个 run 的 2/3 以上），
+          # 只在支持范围的边界版本上验证：3.10（下限）与 3.13（当前上限）。
+          - os: macos-latest
+            python-version: '3.11'
+          - os: macos-latest
+            python-version: '3.12'
 
     runs-on: ${{ matrix.os }}
     env:
@@ -24,12 +38,14 @@ jobs:
       PYTHONUTF8: "1"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
 
       - name: Install dependencies
         run: |
@@ -53,6 +69,26 @@ jobs:
 
       - name: Upload coverage
         if: matrix.python-version == '3.12' && matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           file: ./coverage.xml
+          # 未配置 CODECOV_TOKEN 时上传会被跳过/降级，不应阻塞 CI；
+          # 覆盖率门槛由 pytest 的 --cov-fail-under=80 在本地强制。
+          fail_ci_if_error: false
+
+  # 单一汇总 job，作为分支保护里的 required status check：
+  # 矩阵增删组合时无需同步修改保护规则。
+  gate:
+    name: CI gate
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail if any matrix job failed
+        if: needs.test.result != 'success'
+        run: |
+          echo "test matrix result: ${{ needs.test.result }}"
+          exit 1
+
+      - name: All matrix jobs passed
+        run: echo "CI passed on all matrix combinations"

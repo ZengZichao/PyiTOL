@@ -21,22 +21,56 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  build-and-publish:
-    name: Build and publish to PyPI
+  # 发布前先跑一遍单机快速测试，避免把明显坏的代码发上 PyPI
+  #（tag 指向的 commit 是否通过完整矩阵由 main 的分支保护保证）。
+  test:
+    name: Test before publish
     runs-on: ubuntu-latest
-    # OIDC trusted publishing requires the id-token permission.
-    permissions:
-      id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # setuptools_scm needs the full history and tags to derive the version.
           fetch-depth: 0
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest tests/ -m "not integration"
+
+  build-and-publish:
+    name: Build and publish to PyPI
+    needs: test
+    runs-on: ubuntu-latest
+    # OIDC trusted publishing requires the id-token permission.
+    # 注意：不要在这里加 environment: pypi —— PyPI 侧的 Trusted Publisher
+    # 是按"环境留空"配置的，两边必须一致。
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # setuptools_scm needs the full history and tags to derive the version.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 

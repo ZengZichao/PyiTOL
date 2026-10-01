@@ -1,0 +1,3 @@
+# 默认所有路径的 owner；单人维护项目下主要用于
+# require_code_owner_reviews 未来启用时自动圈定审阅人。
+* @ZengZichao
