@@ -4,6 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PyPI](https://img.shields.io/pypi/v/pyitol.svg)](https://pypi.org/project/pyitol)
 [![CI](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml)
+[![Docs](https://github.com/ZengZichao/PyiTOL/actions/workflows/docs.yml/badge.svg)](https://zengzichao.github.io/PyiTOL/)
 
 English | [中文](README_CN.md)
 
