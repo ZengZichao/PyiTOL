@@ -22,3 +22,9 @@ updates:
       interval: "weekly"
     commit-message:
       prefix: "chore(ci)"
+    # 屏蔽 major 升级：action 跨大版本会更换 Node 运行时
+    # （如 actions/checkout 4→7 从 Node 20 跳到 Node 24），
+    # 未经人工验证直接合并会破坏 CI 流水线。
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
