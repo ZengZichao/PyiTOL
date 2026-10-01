@@ -7,8 +7,11 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "chore(deps)"
+    # pip 生态的 ignore/update-types 必须显式给出 dependency-name，
+    # 否则 Dependabot 报 "did not contain a required property of 'dependency-name'"。
     ignore:
-      - update-types: ["version-update:semver-major"]
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       all-pip-bumps:
         patterns:
