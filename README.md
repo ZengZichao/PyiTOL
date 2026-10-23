@@ -5,6 +5,7 @@
 [![PyPI](https://img.shields.io/pypi/v/pyitol.svg)](https://pypi.org/project/pyitol)
 [![CI](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml/badge.svg)](https://github.com/ZengZichao/PyiTOL/actions/workflows/ci.yml)
 [![Docs](https://github.com/ZengZichao/PyiTOL/actions/workflows/docs.yml/badge.svg)](https://zengzichao.github.io/PyiTOL/)
+[![ORCID](https://img.shields.io/badge/ORCID-0000--0001--6553--970X-a6ce39?logo=orcid&logoColor=white)](https://orcid.org/0000-0001-6553-970X)
 
 English | [中文](README_CN.md)
 
