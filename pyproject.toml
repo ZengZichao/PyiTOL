@@ -29,7 +29,7 @@ classifiers = [
 
 dependencies = [
     "typer>=0.15.0,<1.0",
-    "rich~=13.0",
+    "rich>=13,<16",
     "pandas~=2.0",
     "requests~=2.32",
     "pydantic~=2.5",
