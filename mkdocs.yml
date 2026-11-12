@@ -1,5 +1,5 @@
-site_name: PyiTOL 文档
-site_description: PyiTOL - iTOL 可视化全流程自动化工具文档
+site_name: PyiTOL Documentation
+site_description: PyiTOL - end-to-end automation for iTOL visualisation / iTOL 可视化全流程自动化工具文档
 site_author: Zichao Zeng
 site_url: https://zengzichao.github.io/PyiTOL/
 theme:
@@ -47,6 +47,11 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+      # mkdocs 默认 slugify 会丢掉非 ASCII 字符，导致中文页的标题锚点为空、
+      # `api.md#批量操作` 一类的站内深链全部失效。pymdownx 的 slugify 保留中日韩文字。
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
 
 nav:
   - 中文文档:

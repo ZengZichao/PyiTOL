@@ -1,10 +1,24 @@
 # Template Generation Tutorial
 
-PyiTOL supports 31 template types under the iTOL v7 specification (created via the unified entry `template create <type>`). Additionally, `external-shape-bubble` (bubble external shape, a variant of `external-shape`) can be created through the dedicated subcommand `pyitol template create-external-shape-bubble` and is not covered by the unified entry. There are also 31 dedicated `create-*` subcommands available (`pyitol template create-color-strip`, etc.), which are functionally equivalent to the unified entry.
+[中文](templates.md) | English
+
+PyiTOL supports 33 template types under the iTOL v7 specification (created via the unified entry `template create <type>`). In addition, `external-shape-bubble` (bubble external shape, a variant of `external-shape`) is not covered by the unified entry and can only be created through the dedicated subcommand `pyitol template create-external-shape-bubble`. The 33 unified-entry types plus the `external-shape-bubble` variant correspond to 34 dedicated `create-*` subcommands, 33 of which are functionally equivalent to the unified entry: for example, `pyitol template create arrow` and `pyitol template create-arrow` are equivalent, so you may use whichever style you prefer.
 
 ## Unified Entry
 
+Apart from `--output`, the required arguments of the unified entry **vary by type**: most types take `--taxonomy` + `--tree` plus one category column (`--column` or `--columns`), the data-file types take only `--data-file`, the connection types take only `--connections`, and the structural types take `--node-ids`. The skeleton in this section covers the most common family, and the comments inside the fence give the required arguments for every type:
+
 ```bash
+# Required arguments grouped by type:
+#   --taxonomy + --tree + --column: color-strip, branch, simple-bar, symbols, gradient, text,
+#     external-shape, tree-colors, branch-gradient, ranges, highlight, style, linechart
+#   --taxonomy + --tree + --columns: multi-bar, heatmap, pie, binary
+#   --taxonomy + --tree + --column (the alternate names --label-column/--image-column/--alignment-column
+#     are also accepted): labels, image, alignment; boxplot and popup-info need only --taxonomy + --tree (their statistic column names default)
+#   --data-file: domains, spacing, arrow, placement, timescale, meme, manual
+#   --connections: connections (JSON file path), tanglegram (inline id1,id2;id3,id4)
+#   --node-ids: prune; collapse takes --node-ids or --taxon + --rank + --taxonomy + --tree
+#   external-shape-bubble is outside the unified entry, only create-external-shape-bubble handles it
 pyitol template create <type> \
   --taxonomy data.csv --tree tree.nwk \
   --column <column_name> --output output.txt
@@ -16,18 +30,22 @@ View all supported types:
 pyitol template create --help
 ```
 
+> Note: the two invocation styles use **different names for the data file option**. The unified entry `template create` always uses `--data-file`; among the dedicated subcommands, `create-domains` and `create-spacing` use `--data`, while `create-arrow`, `create-placement`, `create-timescale`, `create-meme`, and `create-manual` still use `--data-file`. Check the option name before copying an example from one style to the other.
+
 ## Categorical Data Templates
 
 ### Color Strip
 
-Adds a color strip to each terminal node to display categorical information.
+Adds a color strip to each leaf to display categorical information.
 
 ```bash
 pyitol template create color-strip \
   --taxonomy taxonomy.csv --tree tree.nwk \
   --column Phylum --output colors.txt \
-  --strip-width 50 --palette nature
+  --strip-width 50
 ```
+
+`--palette` is a legal option of this type yet a reserved one with zero effect on the output, so the Color Strip example omits it (the reason is in the "Color Palettes (`--palette` currently inert)" section).
 
 ### Tree Colors
 
@@ -57,7 +75,7 @@ pyitol template create symbols \
 
 Symbol types: `diamond`, `circle`, `square`, `triangle`, `star`
 
-### External Shape
+### External Shapes
 
 Adds shape markers outside nodes.
 
@@ -144,6 +162,8 @@ pyitol template create boxplot \
 The data file must contain: minimum, q1, median, q3, maximum columns.
 
 ### Gradient
+
+Adds a gradient color strip (gradient strip) to each leaf based on a numeric column.
 
 ```bash
 pyitol template create gradient \
@@ -278,8 +298,22 @@ pyitol template create highlight \
 
 ```bash
 pyitol template create connections \
-  --connections "[[A,B],[C,D]]" --output connections.txt
+  --connections pairs.json --output connections.txt
 ```
+
+`--connections` takes a JSON **file path** (not an inline string); file format: `[["TaxonA","TaxonB"],["TaxonC","TaxonD"]]`
+
+### Alignment
+
+Displays sequence alignment results next to nodes, colored with a nucleotide or amino acid scheme.
+
+```bash
+pyitol template create alignment \
+  --taxonomy taxonomy.csv --tree tree.nwk \
+  --alignment-column AlignedSeq --color-scheme amino_acid --output alignment.txt
+```
+
+Color schemes: `nucleotide`, `amino_acid`
 
 ### Tanglegram
 
@@ -292,10 +326,10 @@ pyitol template create tanglegram \
 
 ```bash
 pyitol template create domains \
-  --data-file domains.csv --output domains.txt
+  --data-file domains.json --output domains.txt
 ```
 
-domains.csv format: id, from, to, type, color
+domains.json is JSON content (not CSV), in the format `[{"id":"TaxonA","domains":[{"start":1,"end":50,"name":"PF001","color":"#ff0000"}]}]`.
 
 ### Arrows v7+
 
@@ -356,9 +390,13 @@ pyitol template validate --template colors.txt
 
 ## Learn from Existing Templates
 
+The canonical command is `learn template` (`--template`/`-t` repeatable for several template files, `--output`/`-o` for the result file):
+
 ```bash
-pyitol utils learn-template --template colors.txt --output learned.json
+pyitol learn template --template colors.txt --output learned.json
 ```
+
+> `utils learn-template` is a duplicate of `learn template`; its source docstring records the duplication and points to `learn template`, and calling it emits a DeprecationWarning. The supported form is `learn template`.
 
 ## Learning Themes in Batch
 
@@ -368,9 +406,9 @@ Learn recommended default parameters from a template directory:
 pyitol learn train-theme --dir ./templates --output theme.json
 ```
 
-## Delimiter Selection
+## Data Field Separator Selection
 
-All template commands support the `--separator` parameter:
+The unified entry `template create`, all 34 dedicated `create-*` subcommands, and `template bundle` accept `--separator` (the data field separator, which sets the character between fields of a template data row):
 
 | Value | Description |
 |----|------|
@@ -384,20 +422,29 @@ pyitol template create color-strip \
   --column Phylum --separator COMMA --output colors.txt
 ```
 
-## Color Palettes
+> `--separator` and the `--delimiter` of `taxonomy extract-from-names` (the name-segment delimiter) are two different things: the latter splits rank segments inside a leaf name (e.g. `Bacteria_Firmicutes_...`), the former splits the fields of a template data row.
 
-Use `--palette` to specify a preset color palette:
+## Color Palettes (`--palette` currently inert)
 
-```bash
-pyitol template create color-strip \
-  --taxonomy taxonomy.csv --tree tree.nwk \
-  --column Phylum --palette nature --output colors.txt
-```
+`--palette` is a legal option of both the unified entry `template create` and the dedicated subcommand `create-color-strip`, yet neither hands its value to any generator function: `create-color-strip` calls `generate_color_strip_template()` with no `palette` argument, and that function has no `palette` parameter either (the source marks it as reserved). Hence `--palette nature` yields exactly the same template as omitting the option, and the other 32 types ignore it outright.
 
-Available presets: `nature`, `cell`, `colorblind`
-
-View the preset colors:
+A preset's colors are readable through `learn palette`, and the actual hand-off to the template happens via `--colors` (valid on the 10 commands `color-strip`, `branch`, `tree-colors`, `ranges`, `highlight`, `style`, `symbols`, `pie`, `multi-bar`, `external-shape`):
 
 ```bash
 pyitol learn palette --preset-name nature
 ```
+
+```bash
+pyitol template create color-strip \
+  --taxonomy taxonomy.csv --tree tree.nwk \
+  --column Phylum --output colors.txt \
+  --colors '{"Firmicutes":"#1f77b4","Proteobacteria":"#ff7f0e"}'
+```
+
+Queryable preset names: `nature`, `cell`, `colorblind`
+
+## Related documents
+
+- [Template Subcommand Reference](../templates-reference_en.md): full options and examples for all 34 dedicated `create-*` subcommands.
+- [CLI Reference](../cli_en.md): command overview, the unified `template create` entry, global options, and exit codes.
+- [API Guide](../api_en.md): iTOL batch API and Python API usage.

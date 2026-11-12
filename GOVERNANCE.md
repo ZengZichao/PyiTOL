@@ -1,5 +1,7 @@
 # PyiTOL Project Governance
 
+English | [中文](GOVERNANCE_CN.md)
+
 This document describes the governance structure and decision-making process for the PyiTOL project.
 
 ## Roles and Responsibilities
@@ -57,7 +59,7 @@ Significant changes should be proposed via a GitHub Issue before implementation 
 
 ## Code of Conduct
 
-All participants are expected to follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). Reports of unacceptable behavior should be directed to the Project Lead.
+All participants are expected to follow the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md). The Project Lead is the maintainer-level point of contact who receives Code of Conduct reports on behalf of the community leaders: reports may be filed in the repository issue tracker, or sent privately by email to zengzichao@sjtu.edu.cn when the matter should not be discussed publicly, as described in the Enforcement section of the Code of Conduct.
 
 ## Amendments
 

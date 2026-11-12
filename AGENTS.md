@@ -1,5 +1,7 @@
 # PyiTOL Agent Guide
 
+English | [中文](AGENTS_CN.md)
+
 ## Project Overview
 
 PyiTOL is a Python CLI tool for automating iTOL (Interactive Tree Of Life) phylogenetic tree visualization. The main package is located in `src/pyitol/`, with the entry point being the `pyitol` command or `python -m pyitol`.
@@ -34,9 +36,9 @@ ruff format src/ tests/
 
 - Follow PEP 8, with a line width of 120 characters
 - All public functions require type hints and docstrings
-- Error messages prefer Chinese, with English as fallback
+- Error message text is bilingual: `_ERROR_MESSAGES` (`src/pyitol/core/validator.py`) holds one Chinese and one English table. The runtime language is thread-local and defaults to Chinese; an unknown or missing language falls back to Chinese, not English. The iTOL API error translation table in `src/pyitol/utils/reporter.py` is Chinese-only
 - Maintain deterministic behavior and avoid randomized algorithms
 
 ## Version Notes
 
-`pyproject.toml` uses `setuptools_scm` to dynamically generate versions; when not in a git repository, it falls back to version `1.0.0`. `src/pyitol/__init__.py` first attempts to read the version from `_version.py`, falling back to `1.0.0` on failure.
+`pyproject.toml` uses `setuptools_scm` to dynamically generate versions; when not in a git repository, it falls back to version `1.0.3`. `src/pyitol/__init__.py` first attempts to read the version from `_version.py`, falling back to `1.0.3` on failure.

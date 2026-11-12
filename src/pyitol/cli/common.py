@@ -294,7 +294,7 @@ def _common_multi_tree_option():
         "ask",
         "--multi-tree-mode",
         "-m",
-        help="多棵树处理策略: ask(默认,提示用户)/first(第一棵)/last(最后一棵)/random(随机)/split(全部分别处理)",
+        help="多棵树处理策略: ask(默认,提示用户)/first(第一棵)/last(最后一棵)/split(全部分别处理)",
     )
 
 

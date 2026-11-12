@@ -1,88 +1,115 @@
-# PyiTOL 测试套件说明文档
+# PyiTOL Test Suite Documentation
 
-本目录包含 **PyiTOL** 项目的完整自动化测试套件。测试遵循 **全面覆盖、不重复、不冗余** 的原则，使用 [pytest](https://docs.pytest.org/) 框架编写，覆盖项目所有核心模块、CLI 命令、API 客户端以及工具函数。
+English | [中文](README_CN.md)
 
-测试目录与源码包 `src/pyitol/` 一一对应，采用分层子目录结构组织。
+This directory contains the complete automated test suite of the **PyiTOL** project. The tests follow the principles of **comprehensive coverage, no duplication, and no redundancy**, are written with the [pytest](https://docs.pytest.org/) framework, and cover every core module, CLI command, API client and utility function of the project.
+
+The test directory maps one-to-one onto the source package `src/pyitol/` and is organized as a hierarchy of subdirectories.
 
 ---
 
-## 目录结构
+## Directory Structure
 
 ```
 tests/
-├── conftest.py                         # 全局共享 fixtures（树文件、分类表、API key 等）
-├── test_concurrency.py                 # 并发与线程安全场景测试
-├── test_exceptions.py                  # 异常类层次结构测试
-├── test_main_entry.py                  # CLI 入口测试
-├── test_realistic_data.py              # 真实数据场景测试
+├── conftest.py                         # globally shared fixtures (tree files, taxonomy tables, API keys, etc.)
+├── test_concurrency.py                 # concurrency and thread-safety scenario tests
+├── test_exceptions.py                  # exception class hierarchy tests
+├── test_main_entry.py                  # CLI entry point tests
+├── test_realistic_data.py              # realistic data scenario tests
 │
-├── api/                                # API 客户端层测试
-│   ├── test_client.py                  # ITOLAPIClient：上传/导出/删除/状态/响应解析
-│   └── test_error_translation.py       # API 错误翻译与报告
+├── api/                                # API client layer tests
+│   ├── __init__.py                     # package marker (empty file)
+│   ├── test_client.py                  # ITOLAPIClient: upload/export/delete/status/response parsing
+│   ├── test_client_robustness.py       # QA regression suite: network errors wrapped as UploadError/ExportError, temp zip cleanup
+│   ├── test_client_robustness_regression.py # regression lock: same upload/export wrapping and temp-zip cleanup (sibling suite)
+│   └── test_error_translation.py       # API error translation and reporting
 │
-├── cli/                                # CLI 命令层测试
-│   ├── test_apps.py                    # 子应用注册
-│   ├── test_common.py                  # CLI 公共工具（输出格式化、参数校验等）
-│   ├── test_config.py                  # config 命令
-│   ├── test_learn.py                   # learn 命令（template / palette / train-theme）
-│   ├── test_main.py                    # 顶层命令（validate / replay 全量模板回放）
-│   ├── test_task.py                    # task 命令（upload / export / delete / status）
-│   ├── test_task_run.py                # task run 配置文件模式
-│   ├── test_taxonomy.py                # taxonomy 子命令（ranks/extract/monophyly/convert）
-│   ├── test_taxonomy_style.py          # taxonomy style 各 action
-│   ├── test_template_advanced.py       # template 高级类型
-│   ├── test_template_bundle.py         # template bundle 批量生成
-│   ├── test_template_create.py         # template create 统一入口
-│   ├── test_template_create_all.py     # template create 全类型遍历
-│   ├── test_template_create_errors.py  # template create 错误容错
-│   ├── test_template_create_extended.py# template create 扩展类型
-│   ├── test_template_datasets.py       # template dataset 类模板
-│   ├── test_template_edge_cases.py     # template 边界场景
-│   ├── test_template_tools.py          # template 工具子命令
-│   ├── test_template_treeops.py        # template 树操作类（collapse/prune/ranges 等）
+├── cli/                                # CLI command layer tests
+│   ├── __init__.py                     # package marker (empty file)
+│   ├── test_apps.py                    # sub-application registration
+│   ├── test_common.py                  # common CLI utilities (output formatting, argument validation, etc.)
+│   ├── test_config.py                  # config command
+│   ├── test_force_and_cli_helpers.py   # resolve_output force/no-clobber, load_filtered_taxonomy/load_tree_tips, template create --force
+│   ├── test_force_and_cli_helpers_regression.py # regression lock: --force overwrite, --no-clobber skip and the CLI helper units
+│   ├── test_learn.py                   # learn command (template / palette / train-theme)
+│   ├── test_main.py                    # top-level commands (validate / replay across all template types)
+│   ├── test_task.py                    # task command (upload / export / delete / status)
+│   ├── test_task_run.py                # task run configuration-file mode
+│   ├── test_taxonomy.py                # taxonomy subcommands (ranks/extract/monophyly/convert)
+│   ├── test_taxonomy_style.py          # each taxonomy style action
+│   ├── test_template_advanced.py       # template advanced types
+│   ├── test_template_bundle.py         # template bundle batch generation
+│   ├── test_template_create.py         # template create unified entry point
+│   ├── test_template_create_all.py     # template create traversal over every type
+│   ├── test_template_create_errors.py  # template create error tolerance
+│   ├── test_template_create_extended.py# template create extended types
+│   ├── test_template_datasets.py       # template dataset-type templates
+│   ├── test_template_edge_cases.py     # template edge-case scenarios
+│   ├── test_template_tools.py          # template tool subcommands
+│   ├── test_template_treeops.py        # template tree-operations (collapse/prune/ranges, etc.)
 │   ├── test_template_validate.py       # template validate
-│   ├── test_tree.py                    # tree 子命令（info / format-support-values）
-│   └── test_utils.py                   # utils 子命令
+│   ├── test_tree.py                    # tree subcommands (info / format-support-values)
+│   └── test_utils.py                   # utils subcommands
 │
-├── core/                               # 核心模块层测试
-│   ├── test_binary_convert.py          # category_to_binary 二值化
-│   ├── test_column_group.py            # group_columns 列分组
-│   ├── test_connect_convert.py         # matrix_to_connect 连接转换
+├── core/                               # core module layer tests
+│   ├── __init__.py                     # package marker (empty file)
+│   ├── test_binary_convert.py          # category_to_binary binarization
+│   ├── test_column_group.py            # group_columns column grouping
+│   ├── test_connect_convert.py         # matrix_to_connect connection conversion
 │   ├── test_count_tree.py              # count_to_tree
-│   ├── test_monophyly.py               # 单系性检测
+│   ├── test_monophyly.py               # monophyly detection
 │   ├── test_parser.py                  # TreeParser / MetadataParser / format_support_values
-│   ├── test_taxonomy.py                # 分类学提取与解析（GTDB/embedded/NCBI/mixed）
-│   └── test_validator.py               # TemplateValidator / detect_file_type / validate_inputs
+│   ├── test_parser_nhx_determinism.py  # _count_newick_trees/_load_all_trees ignore NHX comments; multi_tree='random' rejected
+│   ├── test_parser_nhx_determinism_regression.py # regression lock: NHX-aware tree counting/splitting and the removed 'random' strategy
+│   ├── test_taxonomy.py                # taxonomy extraction and parsing (GTDB/embedded/NCBI/mixed)
+│   ├── test_validator.py               # TemplateValidator / detect_file_type / validate_inputs
+│   ├── test_validator_nhx_extension.py # _detect_tree_format maps .nhx/.nhy to 'newick' (other mappings unchanged)
+│   └── test_validator_nhx_extension_regression.py # regression lock: .nhx/.nhy extensions classified as 'newick'
 │
-├── templates/                          # 模板模块层测试
-│   ├── test_base.py                    # TemplateGenerator 基础引擎
-│   ├── test_domain_exceptions_regression.py # 模板域异常回归（InvalidColumnError/TemplateError/TemplateTypeError）
-│   ├── test_generator.py               # 全部 generate_*_template() 端到端生成
-│   ├── test_learner.py                 # 模板反向学习 / train_theme
-│   ├── test_presets.py                 # 预设与调色板（Nature/Cell/Colorblind）
-│   ├── test_schemas_annotations.py     # 注释类 schema
-│   ├── test_schemas_base.py            # 基础 schema 与 create_schema
-│   ├── test_schemas_datasets_advanced.py # 高级 dataset schema
-│   ├── test_schemas_datasets_simple.py # 简单 dataset schema
-│   ├── test_schemas_presets.py         # 预设 schema
-│   └── test_schemas_tree_structure.py  # 树结构类 schema
+├── templates/                          # template module layer tests
+│   ├── __init__.py                     # package marker (empty file)
+│   ├── test_base.py                    # TemplateGenerator base engine
+│   ├── test_boundary_exceptions.py     # single-column COLLAPSE/PRUNE keep all IDs, under-filled row warning, pie FIELD_COLORS, InvalidColumnError
+│   ├── test_domain_exceptions.py       # generators/presets raise InvalidColumnError/TemplateError/TemplateTypeError, not bare ValueError
+│   ├── test_domain_exceptions_regression.py # template domain exception regression (InvalidColumnError/TemplateError/TemplateTypeError)
+│   ├── test_generator.py               # end-to-end generation of every generate_*_template() function
+│   ├── test_learner.py                 # template reverse learning / train_theme
+│   ├── test_merge_embedded_conflict.py # merge_embedded_taxonomy conflict branch keeps the embedded value without KeyError
+│   ├── test_presets.py                 # presets and palettes (Nature/Cell/Colorblind)
+│   ├── test_roundtrip.py               # generate_template -> learn_template round-trip preserves type/columns/parameters
+│   ├── test_roundtrip_pie_colors.py    # round-trip for color_strip/collapse/prune plus pie FIELD_COLORS 1:1 alignment
+│   ├── test_schemas_annotations.py     # annotation-type schema
+│   ├── test_schemas_base.py            # base schema and create_schema
+│   ├── test_schemas_datasets_advanced.py # advanced dataset schema
+│   ├── test_schemas_datasets_simple.py # simple dataset schema
+│   ├── test_schemas_presets.py         # preset schema
+│   ├── test_schemas_tree_structure.py  # tree-structure-type schema
+│   └── test_taxonomy_check_and_style_refactor.py # the three helpers extracted from taxonomy_check_and_style plus a CLI smoke test
 │
-├── utils/                              # 工具模块层测试
-│   ├── test_color_tools.py             # 颜色距离/梯度/分类着色
-│   ├── test_data_converters.py         # 宽长转换/count_to_tree/group_columns/df_tree
-│   ├── test_fasta.py                   # FASTA 读写迭代
+├── utils/                              # utility module layer tests
+│   ├── __init__.py                     # package marker (empty file)
+│   ├── test_color_tools.py             # color distance / gradients / taxonomy coloring
+│   ├── test_constants.py               # pyitol.utils.constants values and their use in generator / taxonomy_cmd
+│   ├── test_data_converters.py         # wide-long conversion / count_to_tree / group_columns / df_tree
+│   ├── test_fasta.py                   # FASTA read / write / iteration
 │   ├── test_io.py                      # search_tree_file / find_first_tree_file
-│   ├── test_reporter.py                # 错误翻译与报告
-│   ├── test_session.py                 # SessionContext 生命周期与快照
-│   ├── test_shutdown.py                # 信号处理与优雅关闭
-│   └── test_tree_info.py               # extract_tree_info / get_tip_order 等
+│   ├── test_logger.py                  # RealTimeHandler / StepTracker / _format_duration / setup_logging
+│   ├── test_reporter.py                # error translation and reporting
+│   ├── test_session.py                 # SessionContext lifecycle and snapshots
+│   ├── test_shutdown.py                # signal handling and graceful shutdown
+│   └── test_tree_info.py               # extract_tree_info / get_tip_order, etc.
 │
-└── data/                               # 测试数据文件
-    ├── 4taxa_monophyly.csv             # 单系性检验预期输出参考
-    ├── 4taxa_tax_extract.csv           # 分类学提取预期输出参考
-    ├── 4taxa_taxonomy.csv              # 示例分类学表格
-    ├── 4taxa_tree.nwk                  # 4-tip 示例 Newick 树
-    ├── template_bar.txt                # 模板参考文件
+├── regression/                         # Phase-1 correctness-fix regression tests
+│   ├── __init__.py                     # package marker with a module docstring
+│   └── test_phase1_fixes.py            # one test per Phase-1 fix: df_tree hclust leaves, count_to_tree root, NCBI epithet, mixed monophyly, single-column collapse/prune, schema auto-registration
+│
+└── data/                               # test data files
+    ├── 4taxa_monophyly.csv             # expected-output reference for the monophyly test
+    ├── 4taxa_tax_extract.csv           # expected-output reference for taxonomy extraction
+    ├── 4taxa_taxonomy.csv              # example taxonomy table
+    ├── 4taxa_tree.nwk                  # example 4-tip Newick tree
+    ├── template_bar.txt                # template reference files
     ├── template_branch.txt
     ├── template_colorstrip.txt
     ├── template_heatmap.txt
@@ -92,112 +119,114 @@ tests/
 
 ---
 
-## 各层测试要点
+## Key Testing Points by Layer
 
-### API 层（`api/`）
+### API layer (`api/`)
 
-| 文件 | 测试对象 | 关键测试点 |
+| File | Target under test | Key testing points |
 |---|---|---|
-| `test_client.py` | `pyitol.api.client` | `ITOLAPIClient` 初始化（key / 文件 / 缺失）、上传成功/失败、导出（含 DPI）、批量/单条删除、`upload_and_export` 组合调用、状态查询、响应解析器 |
-| `test_error_translation.py` | `pyitol.utils.reporter` | `translate_itol_api_error` 对关键字/常见/未知错误的翻译 |
+| `test_client.py` | `pyitol.api.client` | `ITOLAPIClient` initialization (key / file / missing), upload success and failure, export (including DPI), batch and single deletion, the `upload_and_export` combined call, status queries, response parsers |
+| `test_error_translation.py` | `pyitol.utils.reporter` | how `translate_itol_api_error` translates keyword / common / unknown errors |
 
-### CLI 命令层（`cli/`）
+### CLI command layer (`cli/`)
 
-| 文件 | 测试对象 | 关键测试点 |
+| File | Target under test | Key testing points |
 |---|---|---|
-| `test_main.py` | `pyitol.cli.main` | `validate` 命令、`replay` 命令对 **全部模板类型** 的回放（含成功/跳过/失败路径） |
-| `test_task.py` / `test_task_run.py` | `pyitol.cli.task_cmd` | upload / export / upload-and-export / delete（交互/确认）/ status / task run 配置文件模式 |
-| `test_taxonomy.py` / `test_taxonomy_style.py` | `pyitol.cli.taxonomy_cmd` | ranks / extract / extract-stats / monophyly / convert-binary / convert-connect / style 各 action |
-| `test_template_*.py` | `pyitol.cli.template_cmd` / `template_advanced` / `template_datasets` / `template_tools` / `template_treeops` | 统一 `template create` 入口对 **30+ 模板类型** 的生成、别名、错误容错、bundle、validate、树操作类 |
-| `test_tree.py` | `pyitol.cli.tree_cmd` | `tree info`、`tree format-support-values` |
+| `test_main.py` | `pyitol.cli.main` | the `validate` command, and `replay` over **all template types** (including the success / skipped / failure paths) |
+| `test_task.py` / `test_task_run.py` | `pyitol.cli.task_cmd` | upload / export / upload-and-export / delete (interactive / confirmation) / status / task run configuration-file mode |
+| `test_taxonomy.py` / `test_taxonomy_style.py` | `pyitol.cli.taxonomy_cmd` | each action of ranks / extract / extract-stats / monophyly / convert-binary / convert-connect / style |
+| `test_template_*.py` | `pyitol.cli.template_cmd` / `template_advanced` / `template_datasets` / `template_tools` / `template_treeops` | generation through the unified `template create` entry point for **30+ template types**, aliases, error tolerance, bundle, validate, tree-operation types |
+| `test_tree.py` | `pyitol.cli.tree_cmd` | `tree info`, `tree format-support-values` |
 | `test_utils.py` | `pyitol.cli.utils_cmd` | tree-info / search-tree-file / taxonomy-parse / wide-to-long / long-to-wide / count-to-tree / group-columns / binary / connections / preview / df-tree / learn-template |
-| `test_learn.py` | `pyitol.cli.learn_cmd` | learn template（单/多文件）、learn palette、learn train-theme |
-| `test_common.py` | `pyitol.cli.common` | 输出格式化、参数校验等公共工具 |
-| `test_apps.py` | `pyitol.cli.apps` | 子应用注册 |
-| `test_config.py` | `pyitol.cli.config_cmd` | config 命令 |
+| `test_learn.py` | `pyitol.cli.learn_cmd` | learn template (single / multiple files), learn palette, learn train-theme |
+| `test_common.py` | `pyitol.cli.common` | common utilities such as output formatting and argument validation |
+| `test_apps.py` | `pyitol.cli.apps` | sub-application registration |
+| `test_config.py` | `pyitol.cli.config_cmd` | the config command |
 
-### 核心模块层（`core/`）
+### Core module layer (`core/`)
 
-| 文件 | 测试对象 | 关键测试点 |
+| File | Target under test | Key testing points |
 |---|---|---|
-| `test_parser.py` | `pyitol.core.parser` | Newick / Nexus 解析、自动检测、tip/node 计数、深度、支持值格式检测（IQ-TREE/raxml/posterior）、`write_newick`、元数据 TSV/CSV/Excel 解析、列类型检测、树-元数据一致性、`format_support_values` |
-| `test_taxonomy.py` | `pyitol.core.taxonomy` | `extract_taxonomy_from_tip_names`（GTDB/embedded/NCBI/mixed/auto）、`parse_taxonomy_string`、`check_monophyly`、`get_ranks` |
-| `test_validator.py` | `pyitol.core.validator` | 颜色验证、分隔符冲突、`detect_file_type`（树/序列/表格/内容检测）、`TemplateValidator` 完整生命周期、`validate_inputs` |
-| `test_monophyly.py` | `pyitol.core.monophyly` | 单系性检测各场景 |
-| `test_binary_convert.py` / `test_connect_convert.py` / `test_column_group.py` / `test_count_tree.py` | 对应 core 转换模块 | 二值化 / 连接转换 / 列分组 / count-to-tree |
+| `test_parser.py` | `pyitol.core.parser` | Newick / Nexus parsing, automatic detection, tip/node counting, depth, support-value format detection (IQ-TREE/raxml/posterior), `write_newick`, metadata TSV/CSV/Excel parsing, column type detection, tree-metadata consistency, `format_support_values` |
+| `test_taxonomy.py` | `pyitol.core.taxonomy` | `extract_taxonomy_from_tip_names` (GTDB/embedded/NCBI/mixed/auto), `parse_taxonomy_string`, `check_monophyly`, `get_ranks` |
+| `test_validator.py` | `pyitol.core.validator` | color validation, delimiter conflicts, `detect_file_type` (tree / sequence / table / content detection), the full `TemplateValidator` lifecycle, `validate_inputs` |
+| `test_monophyly.py` | `pyitol.core.monophyly` | the various scenarios of monophyly detection |
+| `test_binary_convert.py` / `test_connect_convert.py` / `test_column_group.py` / `test_count_tree.py` | the corresponding core conversion modules | binarization / connection conversion / column grouping / count-to-tree |
 
-### 模板模块层（`templates/`）
+### Template module layer (`templates/`)
 
-| 文件 | 测试对象 | 关键测试点 |
+| File | Target under test | Key testing points |
 |---|---|---|
-| `test_generator.py` | `pyitol.templates.generator` | `TemplateGenerator` 引擎、**全部 30+ `generate_*_template()` 函数**端到端生成 |
-| `test_learner.py` | `pyitol.templates.learner` | `HEADER_REVERSE` 完整性、单模板反向解析、`train_theme`（空/单/多文件聚合/JSON 序列化/容错） |
-| `test_presets.py` | `pyitol.templates.presets` | 全部 schema preset、未知 preset 报错、Nature/Cell/Colorblind 调色板、色盲友好性 |
-| `test_schemas_*.py` | `pyitol.templates.schemas.*` | base / annotations / datasets_simple / datasets_advanced / presets / tree_structure 各 schema 完整性 |
-| `test_base.py` | `pyitol.templates.generator` | TemplateGenerator 基础引擎 |
-| `test_domain_exceptions_regression.py` | `pyitol.templates.generator` / `presets` | 域异常回归：确认 InvalidColumnError/TemplateError/TemplateTypeError 而非裸 ValueError |
+| `test_generator.py` | `pyitol.templates.generator` | the `TemplateGenerator` engine, end-to-end generation of **all 30+ `generate_*_template()` functions** |
+| `test_learner.py` | `pyitol.templates.learner` | `HEADER_REVERSE` completeness, reverse parsing of a single template, `train_theme` (empty / single / multi-file aggregation / JSON serialization / error tolerance) |
+| `test_presets.py` | `pyitol.templates.presets` | all schema presets, unknown-preset errors, the Nature/Cell/Colorblind palettes, colorblind friendliness |
+| `test_schemas_*.py` | `pyitol.templates.schemas.*` | completeness of the base / annotations / datasets_simple / datasets_advanced / presets / tree_structure schemas |
+| `test_base.py` | `pyitol.templates.generator` | the TemplateGenerator base engine |
+| `test_domain_exceptions_regression.py` | `pyitol.templates.generator` / `presets` | domain exception regression: confirms InvalidColumnError/TemplateError/TemplateTypeError instead of a bare ValueError |
 
-### 工具模块层（`utils/`）
+### Utility module layer (`utils/`)
 
-| 文件 | 测试对象 | 关键测试点 |
+| File | Target under test | Key testing points |
 |---|---|---|
-| `test_color_tools.py` | `pyitol.utils.color_tools` | 颜色距离、相似度排序、梯度生成、分类着色、调色板循环 |
-| `test_data_converters.py` | `pyitol.utils.data_converters` | 二值化、连接、宽长转换、count-to-tree、group_columns、df_tree |
-| `test_fasta.py` | `pyitol.utils.fasta` | `fa_read` / `fa_write` / `fa_iter`、容错 |
-| `test_io.py` | `pyitol.utils.io` | `search_tree_file` / `find_first_tree_file`、空目录容错 |
-| `test_session.py` | `pyitol.utils.session` | `SessionContext` 生命周期、命令/输入输出记录、API 参数脱敏、快照保存/加载/重建 |
-| `test_reporter.py` | `pyitol.utils.reporter` | 错误翻译与报告 |
-| `test_shutdown.py` | `pyitol.utils.shutdown` | 信号处理与优雅关闭 |
-| `test_tree_info.py` | `pyitol.utils.tree_info` | `extract_tree_info`、`get_node_count`、`get_tip_order`、`get_tree_info` |
+| `test_color_tools.py` | `pyitol.utils.color_tools` | color distance, similarity ranking, gradient generation, taxonomy coloring, palette cycling |
+| `test_data_converters.py` | `pyitol.utils.data_converters` | binarization, connections, wide-long conversion, count-to-tree, group_columns, df_tree |
+| `test_fasta.py` | `pyitol.utils.fasta` | `fa_read` / `fa_write` / `fa_iter`, error tolerance |
+| `test_io.py` | `pyitol.utils.io` | `search_tree_file` / `find_first_tree_file`, tolerance for empty directories |
+| `test_session.py` | `pyitol.utils.session` | the `SessionContext` lifecycle, command / input-output recording, sanitization of API parameters, snapshot save / load / rebuild |
+| `test_reporter.py` | `pyitol.utils.reporter` | error translation and reporting |
+| `test_shutdown.py` | `pyitol.utils.shutdown` | signal handling and graceful shutdown |
+| `test_tree_info.py` | `pyitol.utils.tree_info` | `extract_tree_info`, `get_node_count`, `get_tip_order`, `get_tree_info` |
 
-### 顶层专题测试
+### Top-level topic tests
 
-| 文件 | 关键测试点 |
+| File | Key testing points |
 |---|---|
-| `test_concurrency.py` | 并发与线程安全场景 |
-| `test_exceptions.py` | 异常类层次结构与继承 |
+| `test_concurrency.py` | concurrency and thread-safety scenarios |
+| `test_exceptions.py` | the exception class hierarchy and inheritance |
 
 ---
 
-## 运行测试
+## Running the Tests
 
 ```bash
-# 运行全部测试（跳过需真实 iTOL API 密钥的集成测试）
-pytest tests/ -m "not integration"
+# exactly what CI runs (see `.github/workflows/ci.yml`); the
+# `-m "not integration"` part deselects nothing today, because no test is marked `integration`
+pytest tests/ --cov=pyitol --cov-report=xml -m "not integration"
 
-# 运行特定层
+# run a specific layer
 pytest tests/core/ -v
 pytest tests/cli/test_template_create.py -v
 
-# 生成覆盖率报告（pyproject.toml 要求 ≥80%）
+# generate a coverage report (`addopts` in pyproject.toml already appends
+# --cov=pyitol --cov-fail-under=80, so the run fails below 80% coverage)
 pytest tests/ -m "not integration" --cov=pyitol --cov-report=html
 ```
 
-### 测试标记
+### Test Markers
 
-`pyproject.toml` 中注册的 pytest marker：
+The pytest markers registered in `pyproject.toml`:
 
-- `integration` — 需要真实 iTOL API 凭据的集成测试（默认跳过）
-- `slow` — 耗时较长的测试
-- `stress` — 性能/压力测试
-- `concurrency` — 并发/线程安全场景
+- `integration` — declared for tests that would need real iTOL API credentials, but **no test currently carries `@pytest.mark.integration`**, so the CI expression `-m "not integration"` deselects nothing and every test under `tests/` is collected and run
+- `slow` — registered in `pyproject.toml` but unused today: no `@pytest.mark.slow` appears anywhere in `tests/`
+- `stress` — registered in `pyproject.toml` but unused today: no `@pytest.mark.stress` appears anywhere in `tests/`
+- `concurrency` — the only marker actually applied today: it decorates the two concurrent-upload tests of `TestUploadConcurrency` in `test_concurrency.py`
 
-### 可选依赖
+### Optional Dependencies
 
-部分测试需要可选依赖（在 `pyproject.toml` 的 `[project.optional-dependencies]` 中声明）：
+Some tests require optional dependencies (declared under `[project.optional-dependencies]` in `pyproject.toml`):
 
-- `excel` extra（`openpyxl`）：`test_parser.py::test_parse_excel` 测试 Excel 解析。未安装时该测试自动跳过（`pytest.importorskip`）。
-- `memory` extra（`psutil`）：内存监控相关功能。
+- the `excel` extra (`openpyxl`): `tests/core/test_parser.py::TestMetadataParser::test_parse_excel` tests Excel parsing. It calls `pytest.importorskip("openpyxl")` first, so when `openpyxl` is not installed the test is reported as skipped rather than failed.
+- the `memory` extra (`psutil`): memory-monitoring related functionality.
 
-安装全部可选依赖：`pip install -e ".[dev,memory,excel]"`
+To install all optional dependencies: `pip install -e ".[dev,memory,excel]"`
 
 ---
 
-## 设计原则
+## Design Principles
 
-1. **单一职责**：每个测试文件对应一个源码模块或一个 CLI 命令组，避免跨模块耦合。
-2. **分层对应**：`tests/` 子目录与 `src/pyitol/` 包结构一一对应（`api/` / `cli/` / `core/` / `templates/` / `utils/`）。
-3. **共享 Fixtures**：`conftest.py` 集中管理常用测试数据（树文件、分类表、API key），消除跨文件重复 fixture。
-4. **Mock 外部依赖**：所有 API 调用均使用 `unittest.mock.patch` 模拟 HTTP 请求，确保离线可运行。
-5. **边界覆盖**：除正常路径外，每个模块均包含空输入、缺失文件、非法参数、越界数值等异常场景测试。
-6. **无冗余**：已删除重复的 `test_cli_template_highlight.py`（并入 `test_template_create.py`）和 `test_dataset_style.py`（并入 `test_generator.py`）。
+1. **Single responsibility**: each test file corresponds to one source module or one CLI command group, avoiding cross-module coupling.
+2. **Layer correspondence**: the `tests/` subdirectories map one-to-one onto the `src/pyitol/` package structure (`api/` / `cli/` / `core/` / `templates/` / `utils/`).
+3. **Shared fixtures**: `conftest.py` centrally manages commonly used test data (tree files, taxonomy tables, API keys), eliminating fixtures duplicated across files.
+4. **Mocked external dependencies**: every API call mocks the HTTP request with `unittest.mock.patch`, so the suite runs offline.
+5. **Boundary coverage**: besides the happy paths, every module includes tests for empty input, missing files, illegal arguments and out-of-range values.
+6. **No redundancy**: the duplicated `test_cli_template_highlight.py` (merged into `test_template_create.py`) and `test_dataset_style.py` (merged into `test_generator.py`) have been deleted.

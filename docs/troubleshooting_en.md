@@ -1,5 +1,7 @@
 # Troubleshooting Guide
 
+[中文](troubleshooting.md) | English
+
 ## Installation Issues
 
 ### `pip install pyitol` fails
@@ -18,7 +20,7 @@
 - Create a `.itolapi.key` file in the current directory containing the plain-text API Key
 - Ensure the API Key file permissions are secure: `chmod 600 .itolapi.key`
 
-See [API Usage Guide](api.md#api-key-configuration) for details.
+See [API Usage Guide](api_en.md#api-key-configuration) for details.
 
 ### Upload fails `Upload failed with status 403`
 - The API Key may have expired or been restricted; please log in to your iTOL account to check
@@ -26,7 +28,7 @@ See [API Usage Guide](api.md#api-key-configuration) for details.
 
 ### Export timeout
 - Large file exports may take longer; increase the wait time via `--wait`
-- If timeouts occur frequently, check whether the `--dpi` and `--width` parameters are set too large
+- If timeouts occur frequently, check whether the resolution/dimensions are set too large: `task upload-and-export` uses `--dpi`, `--width`, `--height`; `task export` has no such options, so they must be given as `--parameter dpi=300`, `--parameter width=2400`, etc.
 
 ## Template Generation Issues
 
@@ -38,13 +40,16 @@ See [API Usage Guide](api.md#api-key-configuration) for details.
 - Confirm the color format is correct: `#RRGGBB`, `rgb(r,g,b)`, `hsl(h,s,l)`, or a named color (such as `red`)
 - When a categorical variable exceeds 7 values, it is recommended to use `--palette colorblind` to select a colorblind-friendly palette
 
-### Delimiter conflict warning
+### Separator conflict warning
 - If data values contain commas, spaces, or tabs, use `--separator` to switch to a non-conflicting separator
 - For example, when the data contains commas, use `--separator TAB`
 
 ## Tree File Issues
 
-### `Tree file parsing failed`
+### Tree file parsing failure
+
+> Note: the E-series descriptions in `src/pyitol/utils/reporter.py` and the default wording of the validation (V-code) messages in `src/pyitol/core/validator.py` are Chinese (the E-series labels themselves are Python exception names and stay in English), but not every line of terminal output is translated: the exception text and file paths printed at `src/pyitol/cli/main.py:1216,1241` stay in English, and tree-content messages such as `src/pyitol/core/validator.py:965,1058` are English-only. `_ERROR_MESSAGES` contains both a Chinese and an English table; the runtime language is thread-local and defaults to Chinese, and an unknown or missing language falls back to Chinese rather than English (`src/pyitol/core/validator.py:158-180`), while the iTOL API error translation table in `src/pyitol/utils/reporter.py` is Chinese-only. The error strings quoted in backticks inside the headings of this section correspond to what the terminal actually prints, and the untranslated English messages described above are kept as-is; the rest of each heading only describes the symptom.
+
 - Ensure the file is in valid Newick or Nexus format
 - Check that parentheses are balanced and node labels do not contain illegal characters
 - Overly long comments may cause format misjudgment; removing unnecessary comments is recommended
@@ -63,5 +68,5 @@ See [API Usage Guide](api.md#api-key-configuration) for details.
 
 If the above methods do not resolve the issue, please:
 1. View the complete CLI help: `pyitol --help` or `pyitol <command> --help`
-2. Check the [API documentation](api.md) and [CLI documentation](cli.md)
+2. Check the [API documentation](api_en.md) and [CLI documentation](cli_en.md)
 3. Submit an Issue in the project, attaching the complete error output and a sample of the input file

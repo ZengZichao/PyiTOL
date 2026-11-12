@@ -1,29 +1,41 @@
 # 模板生成专用子命令参考（template create-*）
 
+[English](templates-reference_en.md) | 中文
+
 本页逐个记录 `pyitol template` 下的 **34 个专用子命令**（`pyitol template create-*`）。这些命令与统一入口 `pyitol template create <类型>` 功能等价，但每个命令只接受其类型专属的参数，适合在脚本中精确调用，且无需记忆 `template_type` 字符串。
 
-> 统一入口 `pyitol template create` 已支持 31 种类型，外加 `external-shape-bubble` 仅能通过本页专用子命令生成。若你只需要偶尔生成模板，使用统一入口即可；若你在流水线中按固定类型批量调用，专用子命令更直观。
+> 本页 34 个专用子命令覆盖统一入口 `pyitol template create` 支持的 33 种类型，外加 `external-shape-bubble` 变体（后者不在统一入口内，仅能通过本页专用子命令生成）。若你只需要偶尔生成模板，使用统一入口即可；若你在流水线中按固定类型批量调用，专用子命令更直观。
 
 ## 公共选项
 
-除专门说明外，以下选项适用于本页所有命令（默认值以源码为准）：
+下列 5 个选项被本页**全部 34 个**命令接受（默认值以源码为准）：
 
 | 选项 | 简写 | 默认值 | 说明 |
 |------|------|--------|------|
 | `--output` | `-o` | `config_template.txt` | 输出模板文件路径 |
-| `--taxonomy` | `-t` | （多数命令必填） | 分类信息表格文件路径 |
-| `--tree` | `-r` | （多数命令必填） | Newick 树文件路径 |
 | `--label` | `-l` | 随类型变化 | 数据集标签 |
-| `--id-column` | | `id` | ID 列名 |
-| `--separator` | `-s` | `TAB` | 数据分隔符：`TAB`/`SPACE`/`COMMA` |
-| `--colors` | | | 自定义颜色映射，支持 JSON（`{"A":"#ff0000"}`）或简写（`A:#ff0000,B:#00ff00`） |
+| `--separator` | `-s` | `TAB` | 数据字段分隔符：`TAB`/`SPACE`/`COMMA` |
+| `--force` | `-f` | 关闭 | 覆盖已存在的输出文件 |
+| `--no-clobber` | | 关闭 | 跳过已存在的输出文件 |
 
-> 与统一入口不同，专用子命令**不支持** `--force` / `--no-clobber`：若输出文件已存在会直接报错退出。请改用不同的 `--output` 或先删除旧文件。
+其余选项**并非所有命令都有**，按各命令签名实测的适用范围如下：
 
-根据输入依赖，本页命令分为三类：
-- **数据集注释类**：基于“树 + 分类表”的列生成数据集；多数需要 `--tree` 与 `--taxonomy`。
-- **树结构操作类**：折叠、修剪、间距、着色、样式等。
-- **高级注释类**：需要外部数据文件（`--data` / `--connections`），不依赖树与分类表。
+| 选项 | 简写 | 默认值 | 说明 | 适用命令（实测） |
+|------|------|--------|------|------------------|
+| `--taxonomy` | `-t` | 必填 | 分类信息表格文件路径 | 24/34 个命令；`create-collapse` 中可省略；以下 10 个**不接受**：`create-connections`、`create-domains`、`create-tanglegram`、`create-placement`、`create-timescale`、`create-meme`、`create-manual`、`create-prune`、`create-spacing`、`create-arrow` |
+| `--tree` | `-r` | 必填 | Newick 树文件路径 | 与 `--taxonomy` 同组（24/34 个命令，`create-collapse` 可省略） |
+| `--id-column` | | `id` | ID 列名 | 与 `--taxonomy` 同组的 24 个命令 |
+| `--colors` | | 无 | 自定义颜色映射，支持 JSON（`{"A":"#ff0000"}`）或简写（`A:#ff0000,B:#00ff00`） | 仅 10/34 个命令：`create-color-strip`、`create-branch`、`create-multi-bar`、`create-symbols`、`create-pie`、`create-external-shape`、`create-tree-colors`、`create-ranges`、`create-highlight`、`create-style` |
+| `--palette` | | 无 | 配色预设子集名，**当前不生效**（见 `create-color-strip` 说明） | 仅 `create-color-strip` |
+
+> 传入某命令签名中不存在的选项时，Typer 会直接以 `No such option` 报错退出，因此请按下表选择命令；表内“必填”指该选项在这些命令中声明为 `typer.Option(...)`。`--separator` 只影响模板数据行的字段分隔符，与 `taxonomy` 命令里拆分末端（叶）名称内分类等级片段的 `--delimiter`（名称分段符）无关。
+
+> 与统一入口一致，专用子命令**同样支持** `--force`/`-f` 与 `--no-clobber`：`--force` 覆盖已存在的输出文件，`--no-clobber` 跳过已存在的输出文件（此时命令直接返回，不重写文件）。两者都未指定而输出文件已存在时，命令报错退出。
+
+按各命令签名中的**必填输入**，本页命令分为三类（共 16 + 9 + 9 = 34 个）：
+- **数据集注释类**：其中 14 个以“树 + 分类表”为必填输入（需 `--tree` 与 `--taxonomy`）；例外是 `create-connections` 与 `create-domains`，它们的必填输入是外部 JSON 文件（`--connections` / `--data`），完全不需要 `--tree` 与 `--taxonomy`。
+- **树结构操作类**：改变树本身的结构与外观。`create-tree-colors`、`create-branch-gradient`、`create-ranges`、`create-highlight`、`create-style` 必填 `--tree` 与 `--taxonomy`；`create-collapse` 二者皆可省略（`--node-ids` 与 `--taxon`+`--rank` 二选一）；`create-prune` 只需 `--node-ids`；`create-spacing`、`create-arrow` 只需外部数据文件（`--data` / `--data-file`）。
+- **高级注释类**：挂靠到树上的附加注释。`create-linechart`、`create-image`、`create-alignment`、`create-external-shape-bubble` 必填 `--tree` 与 `--taxonomy`；`create-tanglegram` 只需 `--connections`；`create-placement`、`create-timescale`、`create-meme`、`create-manual` 只需 `--data-file`，这四类既不读 `--tree` 也不读 `--taxonomy`。
 
 ---
 
@@ -31,9 +43,9 @@
 
 ### `pyitol template create-color-strip`
 
-为末端分支添加分类色带（color strip）。
+为末端（叶）添加分类色带（color strip）。
 
-**专属选项**：`--column`/`-c`（必填，分类列名）、`--colors`、`--strip-width`（默认 `50`）、`--palette`（配色预设子集名）。
+**专属选项**：`--column`/`-c`（必填，分类列名）、`--colors`、`--strip-width`（默认 `50`）、`--palette`（配色预设子集名；**当前保留不生效**——`generate_color_strip_template()` 没有 `palette` 参数，该值不会被转发，传什么都不改变输出）。
 
 ```bash
 pyitol template create-color-strip \
@@ -143,7 +155,7 @@ pyitol template create-gradient \
 
 ### `pyitol template create-labels`
 
-重命名/自定义末端标签（labels）。
+重命名/自定义末端（叶）标签（labels）。
 
 **专属选项**：`--column`/`-c`（必填，标签列名）。
 
@@ -169,7 +181,7 @@ pyitol template create-popup-info \
 
 二元数据（binary dataset），将分类列转为 0/1 字段。
 
-**专属选项**：`--columns`/`-c`（必填，逗号分隔分类列）、`--field-colors`（默认 `#ff0000,#00ff00,#0000ff`）、`--field-shapes`（默认 `1,2,3`，取值 1–6）、`--color`（默认 `#ff0000`）、`--show-internal`（默认 `1`，是否显示内部节点）。
+**专属选项**：`--columns`/`-c`（必填，逗号分隔分类列）、`--field-colors`（默认 `#ff0000,#00ff00,#0000ff`）、`--field-shapes`（默认 `1,2,3`，取值 1–6）、`--color`（默认 `#ff0000`）、`--show-internal`（默认 `1`，是否显示内部节点，取值 `0`/`1`）。
 
 ```bash
 pyitol template create-binary \
@@ -232,7 +244,7 @@ pyitol template create-domains \
 
 ### `pyitol template create-tree-colors`
 
-树着色（tree colors），支持分支、标签、分支线宽、范围、渐变等多种着色类型。
+树着色（tree colors），支持单系群（`clade`，默认）、标签（`label`）、分支（`branch`）、分支线宽度（`width`）、范围（`range`）、渐变（`gradient`）六种着色类型。
 
 **专属选项**：`--column`/`-c`（必填）、`--colors`、`--color-type`（默认 `clade`；可选 `clade`/`label`/`branch`/`width`/`range`/`gradient`）、`--width-value`（默认 `3`，仅 `width` 类型）。
 
@@ -445,11 +457,11 @@ pyitol template create-meme --data-file meme.csv --show-labels 1 --output meme.t
 
 手动注释（manual），自由格式自定义数据。**不依赖树与分类表**，读取任意列 CSV。
 
-**专属选项**：`--data-file`/`-d`（必填，CSV 文件路径）、`--color`（默认 `#ff0000`）、`--custom-header`（自定义头部 JSON，如 `{"KEY":"VALUE"}`）。
+**专属选项**：`--data-file`/`-d`（必填，CSV 文件路径）、`--color`（默认 `#ff0000`）、`--custom-header`（自定义头部 JSON，如 `{"KEY":"VALUE"}`；键名原样写入模板，拼错只会产生一行被 iTOL 忽略的参数，请使用生成器实际输出的关键字，如 `FIELD_LABELS`、`FIELD_COLORS`、`FIELD_SHAPES`）。
 
 ```bash
 pyitol template create-manual \
-  --data-file custom.csv --custom-header '{"FIELD_SHAPE":"1"}' --output manual.txt
+  --data-file custom.csv --custom-header '{"FIELD_SHAPES":"1,2,3"}' --output manual.txt
 ```
 
 ### `pyitol template create-external-shape-bubble`
@@ -469,5 +481,5 @@ pyitol template create-external-shape-bubble \
 ## 相关页面
 
 - [CLI 完整参考](cli.md)：命令总览、统一入口 `template create`、全局参数与退出码。
-- [模板生成教程](tutorials/templates.md)：30+ 种模板的选型与组合示例。
+- [模板生成教程](tutorials/templates.md)：统一入口 33 种类型与 `external-shape-bubble` 变体的选型与组合示例。
 - [API 使用指南](api.md)：iTOL 批量 API 与 Python API 用法。

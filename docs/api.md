@@ -1,5 +1,7 @@
 # PyiTOL API 使用指南
 
+[English](api_en.md) | 中文
+
 PyiTOL 封装了 iTOL 的三个批量 API 端点，支持自动重试、错误翻译和多格式导出。
 
 ## API 端点
@@ -42,7 +44,7 @@ chmod 600 .itolapi.key
 pyitol task upload --tree tree.nwk --api-key-file /path/to/.itolapi.key
 ```
 
-> **安全提示**：PyiTOL 会检查密钥文件权限，如果 group/other 有读写权限会发出警告。建议使用 `chmod 600 .itolapi.key`。
+> **安全提示**：PyiTOL 会检查密钥文件权限，如果 group/other 有任何读、写或执行权限会发出警告。建议使用 `chmod 600 .itolapi.key`。
 
 ## task 命令总览
 
@@ -88,7 +90,7 @@ pyitol task upload-and-export \
   --output result.svg --format svg --wait 60
 ```
 
-`--wait` 指定等待 iTOL 渲染的最长时间（秒），超时后命令失败。
+`--wait` 指定导出前的固定等待时长（秒，默认 60）：命令在上传完成后休眠该秒数，然后直接发起一次导出。它不是超时上限，等待结束本身不会让命令失败。
 
 ## 导出控制
 
@@ -99,13 +101,15 @@ PyiTOL 支持 8 种导出格式：
 | 格式 | 说明 | 额外参数 |
 |------|------|---------|
 | `svg` | 矢量图（推荐） | |
-| `png` | 位图 | `--dpi` |
-| `pdf` | 文档 | `--dpi` |
-| `tiff` | TIFF 图像 | `--dpi` |
-| `eps` | Encapsulated PostScript | `--dpi` |
+| `png` | 位图 | `dpi` |
+| `pdf` | 文档 | `dpi` |
+| `tiff` | TIFF 图像 | `dpi` |
+| `eps` | Encapsulated PostScript | `dpi` |
 | `newick` | Newick 树格式 | |
 | `nexus` | Nexus 树格式 | |
 | `phyloxml` | PhyloXML 格式 | |
+
+> 格式与尺寸参数的传入方式因命令而异：`pyitol task export` 没有 `--format`/`--dpi` 这类独立选项，必须通过 `--parameter key=value` 传递；只有 `pyitol task upload-and-export` 直接提供 `--format`（svg/png/pdf）、`--dpi`（仅 PNG/PDF）、`--width`、`--height`。
 
 ### 导出尺寸
 
@@ -113,13 +117,13 @@ PyiTOL 支持 8 种导出格式：
 pyitol task export \
   --upload-id TREE_ID \
   --download ./output \
-  --format png \
+  --parameter format=png \
   --parameter dpi=300 \
   --parameter width=2400 \
   --parameter height=1600
 ```
 
-支持的尺寸参数：`--dpi`、`--width`、`--height`。
+`task export` 只接受 `--upload-id/-u`、`--download/-d`、`--api-key`、`--api-key-file`、`--parameters-file`、`--parameter`、`--wait`、`--retry` 这些选项，因此导出格式（`format=`，默认 `pdf`）与尺寸（`dpi=`、`width=`、`height=`）一律通过 `--parameter` 传递。若要直接用 `--format`、`--dpi`、`--width`、`--height`，请改用 `pyitol task upload-and-export`。
 
 ## 删除操作
 
@@ -134,8 +138,10 @@ pyitol task delete --upload-id ID1 --upload-id ID2
 ## 状态查询
 
 ```bash
-pyitol task status --upload-id TREE_ID
+pyitol task status --tree-name TREE_NAME
 ```
+
+> `task status` 用 `--tree-name/-n` 指定已上传树名称（不是 `--upload-id`），内部通过探测渲染状态实现。
 
 ## 批量操作
 
@@ -188,9 +194,9 @@ name: MyTree
 
 ## 错误处理
 
-PyiTOL 内置了 iTOL API 错误翻译表，将英文错误信息转换为用户友好的中文建议：
+PyiTOL 内置了 iTOL API 错误翻译表，将 iTOL 返回的英文错误信息转换为用户友好的中文建议。这些建议在运行时始终以中文打印——文案硬编码在 `src/pyitol/utils/reporter.py` 中，不存在语言开关——因此下表为终端实际打印的中文建议摘句：
 
-| iTOL 错误关键词 | PyiTOL 翻译 |
+| iTOL 错误关键词 | 终端打印的中文建议（摘句） |
 |----------------|------------|
 | `invalid api key` | API Key 无效：请检查 --api-key 参数或 .itolapi.key 文件 |
 | `file too large` | 文件过大：iTOL 限制上传文件总大小不超过 2MB |
@@ -215,7 +221,7 @@ pyitol task upload --tree tree.nwk --retry 5
 
 ## Python API 参考
 
-除命令行外，PyiTOL 的所有能力都可通过 Python 直接调用。下面按模块列出最常用的公共类与函数，并给出最小可运行示例。所有签名以源码为准，运行时可用 `help(函数名)` 查看完整参数。
+除命令行外，PyiTOL 的所有能力都可通过 Python 直接调用。下面按模块列出最常用的公共类与函数，并给出最小可运行示例。所有签名以源码为准，运行时可用 `help(function)` 查看完整参数。
 
 ### `pyitol.api.client.ITOLAPIClient` — iTOL 批量 API 客户端
 
@@ -228,10 +234,10 @@ pyitol task upload --tree tree.nwk --retry 5
 | 方法 | 说明 |
 |------|------|
 | `upload(tree_file, template_files, force=False, datasets_visible=None, project_name=None, tree_description=None)` | 打包 zip 上传，返回树 ID（字符串） |
-| `export(tree_ids, fmt='pdf', output_dir=None, dpi=None, width=None, height=None, extra_params=None)` | 导出，返回 `{tree_id: 本地路径}` |
+| `export(tree_ids, fmt='pdf', output_dir=None, datasets_visible=None, dpi=None, width=None, height=None, extra_params=None)` | 导出，返回 `{tree_id: 本地路径}` |
 | `delete(tree_id)` / `batch_delete(tree_ids)` | 删除单棵 / 批量删除树 |
-| `delete_project(name)` / `batch_delete_projects(names)` | 删除项目 |
-| `upload_and_export(tree_file, template_files, fmt='pdf', output_dir='.', wait_time=120, poll_interval=10, ...)` | 上传后轮询就绪再导出，返回本地路径 |
+| `delete_project(project_name)` / `batch_delete_projects(project_names)` | 删除项目 |
+| `upload_and_export(tree_file, template_files, fmt='pdf', output_dir='.', wait_time=120, poll_interval=10, ...)` | 上传后只做一次固定等待 `min(poll_interval, wait_time)` 秒，随后恰好调用一次 `export`；iTOL 未提供就绪查询接口，因此不轮询。返回本地路径 |
 | `query_status(tree_name, timeout=10)` | 间接探测渲染状态，返回字典 |
 | `close()` | 关闭会话（亦可用上下文管理器） |
 
@@ -244,11 +250,11 @@ tree_id = client.upload(
     "tree.nwk",
     ["colors.txt", "bars.txt"],
     project_name="MyTree",
-    tree_description="示例树",
+    tree_description="Example tree",
 )
-print("已上传:", tree_id)
+print("Uploaded:", tree_id)
 paths = client.export([tree_id], fmt="png", output_dir="./out", dpi=300)
-print("已导出:", paths)
+print("Exported:", paths)
 client.delete(tree_id)
 client.close()
 
@@ -261,7 +267,7 @@ with ITOLAPIClient(api_key="YOUR_API_KEY") as client:
         output_dir="./output",
         wait_time=120,
     )
-    print("一键上传并导出:", out)
+    print("Upload and export:", out)
 ```
 
 ### `pyitol.templates.generator.TemplateGenerator` — 模板生成引擎
@@ -304,7 +310,7 @@ path = gen.write("my_template.txt")          # 写出合并模板
 paths = gen.write_multiple("./templates", prefix="ds_")  # 分文件写出
 ```
 
-> `type_name` 取值见 `pyitol.templates.presets.list_presets()`（共 31 种，如 `color_strip`、`simple_bar`、`heatmap`、`tree_colors` 等）。
+> `type_name` 取值见 `pyitol.templates.presets.list_presets()`（共返回 30 个预设名，如 `color_strip`、`simple_bar`、`heatmap`、`tree_colors` 等；注意它与统一入口 `pyitol template create` 支持的 33 种模板类型不是同一套名单）。
 
 ### `pyitol.templates.learner` — 模板反向学习
 
@@ -329,7 +335,7 @@ print(theme)
 
 | 函数 | 说明 |
 |------|------|
-| `list_presets()` | 列出全部 31 种数据集模板预设名 |
+| `list_presets()` | 列出全部 30 个数据集模板预设名 |
 | `get_preset(name)` | 按名获取模板 schema 类实例 |
 | `get_palette(preset_name, palette_name='primary', n=None)` | 获取调色板颜色列表（`preset_name` 为 `nature`/`cell`/`colorblind`） |
 | `list_all_palettes()` | 分组列出所有可用调色板名 |
@@ -337,7 +343,7 @@ print(theme)
 ```python
 from pyitol.templates.presets import get_palette, list_all_palettes, list_presets
 
-print(list_presets())            # 31 种模板类型名
+print(list_presets())            # 30 个预设名
 print(list_all_palettes())       # 按 nature/cell/colorblind 分组的调色板名
 colors = get_palette("nature")            # 默认取 primary
 colors = get_palette("nature", "vibrant") # 指定子调色板
@@ -352,7 +358,7 @@ colors = get_palette("nature", "vibrant") # 指定子调色板
 | `get_ranks(taxonomy_path, id_column='id')` | 返回分类等级列表 |
 | `extract_taxonomy(taxonomy_path, tree_path, rank, id_column='id', multi_tree='error')` | 提取指定等级的分类信息，返回 `list[dict]` |
 | `extract_taxonomy_with_stats(...)` | 提取并附带成员数、LCA 等统计 |
-| `extract_taxonomy_from_tip_names(tree_path, format='auto', ...)` | 从末端名称反推分类表 |
+| `extract_taxonomy_from_tip_names(tree_path, output_path=None, name_format='auto', delimiter='_', taxonomy_levels=None, delimiter_mode='segment')` | 从末端名称反推分类表 |
 
 ```python
 from pyitol.core.taxonomy import get_ranks, extract_taxonomy
@@ -362,7 +368,7 @@ print(ranks)  # ['Domain', 'Phylum', 'Class', ...]
 
 rows = extract_taxonomy("taxonomy.csv", "tree.nwk", rank="Phylum")
 for r in rows:
-    print(r["id"], r["label"])
+    print(r["id"], r["name"])
 ```
 
 ### `pyitol.core.monophyly` — 单系性检测
@@ -382,7 +388,7 @@ results = check_monophyly_with_taxa_list(
     taxa_list=["Proteobacteria", "Firmicutes"],
 )
 for r in results:
-    print(r["taxon"], r["status"])   # monophyletic / paraphyletic / polyphyletic
+    print(r["group"], r["status"])   # monophyletic / paraphyletic / polyphyletic / incomplete_sampling / data_insufficient / unknown
 ```
 
 ### `pyitol.core.parser` — 树解析
@@ -436,7 +442,7 @@ print(files, first)
 
 | 函数 | 说明 |
 |------|------|
-| `get_tree_info(tree_path)` | 返回树的概要信息字典（末端数、内部节点数等） |
+| `get_tree_info(tree_path)` | 返回树的概要信息字典（末端数、内部节点数、总节点数、是否含枝长、最大深度、末端名示例）；只报告枝长是否存在，并不要求树必须带枝长 |
 | `get_tip_order(tree_path)` | 返回末端名称顺序列表 |
 | `extract_tree_info(...)` | 底层提取函数 |
 
@@ -444,7 +450,7 @@ print(files, first)
 from pyitol.utils.tree_info import get_tree_info
 
 info = get_tree_info("tree.nwk")
-print(info)  # {'tip_count': ..., 'internal_count': ..., ...}
+print(info)  # {'tip_count': ..., 'internal_node_count': ..., 'total_nodes': ..., 'has_branch_lengths': ..., 'max_depth': ..., 'sample_tips': ...}
 ```
 
 ### `pyitol.utils.color_tools` — 颜色工具

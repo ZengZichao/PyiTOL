@@ -49,7 +49,9 @@ tree_directory: ''
 # 树解析设置
 # ============================================================================
 
-# 多棵树处理策略：ask / first / last / random / split / all
+# 多棵树处理策略：ask / first / last / split（all 为 split 的内部别名；无 random）
+# 注意：该值只在库函数 core/parser.load_tree(multi_tree=...) 生效；CLI 上仅
+# `taxonomy monophyly` 与 `taxonomy check-and-style` 接受 --multi-tree-mode，且当前不转发（保留参数）。
 # multi_tree_mode: ask
 
 # 分类学命名格式：auto / gtdb / embedded / ncbi / underscore / mixed

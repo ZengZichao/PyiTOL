@@ -13,13 +13,13 @@
 
 ### 核心功能
 
-- **30+ 种 iTOL 模板类型**：色带、热图、柱状图、饼图、符号、二元矩阵、渐变、蛋白质域、连接线等（统一入口 31 种 + `external-shape-bubble` 变体）
+- **33 种 iTOL 模板类型**：色带、热图、柱状图、饼图、符号、二元矩阵、渐变、蛋白质域、连接线等（统一入口 `pyitol template create <type>` 支持 33 种，另有 `external-shape-bubble`（`external-shape` 的变体），专用子命令共 34 个）
 - **完整 API 客户端**：通过 iTOL 批量接口执行上传、导出 PDF/SVG/PNG/TIFF/EPS/Newick/Nexus/PhyloXML、删除及批量操作
 - **分类学与单系群分析**：内置 dendropy 集成，支持单系/并系/复系三分类检测
-- **从树名提取分类学**：支持 GTDB (`d__Bacteria;p__Proteobacteria;...`)、嵌入式 (`_d_Bacteria_p_...`)、NCBI (`Genus_species`)、auto 自动检测、underscore、mixed 混合格式
+- **从末端（叶）名称提取分类学**：支持 GTDB (`d__Bacteria;p__Proteobacteria;...`)、嵌入式 (`_d_Bacteria_p_...`)、NCBI (`Genus_species`)、auto 自动检测、underscore、mixed 混合格式
 - **单系群判定→条件美化**：检查类群单系性，自动决定是否生成美化模板
 - **色盲友好配色方案**：`tol_bright`、`tol_vibrant`、`wong`、`okabeito` 等
-- **图例自动定位**：生成模板时自动设置图例位置，避免与树图重叠
+- **图例自动定位**：生成模板时自动将图例放置在右下角（bottom-right），避免与树图重叠
 - **会话快照与回放**：基于 YAML 的操作记录，支持工作流可重复性
 - **Newick/Nexus 双格式**：自动检测树文件格式
 
@@ -31,7 +31,7 @@
 - **可扩展级别**：通过 `--taxonomy-levels` 自定义分类级别前缀
 - **特殊标识符**：`LUCA`（所有细菌和古菌的MRCA）、`LACA`（古菌的MRCA）、`LBCA`（细菌的MRCA）、`ROOT`（全树根，所有末端）
 
-### 单系群条件折叠
+### 基于单系群的分支折叠
 
 ```bash
 # 通过类群名称触发折叠（先检查单系性）
@@ -57,18 +57,17 @@ pyitol template create-collapse --taxon Proteobacteria --rank Phylum \
 
 ### 多棵树处理
 
-```bash
-# 默认模式（ask）：检测到多棵树时提示用户（非交互环境回退到 first）
-pyitol template create color-strip --tree multi.nwk ...
+多棵树策略选择是**库层能力**，由 `pyitol.core.parser.load_tree()` 实现：
 
-# 指定处理策略
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode first ...
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode last ...
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode random ...
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode split ...  # 或 all
+```python
+# 从多棵树文件中载入一棵，或全部载入
+from pyitol.core.parser import load_tree
+
+tree = load_tree("trees.nwk", multi_tree="first")
+trees = load_tree("trees.nwk", multi_tree="split")
 ```
 
-支持策略：`ask`（默认，交互提示）、`first`（第一棵）、`last`（最后一棵）、`random`（随机）、`split`/`all`（处理所有树）。
+支持策略：`ask`（默认，交互式终端下提示用户，非交互环境自动回退到 `first`）、`first`（第一棵）、`last`（最后一棵）、`split`（返回全部树并分别处理）。`all` 是 `split` 的内部等价别名。本工具刻意保持确定性行为，因此**没有** `random` 策略。命令行方面，只有 `taxonomy monophyly` 与 `taxonomy check-and-style` 声明了 `--multi-tree-mode` / `-m`，且两者当前都忽略其取值（源码注释标注该参数 reserved for future use）；任何 `template create <类型>` 或 `template create-*` 命令都不接受该选项，其余命令则以内部硬编码的策略调用库函数。
 
 ### 输入文件验证
 
@@ -81,9 +80,9 @@ pyitol validate --tree tree.nwk --alphabet DNA
 ```
 
 验证内容：
-- 树文件：括号平衡、负分支长度(CRITICAL)、空节点名(ERROR)、重复tip名(ERROR)、多根节点(CRITICAL)
-- 序列文件：字母表检测(DNA/RNA/protein)、ID唯一性、长度一致性
-- 对抗性防护：恶意字符(控制字符/双向文本)、循环依赖、空文件
+- 树文件：括号平衡、负分支长度（CRITICAL）、空节点名（ERROR）、重复末端（叶）名称（ERROR）、多根节点（ERROR）
+- 序列文件：字母表检测（DNA/RNA/protein）、ID 唯一性、长度一致性
+- 对抗性防护：恶意字符（控制字符/双向文本）、循环依赖、空文件
 
 ### 自检模式
 
@@ -128,6 +127,22 @@ pip install -e ".[dev]"
 pip install pyitol[memory]
 ```
 
+### Docker 部署
+
+PyiTOL 提供 Docker 镜像，适用于隔离环境：
+
+```bash
+# 使用项目自带的 Dockerfile 构建
+docker build -t pyitol:latest .
+
+# 挂载数据目录运行
+docker run -v $(pwd)/data:/data pyitol:latest \
+  template create color-strip --tree /data/tree.nwk \
+  --taxonomy /data/tax.csv --column Phylum -o /data/output.txt
+```
+
+Docker 镜像包含全部运行时依赖，适用于 HPC 集群或云平台。
+
 ### 验证安装
 
 安装完成后，运行以下命令验证：
@@ -142,7 +157,7 @@ pyitol self-test
 
 预期输出：
 ```
-pyitol 1.0.0
+pyitol 1.0.3
 license: MIT
 ...
 ```
@@ -175,14 +190,9 @@ license: MIT
 | `synthetic_32tips_enriched.csv` | 富集分析数据 |
 | `synthetic_4096tips.nwk` | 4096 个末端的大型合成树（压测用） |
 | `synthetic_4096tips_taxonomy.csv` | 对应分类学表格 |
-| `synthetic_4096tips_monophyly.csv` | 单系性检测结果 |
-| `synthetic_4096tips_phylum_strip.txt` | 门级色带模板 |
 | `synthetic_4096tips_traits.csv` | 性状数据 |
-| `synthetic_4096tips_trait_binary.txt` | 二元性状模板 |
-| `synthetic_4096tips_trait_heatmap.txt` | 热图模板 |
 | `synthetic_5000tips.nwk` | 5000 个末端的大型合成树（压测用） |
 | `synthetic_5000tips_taxonomy.csv` | 对应分类学表格 |
-| `synthetic_5000tips_monophyly.csv` | 单系性检测结果 |
 | `synthetic_5000tips_traits.csv` | 性状数据 |
 
 使用示例数据快速体验：
@@ -199,7 +209,7 @@ pyitol validate --tree examples/data/synthetic_130tips.nwk \
 pyitol template create color-strip \
   --tree examples/data/synthetic_130tips.nwk \
   --taxonomy examples/data/synthetic_130tips_taxonomy.csv \
-  --column Phylum --palette tol_bright -o phylum_strip.txt
+  --column Phylum -o phylum_strip.txt
 
 # 检查单系性
 pyitol taxonomy monophyly \
@@ -207,13 +217,38 @@ pyitol taxonomy monophyly \
   --taxonomy examples/data/synthetic_32tips_taxonomy.csv \
   --rank Genus -o monophyly.csv
 
-# 从树名提取分类学
+# 从末端（叶）名称提取分类学
 pyitol taxonomy extract-from-names \
   --tree examples/data/synthetic_130tips.nwk \
   --format auto -o extracted_taxonomy.csv
 ```
 
 ## 快速开始
+
+### 本地模板生成（无需 API 密钥）
+
+最快的入门方式是从本地树文件与分类数据直接生成 iTOL 模板文件——无需 API 密钥，也无需联网：
+
+```bash
+# 从 Newick 树文件和分类表格生成色带模板
+pyitol template create color-strip --tree tree.nwk --taxonomy tax.csv --column Phylum -o colorstrip.txt
+```
+
+生成的是纯文本 iTOL 模板文件（`colorstrip.txt`），可通过拖拽方式手动上传到 [iTOL](https://itol.embl.de/)。
+
+### 验证输入文件
+
+生成模板前，先检查输入文件的常见问题：
+
+```bash
+pyitol validate --tree tree.nwk --taxonomy tax.csv
+```
+
+该命令会检查树文件格式、括号平衡、重复末端（叶）名称和分类表一致性。如需包含序列字母表检测的深度验证：
+
+```bash
+pyitol validate --tree tree.nwk --taxonomy tax.csv --sequence seqs.fasta --alphabet DNA
+```
 
 ### 版本信息
 
@@ -224,9 +259,10 @@ pyitol --version
 
 输出示例：
 ```
-pyitol 1.0.0
+pyitol 1.0.3
 license: MIT
-date: 2026-08-13
+date: 2026-08-26
+git: abc1234
 dependencies:
   typer: 0.25.1 (MIT)
   pandas: 2.3.3 (BSD-3-Clause)
@@ -235,7 +271,11 @@ dependencies:
   ...
 ```
 
-### API 密钥配置
+### 可选：上传至 iTOL
+
+> 以下步骤需要免费的 [iTOL API key](https://itol.embl.de/help.cgi#batch)。若只想本地生成模板，可跳过本节。
+
+#### API 密钥配置
 
 支持三种方式（优先级从高到低）：
 
@@ -250,14 +290,14 @@ export ITOL_API_KEY=YOUR_KEY
 pyitol task upload --tree tree.nwk --api-key-file /path/to/key.txt
 ```
 
-> **凭据安全 / Credential security**
+> **凭据安全**
 >
 > - **切勿将密钥文件提交到版本控制。** `.gitignore` 已排除 `*.key`、`itolapi.key`、`.itolapi.key`，但密钥文件仍可能通过其他渠道泄露——请勿将其放在云盘同步目录或共享目录中。
-> - **密钥文件建议存放于 `~/.config/pyitol/`（权限 600）或系统钥匙串**，不要放在项目根目录。
+> - **密钥文件建议存放于 `~/.config/pyitol/`（权限 600）**，不要放在项目根目录。
 > - 会话快照与日志会自动脱敏密钥（`***REDACTED***`），快照可安全分享。
 > - 若密钥可能已暴露（被提交、同步或分享），**请立即在 iTOL 账户设置中轮换**。
 
-### 上传并导出 PDF
+#### 上传并导出 PDF
 
 ```bash
 # 一步完成：上传 → 渲染 → 导出 PDF 到本地
@@ -289,36 +329,9 @@ pyitol task upload-and-export \
   --parameter background=ffffff
 ```
 
-## 工作流程
-
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  输入文件    │     │  分类学解析  │     │  模板生成    │
-│             │     │             │     │             │
-│ tree.nwk    │────>│ 从树名提取  │────>│ color-strip │
-│ tax.csv     │     │ 或外部表格  │     │ heatmap     │
-│ seqs.fasta  │     │             │     │ bar/pie/... │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │                   │
-                           v                   v
-                    ┌─────────────┐     ┌─────────────┐
-                    │  单系群判定  │     │  上传 iTOL  │
-                    │             │     │             │
-                    │ monophyly   │     │ upload      │
-                    │ check       │     │ export PDF  │
-                    └─────────────┘     └─────────────┘
-```
-
-典型工作流程：
-1. **准备输入**：系统发育树 (Newick/Nexus) + 分类学表格 (CSV/TSV)
-2. **解析分类学**：从树名自动提取或使用外部表格
-3. **单系群检查**：验证类群是否为单系群
-4. **生成模板**：根据分类信息生成 iTOL 可视化模板
-5. **上传导出**：上传至 iTOL 平台并导出 PDF/SVG/PNG
-
 ## 分类学与单系群分析
 
-### 从树末端名称自动提取分类学
+### 从末端（叶）名称自动提取分类学
 
 ```bash
 # GTDB 格式：d__Bacteria;p__Proteobacteria;...;s__Escherichia_coli
@@ -363,7 +376,7 @@ pyitol taxonomy check-and-style \
   --action color-branch \
   --output luca.txt
 
-# 不提供分类表 → 自动从树名提取
+# 不提供分类表 → 自动从末端（叶）名称提取
 pyitol taxonomy check-and-style \
   --tree tree.nwk \
   --taxon Salmonella \
@@ -386,7 +399,7 @@ pyitol taxonomy monophyly --tree tree.nwk --taxonomy tax.csv \
 
 # 检查特殊标识符
 pyitol taxonomy monophyly --tree tree.nwk --taxonomy tax.csv \
-  --taxa LUCA,LACA,LBCA --output special_monophyly.csv
+  --taxa LUCA,LACA,LBCA,ROOT --output special_monophyly.csv
 
 # 提取分类学摘要
 pyitol taxonomy extract --tree tree.nwk --taxonomy tax.csv \
@@ -401,7 +414,7 @@ pyitol taxonomy ranks --taxonomy tax.csv
 ```bash
 # 色带 - 按分类等级着色（图例自动定位到右下角）
 pyitol template create color-strip --tree tree.nwk --taxonomy tax.csv \
-  --column Phylum --palette tol_bright -o strip.txt
+  --column Phylum -o strip.txt
 
 # 热图 - 数值数据可视化
 pyitol template create heatmap --tree tree.nwk --taxonomy tax.csv \
@@ -425,8 +438,8 @@ pyitol template create branch-gradient --tree tree.nwk --taxonomy tax.csv \
 # 蛋白质域架构
 pyitol template create domains --data-file domains.json -o domain.txt
 
-# 多列气泡外部形状（数值列可视化）
-pyitol template create external-shape-bubble --tree tree.nwk --taxonomy tax.csv \
+# 多列气泡外部形状（仅专用子命令提供，不属于统一入口类型）
+pyitol template create-external-shape-bubble --tree tree.nwk --taxonomy tax.csv \
   --columns "gc_content,genome_size,gene_count" -o bubble.txt
 
 # 一键打包多个模板
@@ -464,8 +477,8 @@ TaxonB	#EE6677	Firmicutes
 # 查看树的基本信息（末端数、内部节点数、是否有分支长度等）
 pyitol tree info --tree examples/data/synthetic_130tips.nwk
 
-# 格式化支持值（IQ-TREE/RAxML 等）
-pyitol tree format-support-values --tree input.nwk --format iqtree -o output.nwk
+# 格式化支持值（IQ-TREE/RAxML 等格式自动检测）
+pyitol tree format-support-values --tree input.nwk -o output.nwk
 ```
 
 ## 实用工具
@@ -496,19 +509,19 @@ pyitol utils preview --taxonomy tax.csv --tree tree.nwk --column Phylum
 pyitol utils df-tree --data data.csv --columns col1,col2 -o tree.nwk
 ```
 
-> **注意**: `utils tree-info` 已废弃，请使用 `tree info`；`utils learn-template` 已废弃，请使用 `learn template`。
+> **注意**：`utils tree-info` 已废弃，请使用 `tree info`；`utils learn-template` 已废弃，请使用 `learn template`。
 
 ## 模板反向学习
 
 ```bash
 # 从已有 iTOL 模板文件学习参数
-pyitol learn template --input existing_template.txt
+pyitol learn template --template existing_template.txt
 
-# 学习配色方案
-pyitol learn palette --input templates_dir/
+# 查看配色预设
+pyitol learn palette --preset-name nature
 
 # 训练主题
-pyitol learn train-theme --input templates_dir/ --output theme.yaml
+pyitol learn train-theme --dir templates_dir/ --output theme.json
 ```
 
 ## 配置文件管理
@@ -534,7 +547,32 @@ separator: TAB
 palette: tol_bright
 ```
 
-项目根目录提供 `config.example.yaml` 模板，包含所有可配置项及注释（API 密钥、导出格式、多棵树策略、分类学解析参数等），可直接复制后修改使用。
+项目根目录提供 `config.example.yaml` 模板，包含所有可配置项及注释（API 密钥、导出格式、树解析参数、分类学解析参数等），可直接复制后修改使用。其中的 `multi_tree_mode` 仅被 `taxonomy monophyly` 读取，而该命令当前并不使用它（见上文“多棵树处理”）。`palette` 键对应 `--palette` 选项，该选项同样会被接受但不参与模板写入：色带/分支颜色取自内置的 `DEFAULT_PALETTE`（按类别循环取色），除非用 `--colors` 传入 JSON 映射。
+
+## 工作流程
+
+```
+┌───────────┐     ┌───────────┐     ┌───────────┐
+│    输入     │     │    分类     │     │    模板     │
+│    文件     │     │    解析     │     │    生成     │
+│ tree.nwk  │────>│   从末端提取   │────>│color-strip│
+│  tax.csv  │     │   或外部表格   │     │  heatmap  │
+│seqs.fasta │     │           │     │ bar / pie │
+└───────────┘     └─────┬─────┘     └─────┬─────┘
+                  ┌─────┴─────┐     ┌─────┴─────┐
+                  │    单系     │     │    上传     │
+                  │    检查     │     │   iTOL    │
+                  │ taxonomy  │     │  upload   │
+                  │ monophyly │     │export PDF │
+                  └───────────┘     └───────────┘
+```
+
+典型工作流程：
+1. **准备输入**：系统发育树（Newick/Nexus）+ 分类学表格（CSV/TSV）
+2. **解析分类学**：从末端（叶）名称自动提取或使用外部表格
+3. **单系群检查**：验证类群是否为单系群
+4. **生成模板**：根据分类信息生成 iTOL 可视化模板
+5. **上传导出**：上传至 iTOL 平台并导出 PDF/SVG/PNG
 
 ## 色盲友好配色方案
 
@@ -546,14 +584,15 @@ palette: tol_bright
 | `okabeito` | #E69F00 #56B4E9 #009E73 #F0E442 #0072B2 #D55E00 #CC79A7 #000000 | Okabe & Ito (2008) |
 | `ibm` | #648FFF #785EF0 #DC267F #FE6100 #FFB000 | IBM Design |
 
-使用方式：`--palette wong`
+这些名称通过预设 API 读取（`get_palette("colorblind", "wong")`），或由 `pyitol learn palette --preset-name colorblind` 列出。`template create` 与 `create-color-strip` 的 `--palette` 选项虽被接受，但当前并不使用，传入名称不会改变任何输出；要控制实际写入的颜色，请用 `--colors colors.json`。
 
 ## 会话快照与可重复性
 
 ```bash
 # 工作流完成后，会话快照自动保存
 pyitol task upload --tree tree.nwk --config template.txt
-# 快照保存至 ~/.pyitol/session_logs/
+# 快照目录：设置了 XDG_DATA_HOME 环境变量时为 $XDG_DATA_HOME/pyitol/session_logs，
+# 未设置时为 ~/.pyitol/session_logs
 
 # 回放之前的会话
 pyitol replay --session session.yaml
@@ -584,14 +623,14 @@ pyitol --log-file pyitol.log template create color-strip --tree tree.nwk ...
 # 默认行为：输出文件已存在时报错（所有子命令均受保护）
 pyitol template create color-strip --tree tree.nwk -o output.txt
 
-# 强制覆盖（仅统一入口 template create 支持）
+# 强制覆盖（34 个专用 create-* 子命令同样支持）
 pyitol template create color-strip --tree tree.nwk -o output.txt --force
 
-# 跳过已存在的文件（仅统一入口 template create 支持）
+# 跳过已存在的文件（create-* 子命令的选项集一致）
 pyitol template create color-strip --tree tree.nwk -o output.txt --no-clobber
 ```
 
-> 所有独立子命令（如 `create-color-strip`、`create-heatmap` 等）也会检查输出文件是否已存在，防止意外覆盖。如需覆盖，请使用统一入口 `template create` 的 `--force` 选项。
+> 所有模板命令——统一入口 `template create` 与 34 个专用 `create-*` 子命令——都不会覆盖已存在的输出文件。传入 `--force`/`-f` 可覆盖，传入 `--no-clobber` 则保持原文件不动。
 
 ## 优雅中断
 
@@ -626,7 +665,7 @@ pyitol
 ├── validate              验证输入文件
 ├── config                配置文件管理
 ├── template              创建和管理 iTOL 模板文件
-│   ├── create-*          31 种模板创建子命令
+│   ├── create-*          34 个专用子命令（33 种类型 + external-shape-bubble 变体）
 │   ├── create-collapse   折叠分支（支持 --taxon 单系群检查）
 │   ├── bundle            一键打包多个模板
 │   └── validate          验证模板格式
@@ -634,7 +673,7 @@ pyitol
 │   ├── ranks             查看分类等级
 │   ├── extract           提取分类信息
 │   ├── extract-stats     提取分类统计
-│   ├── extract-from-names  从树名自动提取分类学
+│   ├── extract-from-names  从末端（叶）名称自动提取分类学
 │   ├── monophyly         单系性检查（支持 LUCA/LACA/LBCA/ROOT）
 │   ├── check-and-style   单系群判定→条件美化
 │   ├── style             分类样式模板
@@ -663,7 +702,7 @@ PyiTOL/
 │   ├── core/                   核心算法（解析器、单系群检测、分类学）
 │   ├── templates/              模板生成器和 schema 定义
 │   └── utils/                  工具函数（颜色、I/O、会话、日志、shutdown）
-├── tests/                      测试套件（1702 个测试）
+├── tests/                      测试套件（1500+ 个测试）
 │   ├── data/                   测试数据文件
 │   ├── core/                   核心算法测试
 │   ├── cli/                    CLI 命令测试
@@ -673,7 +712,13 @@ PyiTOL/
 ├── examples/
 │   └── data/                   演示数据文件
 ├── docs/                       文档
-│   └── error_codes.md          错误码参考
+│   ├── cli.md                  CLI 参考手册
+│   ├── api.md                  API 指南
+│   ├── error_codes.md          错误码参考
+│   └── tutorials/              教程
+│       ├── quickstart.md       快速开始指南
+│       ├── templates.md        模板类型概览
+│       └── taxonomy.md         分类学分析教程
 ├── benchmarks/                 性能基准
 └── pyproject.toml              项目配置
 ```
@@ -686,7 +731,7 @@ PyiTOL/
 - [CLI 参考手册](docs/cli.md)
 - [API 指南](docs/api.md)
 - [错误码参考](docs/error_codes.md)
-- [贡献指南](CONTRIBUTING.md)
+- [贡献指南](CONTRIBUTING_CN.md)
 
 ## 依赖库许可证
 
@@ -695,7 +740,7 @@ PyiTOL/
 | typer | >=0.15.0 | MIT |
 | rich | ~=13.0 | MIT |
 | pandas | ~=2.0 | BSD-3-Clause |
-| dendropy | ~=4.6 | BSD-3-Clause |
+| dendropy | >=4.6,<6.0 | BSD-3-Clause |
 | numpy | >=1.24 | BSD-3-Clause |
 | requests | ~=2.32 | Apache-2.0 |
 | PyYAML | ~=6.0 | MIT |
