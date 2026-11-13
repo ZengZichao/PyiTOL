@@ -2,11 +2,11 @@
 
 [中文](templates.md) | English
 
-PyiTOL supports 33 template types under the iTOL v7 specification (created via the unified entry `template create <type>`). In addition, `external-shape-bubble` (bubble external shape, a variant of `external-shape`) is not covered by the unified entry and can only be created through the dedicated subcommand `pyitol template create-external-shape-bubble`. The 33 unified-entry types plus the `external-shape-bubble` variant correspond to 34 dedicated `create-*` subcommands, 33 of which are functionally equivalent to the unified entry: for example, `pyitol template create arrow` and `pyitol template create-arrow` are equivalent, so you may use whichever style you prefer.
+PyiTOL supports 33 template types under the iTOL v7 specification (created via the unified entry `template create <type>`). In addition, `external-shape-bubble` (bubble external shape, a variant of `external-shape`) is not covered by the unified entry and can only be created through the dedicated subcommand `pyitol template create-external-shape-bubble`. The 33 unified-entry types plus the `external-shape-bubble` variant correspond to 34 dedicated `create-*` subcommands, 33 of which map one-to-one onto the unified entry: for example, `pyitol template create arrow` and `pyitol template create-arrow` are interchangeable, so you may use whichever style you prefer. The defaults applied when an option is omitted, however, are not the same: the unified entry shares one generic set of defaults across all types, while each dedicated subcommand carries defaults tuned for its own type (for gradient, `--strip-width` defaults to 50 through the unified entry but 25 through `create-gradient`; for boxplot, `--width` defaults to 1000 versus 1500; for connections, `--color` defaults to `#ff0000` versus `#e64b35`). Pass those options explicitly when you need identical output.
 
 ## Unified Entry
 
-Apart from `--output`, the required arguments of the unified entry **vary by type**: most types take `--taxonomy` + `--tree` plus one category column (`--column` or `--columns`), the data-file types take only `--data-file`, the connection types take only `--connections`, and the structural types take `--node-ids`. The skeleton in this section covers the most common family, and the comments inside the fence give the required arguments for every type:
+Apart from `--output` (optional; it defaults to `config_template.txt`), the required arguments of the unified entry **vary by type**: most types take `--taxonomy` + `--tree` plus one category column (`--column` or `--columns`), the data-file types take only `--data-file`, the connection types take only `--connections`, and the structural types take `--node-ids`. The skeleton in this section covers the most common family, and the comments inside the fence give the required arguments for every type:
 
 ```bash
 # Required arguments grouped by type:
@@ -14,7 +14,7 @@ Apart from `--output`, the required arguments of the unified entry **vary by typ
 #     external-shape, tree-colors, branch-gradient, ranges, highlight, style, linechart
 #   --taxonomy + --tree + --columns: multi-bar, heatmap, pie, binary
 #   --taxonomy + --tree + --column (the alternate names --label-column/--image-column/--alignment-column
-#     are also accepted): labels, image, alignment; boxplot and popup-info need only --taxonomy + --tree (their statistic column names default)
+#     are also accepted): labels, image, alignment; boxplot and popup-info need only --taxonomy + --tree (their column-name options default)
 #   --data-file: domains, spacing, arrow, placement, timescale, meme, manual
 #   --connections: connections (JSON file path), tanglegram (inline id1,id2;id3,id4)
 #   --node-ids: prune; collapse takes --node-ids or --taxon + --rank + --taxonomy + --tree
@@ -49,7 +49,7 @@ pyitol template create color-strip \
 
 ### Tree Colors
 
-Colors branches, labels, ranges, or widths.
+Colors clades, branches, labels, ranges, widths, or gradients according to `--color-type` (`clade`/`branch`/`label`/`width`/`range`/`gradient`, default `clade`); the `gradient` value requires a numeric column.
 
 ```bash
 # Branch coloring (clade)
@@ -73,7 +73,7 @@ pyitol template create symbols \
   --column Type --symbol-type diamond --output symbols.txt
 ```
 
-Symbol types: `diamond`, `circle`, `square`, `triangle`, `star`
+Symbol types: `circle`, `square`, `triangle`, `star`, `left-triangle`, `right-triangle`; `diamond` (used in the example above, and the default of `--symbol-type` in both invocation styles) is kept only for backward compatibility — iTOL's DATASET_SYMBOL has no diamond, so it falls back to `square` and a warning is logged.
 
 ### External Shapes
 
@@ -329,7 +329,7 @@ pyitol template create domains \
   --data-file domains.json --output domains.txt
 ```
 
-domains.json is JSON content (not CSV), in the format `[{"id":"TaxonA","domains":[{"start":1,"end":50,"name":"PF001","color":"#ff0000"}]}]`.
+domains.json is JSON content (not CSV), one record per domain, in the format `[{"id":"TaxonA","from":"10","to":"50","type":"PF001","color":"#ff0000"}]`.
 
 ### Arrows v7+
 

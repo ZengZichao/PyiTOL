@@ -35,7 +35,7 @@ ruff format src/ tests/
 ## 代码规范
 
 - 遵循 PEP 8，行宽 120 字符
-- 所有公共函数需类型提示与文档字符串（docstring）
+- 所有公共函数需类型提示与文档字符串（docstring）；`ruff` 的 `ANN` 规则目前豁免 `src/pyitol/cli/*` 与 `tests/**`（见 `pyproject.toml` 的 `[tool.ruff.lint.per-file-ignores]`），因此 CLI 回调的注解应逐步补全、不要批量添加
 - 错误文案为双语：`src/pyitol/core/validator.py` 的 `_ERROR_MESSAGES` 中中英文各维护一份表。运行时语言是线程本地的，默认中文；语言未知或缺失时回退到中文，而非英文。`src/pyitol/utils/reporter.py` 中的 iTOL API 错误翻译表仅有中文
 - 保持确定性行为，避免随机算法
 

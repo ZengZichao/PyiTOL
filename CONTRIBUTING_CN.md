@@ -45,50 +45,50 @@ pre-commit install
 
 ```
 src/pyitol/
-├── __main__.py             # python -m pyitol entry point
-├── exceptions.py           # Exception hierarchy shared by all packages
-├── api/                    # iTOL REST client
-│   └── client.py           # Upload / query / export / delete over one requests.Session; the HTTPS adapter retries 429/5xx POSTs and GETs with capped exponential backoff
-├── cli/                    # CLI entry points (Typer-based)
-│   ├── apps.py             # Typer app definitions for the command groups
-│   ├── main.py             # Main entry + validate/replay/self-test
-│   ├── common.py           # Shared CLI utilities
-│   ├── template_cmd.py     # Template commands aggregator (re-exports submodules)
-│   ├── template_tools.py   # Unified create/bundle/validate commands
-│   ├── template_datasets.py # Dataset template commands (create-xxx)
-│   ├── template_treeops.py # Tree structure commands (create-xxx)
-│   ├── template_advanced.py # Advanced template commands (create-xxx, incl. external-shape-bubble)
-│   ├── task_cmd.py         # Task commands (upload/export/delete)
-│   ├── taxonomy_cmd.py     # Taxonomy commands
-│   ├── tree_cmd.py         # Tree info commands
-│   ├── config_cmd.py       # Config file management commands
-│   ├── utils_cmd.py        # Utility commands
-│   └── learn_cmd.py        # Learn/reverse-engineer commands
-├── core/                   # Core logic
-│   ├── parser.py           # Tree/metadata parsing
-│   ├── taxonomy.py         # Taxonomy extraction
-│   ├── monophyly.py        # Monophyly detection
-│   ├── validator.py        # Input validation, error codes and their messages
-│   ├── binary_convert.py   # Taxonomy columns -> binary matrix
-│   ├── connect_convert.py  # 0/1 matrix -> connection pairs
-│   ├── column_group.py     # Data column grouping
-│   └── count_tree.py       # Count data -> tree format
-├── templates/              # Template engine
-│   ├── generator.py        # Template generator (32 type-specific generate_* writers + generate_template)
-│   ├── learner.py          # Reverse parser (template file -> structured dict)
-│   ├── schemas/            # Schema classes (base, annotations, datasets_simple, datasets_advanced, tree_structure) + presets.py
-│   └── presets/            # Color palettes (nature, cell, colorblind)
-└── utils/                  # Utility functions
-    ├── session.py          # Session snapshots
-    ├── reporter.py         # iTOL API error translation (Chinese only)
-    ├── color_tools.py      # Color utilities
-    ├── constants.py        # Shared constants
-    ├── logger.py           # Logging
-    ├── fasta.py            # FASTA parsing
-    ├── io.py               # File discovery, path handling, safe encoding
-    ├── tree_info.py        # Tree topology / support-value stats
-    ├── data_converters.py  # Data set conversion helpers
-    └── shutdown.py         # Graceful shutdown
+├── __main__.py             # python -m pyitol 入口
+├── exceptions.py           # 各包共享的异常层次结构
+├── api/                    # iTOL REST 客户端
+│   └── client.py           # 基于单个 requests.Session 实现上传 / 查询 / 导出 / 删除；HTTPS 适配器对 429/5xx 的 POST 与 GET 请求做封顶指数退避重试
+├── cli/                    # CLI 入口（基于 Typer）
+│   ├── apps.py             # 各命令组的 Typer app 定义
+│   ├── main.py             # 主入口 + validate/replay/self-test
+│   ├── common.py           # 共享 CLI 工具函数
+│   ├── template_cmd.py     # 模板命令聚合器（重新导出各子模块）
+│   ├── template_tools.py   # 统一的 create/bundle/validate 命令
+│   ├── template_datasets.py # 数据集模板命令（create-xxx）
+│   ├── template_treeops.py # 树结构命令（create-xxx）
+│   ├── template_advanced.py # 高级模板命令（create-xxx，含 external-shape-bubble）
+│   ├── task_cmd.py         # 任务命令（upload/export/delete）
+│   ├── taxonomy_cmd.py     # 分类学命令
+│   ├── tree_cmd.py         # 树信息命令
+│   ├── config_cmd.py       # 配置文件管理命令
+│   ├── utils_cmd.py        # 工具命令
+│   └── learn_cmd.py        # 模板反向学习/逆向解析命令
+├── core/                   # 核心逻辑
+│   ├── parser.py           # 树/元数据解析
+│   ├── taxonomy.py         # 分类信息提取
+│   ├── monophyly.py        # 单系性检测
+│   ├── validator.py        # 输入校验、错误码及其文案
+│   ├── binary_convert.py   # 分类列 -> 二元矩阵
+│   ├── connect_convert.py  # 0/1 矩阵 -> 连线配对
+│   ├── column_group.py     # 数据列分组
+│   └── count_tree.py       # 计数数据 -> 树格式
+├── templates/              # 模板引擎
+│   ├── generator.py        # 模板生成器（32 个类型专属 generate_* 写出函数 + generate_template）
+│   ├── learner.py          # 反向解析器（模板文件 -> 结构化字典）
+│   ├── schemas/            # Schema 类（base、annotations、datasets_simple、datasets_advanced、tree_structure）+ presets.py
+│   └── presets/            # 调色板（nature、cell、colorblind）
+└── utils/                  # 工具函数
+    ├── session.py          # 会话快照
+    ├── reporter.py         # iTOL API 错误翻译（仅中文）
+    ├── color_tools.py      # 颜色工具
+    ├── constants.py        # 共享常量
+    ├── logger.py           # 日志
+    ├── fasta.py            # FASTA 解析
+    ├── io.py               # 文件发现、路径处理、文本编码的安全读取
+    ├── tree_info.py        # 树拓扑 / 支持值统计
+    ├── data_converters.py  # 数据集转换辅助函数
+    └── shutdown.py         # 优雅退出
 ```
 
 每个目录另有 `__init__.py`；`src/pyitol/` 还包含 `py.typed` 与由 setuptools_scm 生成的 `_version.py`。`templates/` 下**没有** `parser.py`——反向解析全部在 `templates/learner.py` 中实现。
@@ -106,7 +106,7 @@ src/pyitol/
 
 `src/pyitol` 的注释中保留有历史 QA 评审轮次的可追溯性标记。对当前代码做全量普查（`grep -rhoE "\b(C|M|H|L|P|R)[0-9]+\b" src/pyitol --include="*.py"`，另加小写的 `m[0-9]+`）后，实际存在的标签只有以下几族：
 
-- **C1**-**C5**：`core/monophyly.py` 单系性判定的正确性修复（严格按定义区分并系/复系、清空过期节点索引缓存、多分叉处理、按树加锁与后代缓存）
+- **C1**-**C5**：`core/monophyly.py` 单系性判定的正确性修复（严格按定义区分并系/复系、清空过期 tip 索引缓存、多分叉处理、按树加锁与后代缓存）
 - **H1**、**H3**：iTOL 协议与数值编码的一致性说明（iTOL 无官方"树就绪状态"查询接口；`SYMBOL_SHAPE_MAP` 与 `EXTERNAL_SHAPE_MAP` 两套编码不可混用）
 - **M1** 以及小写的 **m2**-**m5**、**m9**：零散的小型评审修订（URL 解析、抽取共享的 schema 探测工具、线程本地语言状态、扩充 CSS 命名色表、移除不安全的 `http://` 挂载）
 - **L9**、**L10**：`templates/generator.py` 的样板收敛（统一的 schema 写出）与共享映射表一致性
@@ -184,7 +184,7 @@ pytest tests/ -m "not integration"
 
 ## 添加新的 iTOL 模板类型
 
-PyiTOL 提供统一入口 `pyitol template create <type>`，支持 **33 种模板类型**；此外共有 **34 个专用 `pyitol template create-*` 子命令**（上述 33 种再加上 `external-shape-bubble` 变体）。要为新的类型添加支持：
+PyiTOL 提供统一入口 `pyitol template create <类型>`，支持 **33 种模板类型**；此外共有 **34 个专用 `pyitol template create-*` 子命令**（上述 33 种再加上 `external-shape-bubble` 变体）。要为新的类型添加支持：
 
 1. **定义模板名称**于 `src/pyitol/templates/schemas/` 下对应的子模块（`datasets_simple.py`、`datasets_advanced.py`、`tree_structure.py`、`annotations.py`）：用 `@register_template` 装饰 schema 类，使其登记进 `schemas/base.py` 的 `SCHEMA_MAP`，从而让 `create_schema("<type>", ...)` 对该模板的参数执行校验。
 
@@ -195,7 +195,7 @@ PyiTOL 提供统一入口 `pyitol template create <type>`，支持 **33 种模�
    - 树操作模板（tree-colors、collapse、prune、spacing、highlight、style 等）放在 `template_treeops.py`
    - 高级模板（linechart、image、alignment、tanglegram、placement、timescale、meme、manual、external-shape-bubble）放在 `template_advanced.py`
 
-4. **注册别名**于 `template_tools.py` 的调度表：给处理器加上 `@_register_create("<type>", "<alias>", ...)` 装饰器，使 `pyitol template create <type>` 也能路由到新生成器。
+4. **注册别名**于 `template_tools.py` 的调度表：给处理器加上 `@_register_create("<type>", "<alias>", ...)` 装饰器，使 `pyitol template create <类型>` 也能路由到新生成器。
 
 5. **添加测试**于 `tests/`，覆盖：
    - 使用合法输入的模板生成

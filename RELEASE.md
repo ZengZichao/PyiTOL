@@ -137,7 +137,7 @@ twine upload --repository testpypi dist/*     # Enter TestPyPI username(__token_
 
 ## 5. Troubleshooting / rollback
 
-- **Published the wrong version**: PyPI does not allow overwriting the same version number, so you can only publish a new `patch` version (e.g. `v1.0.4`). Published versions cannot be deleted, so **always rehearse before releasing**.
+- **Published the wrong version**: PyPI does not allow overwriting the same version number, so you can only publish a new `patch` version (e.g. `v1.0.4`). A release can be deleted, but deleted files can never be re-uploaded or restored, so **always rehearse before releasing**.
 - **publish.yml fails**: inspect the Actions log for the cause. A common reason is that the Trusted Publisher's owner/repo/workflow do not match — recheck 1.4.
 - **Wrong version number (e.g. `0.2.3.dev0` appears)**: this means `setuptools_scm` did not pick up a tag. Confirm `git push origin --tags` ran and that the Actions checkout uses `fetch-depth: 0` (already configured in publish.yml).
 - **Want to re-publish the same version**: delete the old local and remote tag, then re-tag:

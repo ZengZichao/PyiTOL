@@ -19,7 +19,7 @@ English | [中文](README_CN.md)
 - **Full API client**: upload, export PDF/SVG/PNG/TIFF/EPS/Newick/Nexus/PhyloXML, delete, and batch operations via iTOL batch endpoints
 - **Taxonomy & monophyly analysis**: built-in dendropy integration for monophyletic/paraphyletic/polyphyletic group classification
 - **Extract taxonomy from tip names**: supports GTDB (`d__Bacteria;p__Proteobacteria;...`), embedded (`_d_Bacteria_p_...`), NCBI (`Genus_species`), auto-detection, underscore, and mixed formats
-- **Monophyly check → conditional styling**: check if a taxon is monophyletic, then automatically generate beautification templates
+- **Monophyly check → conditional styling**: check if a taxon is monophyletic, then automatically decide whether to generate beautification templates
 - **Color-blind friendly palettes**: `tol_bright`, `tol_vibrant`, `wong`, `okabeito`, and more
 - **Auto legend positioning**: legends placed in bottom-right corner to avoid tree overlap
 - **Session snapshots & replay**: YAML-based operation recording for reproducible workflows
@@ -182,7 +182,7 @@ The project ships example data under `examples/data/`:
 | File | Description |
 |------|-------------|
 | `synthetic_130tips.nwk` | Synthetic phylogenetic tree with 130 tips |
-| `synthetic_130tips_taxonomy.csv` | Corresponding taxonomy table (Domain → Species) |
+| `synthetic_130tips_taxonomy.csv` | Corresponding taxonomy table (Phylum → Genus) |
 | `synthetic_130tips_amr.csv` | Synthetic antimicrobial resistance gene data |
 | `synthetic_130tips_auto_taxonomy.csv` | Auto-extracted taxonomy table |
 | `synthetic_130tips_enriched.csv` | Enriched analysis data |
@@ -435,7 +435,7 @@ pyitol template create connections --connections connections.json -o connections
 
 # Branch gradient - continuous coloring
 pyitol template create branch-gradient --tree tree.nwk --taxonomy tax.csv \
-  --column gc_content --gradient "#313695,#a50026" -o gradient.txt
+  --column gc_content --color-min "#313695" --color-max "#a50026" -o gradient.txt
 
 # Domain architecture
 pyitol template create domains --data-file domains.json -o domain.txt
@@ -446,7 +446,7 @@ pyitol template create-external-shape-bubble --tree tree.nwk --taxonomy tax.csv 
 
 # Bundle multiple templates at once
 pyitol template bundle --tree tree.nwk --taxonomy tax.csv \
-  --config '[{"type":"color-strip","column":"Phylum"},{"type":"heatmap","columns":"gc,genome_size"}]' \
+  --config '[{"type":"color-strip","column":"Phylum"},{"type":"heatmap","columns":["gc","genome_size"]}]' \
   --output-dir ./templates/
 ```
 
@@ -479,7 +479,7 @@ TaxonB	#EE6677	Firmicutes
 # Show basic tree info (number of tips, internal nodes, whether branch lengths are present, etc.)
 pyitol tree info --tree examples/data/synthetic_130tips.nwk
 
-# Format support values (IQ-TREE/RAxML etc. are detected automatically)
+# Format support values (IQ-TREE bootstrap/aLRT style; RAxML etc. need the library API)
 pyitol tree format-support-values --tree input.nwk -o output.nwk
 ```
 
@@ -661,6 +661,7 @@ pyitol
 ├── --version             Display version, Git hash and dependency versions
 ├── --verbose             Enable verbose logging
 ├── --quiet               Show only critical info
+├── --config              Load YAML/JSON config file (can be specified multiple times)
 ├── --log-file            Log file path
 ├── --low-memory          Low memory mode
 ├── self-test             Run self-test
@@ -739,14 +740,15 @@ PyiTOL/
 
 | Library | Version | License |
 |---------|---------|---------|
-| typer | >=0.15.0 | MIT |
+| typer | >=0.15.0,<1.0 | MIT |
 | rich | ~=13.0 | MIT |
 | pandas | ~=2.0 | BSD-3-Clause |
 | dendropy | >=4.6,<6.0 | BSD-3-Clause |
-| numpy | >=1.24 | BSD-3-Clause |
+| numpy | >=1.24,<3.0 | BSD-3-Clause |
 | requests | ~=2.32 | Apache-2.0 |
 | PyYAML | ~=6.0 | MIT |
 | pydantic | ~=2.5 | MIT |
+| scipy | ~=1.11 | BSD-3-Clause |
 
 ## Citation
 

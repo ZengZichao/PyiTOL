@@ -28,7 +28,7 @@
 | `--colors` | | 无 | 自定义颜色映射，支持 JSON（`{"A":"#ff0000"}`）或简写（`A:#ff0000,B:#00ff00`） | 仅 10/34 个命令：`create-color-strip`、`create-branch`、`create-multi-bar`、`create-symbols`、`create-pie`、`create-external-shape`、`create-tree-colors`、`create-ranges`、`create-highlight`、`create-style` |
 | `--palette` | | 无 | 配色预设子集名，**当前不生效**（见 `create-color-strip` 说明） | 仅 `create-color-strip` |
 
-> 传入某命令签名中不存在的选项时，Typer 会直接以 `No such option` 报错退出，因此请按下表选择命令；表内“必填”指该选项在这些命令中声明为 `typer.Option(...)`。`--separator` 只影响模板数据行的字段分隔符，与 `taxonomy` 命令里拆分末端（叶）名称内分类等级片段的 `--delimiter`（名称分段符）无关。
+> 传入某命令签名中不存在的选项时，Typer 会直接以 `No such option` 报错退出，因此请按上表选择命令；表内“必填”指该选项在这些命令中声明为 `typer.Option(...)`。`--separator` 只影响模板数据行的字段分隔符，与 `taxonomy` 命令里拆分末端（叶）名称内分类等级片段的 `--delimiter`（名称分段符）无关。
 
 > 与统一入口一致，专用子命令**同样支持** `--force`/`-f` 与 `--no-clobber`：`--force` 覆盖已存在的输出文件，`--no-clobber` 跳过已存在的输出文件（此时命令直接返回，不重写文件）。两者都未指定而输出文件已存在时，命令报错退出。
 
@@ -107,7 +107,7 @@ pyitol template create-heatmap \
 
 符号标记（symbols）。
 
-**专属选项**：`--column`/`-c`（必填）、`--symbol-type`（默认 `diamond`；可选 `diamond`/`circle`/`square`/`triangle`/`star`）、`--colors`、`--size`（默认 `30`）。
+**专属选项**：`--column`/`-c`（必填）、`--symbol-type`（默认 `diamond`；可选 `diamond`/`circle`/`square`/`triangle`/`star`，但 iTOL 无菱形符号，`diamond` 会告警并回退为 `square`）、`--colors`、`--size`（默认 `30`）。
 
 ```bash
 pyitol template create-symbols \
@@ -218,12 +218,12 @@ pyitol template create-external-shape \
 
 连接线（connections）。**不依赖树与分类表**，读取连接对 JSON 文件。
 
-**专属选项**：`--connections`/`-c`（必填，JSON 文件路径，格式 `[[id1,id2],...]`）、`--color`（默认 `#e64b35`）、`--line-width`（默认 `2`）、`--line-type`（默认 `solid`；可选 `solid`/`dotted`/`dashed`）、`--arrow-head-size`（默认 `1`）。
+**专属选项**：`--connections`/`-c`（必填，JSON 文件路径，格式 `[[id1,id2],...]`）、`--color`（默认 `#e64b35`）、`--line-width`（默认 `2`）、`--line-type`（默认 `solid`；实际生效的取值只有 `solid`（曲线）与 `straight`（直线），`--help` 中列出的 `dotted`/`dashed` iTOL 并不支持，会告警并按 `solid` 处理）、`--arrow-head-size`（默认 `1`）。
 
 ```bash
 # pairs.json: [["TaxonA","TaxonB"], ["TaxonC","TaxonD"]]
 pyitol template create-connections \
-  --connections pairs.json --color "#e64b35" --line-type dashed --output connections.txt
+  --connections pairs.json --color "#e64b35" --line-type straight --output connections.txt
 ```
 
 ### `pyitol template create-domains`
@@ -233,7 +233,7 @@ pyitol template create-connections \
 **专属选项**：`--data`/`-d`（必填，JSON 文件路径）、`--color`（默认 `#ff00aa`）、`--scale`（尺度，可选）。
 
 ```bash
-# domains.json: [{"id":"TaxonA","domains":[{"start":1,"end":50,"name":"PF001","color":"#ff0000"}]}]
+# domains.json: 每个结构域一条记录 [{"id":"TaxonA","from":"10","to":"50","type":"PF001","color":"#ff0000"}]
 pyitol template create-domains \
   --data domains.json --color "#ff00aa" --output domains.txt
 ```

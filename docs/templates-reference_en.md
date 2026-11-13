@@ -2,7 +2,7 @@
 
 [中文](templates-reference.md) | English
 
-This page documents all **34 dedicated subcommands** under `pyitol template` (`pyitol template create-*`). They are functionally equivalent to the unified entry point `pyitol template create <type>`, but each command accepts only its type-specific parameters — ideal for precise scripting and pipelines, with no need to remember the `template_type` string.
+This page documents all **34 dedicated subcommands** under `pyitol template` (`pyitol template create-*`). They are functionally equivalent to the unified entry point `pyitol template create <type>`, but each command accepts only its type-specific parameters — ideal for precise scripting, with no need to remember the `template_type` string.
 
 > The 34 dedicated subcommands on this page cover the 33 types supported by the unified entry `pyitol template create` plus the `external-shape-bubble` variant (which is not part of the unified entry and is only available through the dedicated subcommand documented here). Use the unified entry for occasional template generation; use dedicated subcommands for fixed-type batch calls in pipelines.
 
@@ -107,7 +107,7 @@ pyitol template create-heatmap \
 
 Symbol markers.
 
-**Specific options**: `--column`/`-c` (required), `--symbol-type` (default `diamond`; `diamond`/`circle`/`square`/`triangle`/`star`), `--colors`, `--size` (default `30`).
+**Specific options**: `--column`/`-c` (required), `--symbol-type` (default `diamond`; `diamond`/`circle`/`square`/`triangle`/`star` — iTOL has no diamond symbol, so `diamond` warns and falls back to `square`), `--colors`, `--size` (default `30`).
 
 ```bash
 pyitol template create-symbols \
@@ -218,12 +218,12 @@ pyitol template create-external-shape \
 
 Connection lines. **Does not depend on tree or taxonomy**; reads a connections JSON file.
 
-**Specific options**: `--connections`/`-c` (required, JSON file path, format `[[id1,id2],...]`), `--color` (default `#e64b35`), `--line-width` (default `2`), `--line-type` (default `solid`; `solid`/`dotted`/`dashed`), `--arrow-head-size` (default `1`).
+**Specific options**: `--connections`/`-c` (required, JSON file path, format `[[id1,id2],...]`), `--color` (default `#e64b35`), `--line-width` (default `2`), `--line-type` (default `solid`; only `solid` (curve) and `straight` (line) actually take effect — the `dotted`/`dashed` values listed in `--help` are not supported by iTOL, they warn and fall back to `solid`), `--arrow-head-size` (default `1`).
 
 ```bash
 # pairs.json: [["TaxonA","TaxonB"], ["TaxonC","TaxonD"]]
 pyitol template create-connections \
-  --connections pairs.json --color "#e64b35" --line-type dashed --output connections.txt
+  --connections pairs.json --color "#e64b35" --line-type straight --output connections.txt
 ```
 
 ### `pyitol template create-domains`
@@ -233,7 +233,7 @@ Protein domains. **Does not depend on tree or taxonomy**; reads a JSON data file
 **Specific options**: `--data`/`-d` (required, JSON file path), `--color` (default `#ff00aa`), `--scale` (scale, optional).
 
 ```bash
-# domains.json: [{"id":"TaxonA","domains":[{"start":1,"end":50,"name":"PF001","color":"#ff0000"}]}]
+# domains.json: one record per domain [{"id":"TaxonA","from":"10","to":"50","type":"PF001","color":"#ff0000"}]
 pyitol template create-domains \
   --data domains.json --color "#ff00aa" --output domains.txt
 ```

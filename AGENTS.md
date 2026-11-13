@@ -35,7 +35,7 @@ ruff format src/ tests/
 ## Code Conventions
 
 - Follow PEP 8, with a line width of 120 characters
-- All public functions require type hints and docstrings
+- All public functions require type hints and docstrings; ruff's `ANN` rules currently exempt `src/pyitol/cli/*` and `tests/**` (see `[tool.ruff.lint.per-file-ignores]` in `pyproject.toml`), so annotate CLI callbacks incrementally rather than in bulk
 - Error message text is bilingual: `_ERROR_MESSAGES` (`src/pyitol/core/validator.py`) holds one Chinese and one English table. The runtime language is thread-local and defaults to Chinese; an unknown or missing language falls back to Chinese, not English. The iTOL API error translation table in `src/pyitol/utils/reporter.py` is Chinese-only
 - Maintain deterministic behavior and avoid randomized algorithms
 

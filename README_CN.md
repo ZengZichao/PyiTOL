@@ -13,7 +13,7 @@
 
 ### 核心功能
 
-- **33 种 iTOL 模板类型**：色带、热图、柱状图、饼图、符号、二元矩阵、渐变、蛋白质域、连接线等（统一入口 `pyitol template create <type>` 支持 33 种，另有 `external-shape-bubble`（`external-shape` 的变体），专用子命令共 34 个）
+- **33 种 iTOL 模板类型**：色带、热图、柱状图、饼图、符号、二元矩阵、渐变、蛋白质域、连接线等（统一入口 `pyitol template create <类型>` 支持 33 种，另有 `external-shape-bubble`（`external-shape` 的变体），专用子命令共 34 个）
 - **完整 API 客户端**：通过 iTOL 批量接口执行上传、导出 PDF/SVG/PNG/TIFF/EPS/Newick/Nexus/PhyloXML、删除及批量操作
 - **分类学与单系群分析**：内置 dendropy 集成，支持单系/并系/复系三分类检测
 - **从末端（叶）名称提取分类学**：支持 GTDB (`d__Bacteria;p__Proteobacteria;...`)、嵌入式 (`_d_Bacteria_p_...`)、NCBI (`Genus_species`)、auto 自动检测、underscore、mixed 混合格式
@@ -180,14 +180,14 @@ license: MIT
 | 文件 | 说明 |
 |------|------|
 | `synthetic_130tips.nwk` | 130 个末端的合成系统发育树 |
-| `synthetic_130tips_taxonomy.csv` | 对应分类学表格（Domain → Species） |
+| `synthetic_130tips_taxonomy.csv` | 对应分类学表格（Phylum → Genus） |
 | `synthetic_130tips_amr.csv` | 合成抗生素耐药基因数据 |
 | `synthetic_130tips_auto_taxonomy.csv` | 自动提取的分类学表格 |
-| `synthetic_130tips_enriched.csv` | 富集分析数据 |
+| `synthetic_130tips_enriched.csv` | 扩展分析数据 |
 | `synthetic_32tips.nwk` | 32 个末端的合成单系群测试树 |
 | `synthetic_32tips_taxonomy.csv` | 对应分类学表格 |
 | `synthetic_32tips_auto_taxonomy.csv` | 自动提取的分类学表格 |
-| `synthetic_32tips_enriched.csv` | 富集分析数据 |
+| `synthetic_32tips_enriched.csv` | 扩展分析数据 |
 | `synthetic_4096tips.nwk` | 4096 个末端的大型合成树（压测用） |
 | `synthetic_4096tips_taxonomy.csv` | 对应分类学表格 |
 | `synthetic_4096tips_traits.csv` | 性状数据 |
@@ -273,7 +273,7 @@ dependencies:
 
 ### 可选：上传至 iTOL
 
-> 以下步骤需要免费的 [iTOL API key](https://itol.embl.de/help.cgi#batch)。若只想本地生成模板，可跳过本节。
+> 以下步骤需要免费的 [iTOL API 密钥](https://itol.embl.de/help.cgi#batch)。若只想本地生成模板，可跳过本节。
 
 #### API 密钥配置
 
@@ -433,7 +433,7 @@ pyitol template create connections --connections connections.json -o connections
 
 # 分支渐变 - 连续着色
 pyitol template create branch-gradient --tree tree.nwk --taxonomy tax.csv \
-  --column gc_content --gradient "#313695,#a50026" -o gradient.txt
+  --column gc_content --color-min "#313695" --color-max "#a50026" -o gradient.txt
 
 # 蛋白质域架构
 pyitol template create domains --data-file domains.json -o domain.txt
@@ -444,7 +444,7 @@ pyitol template create-external-shape-bubble --tree tree.nwk --taxonomy tax.csv 
 
 # 一键打包多个模板
 pyitol template bundle --tree tree.nwk --taxonomy tax.csv \
-  --config '[{"type":"color-strip","column":"Phylum"},{"type":"heatmap","columns":"gc,genome_size"}]' \
+  --config '[{"type":"color-strip","column":"Phylum"},{"type":"heatmap","columns":["gc","genome_size"]}]' \
   --output-dir ./templates/
 ```
 
@@ -477,7 +477,7 @@ TaxonB	#EE6677	Firmicutes
 # 查看树的基本信息（末端数、内部节点数、是否有分支长度等）
 pyitol tree info --tree examples/data/synthetic_130tips.nwk
 
-# 格式化支持值（IQ-TREE/RAxML 等格式自动检测）
+# 格式化支持值（按 IQ-TREE 的 bootstrap/aLRT 样式处理，RAxML 等需用库 API）
 pyitol tree format-support-values --tree input.nwk -o output.nwk
 ```
 
@@ -552,19 +552,19 @@ palette: tol_bright
 ## 工作流程
 
 ```
-┌───────────┐     ┌───────────┐     ┌───────────┐
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
 │    输入     │     │    分类     │     │    模板     │
 │    文件     │     │    解析     │     │    生成     │
-│ tree.nwk  │────>│   从末端提取   │────>│color-strip│
-│  tax.csv  │     │   或外部表格   │     │  heatmap  │
-│seqs.fasta │     │           │     │ bar / pie │
-└───────────┘     └─────┬─────┘     └─────┬─────┘
-                  ┌─────┴─────┐     ┌─────┴─────┐
-                  │    单系     │     │    上传     │
-                  │    检查     │     │   iTOL    │
-                  │ taxonomy  │     │  upload   │
-                  │ monophyly │     │export PDF │
-                  └───────────┘     └───────────┘
+│  tree.nwk   │────>│ 从末端提取  │────>│ color-strip │
+│   tax.csv   │     │ 或外部表格  │     │   heatmap   │
+│ seqs.fasta  │     │             │     │  bar / pie  │
+└─────────────┘     └──────┬──────┘     └──────┬──────┘
+                    ┌──────┴──────┐     ┌──────┴──────┐
+                    │    单系     │     │    上传     │
+                    │    检查     │     │    iTOL     │
+                    │  taxonomy   │     │   upload    │
+                    │  monophyly  │     │ export PDF  │
+                    └─────────────┘     └─────────────┘
 ```
 
 典型工作流程：
@@ -659,6 +659,7 @@ pyitol
 ├── --version             显示版本号、Git哈希和依赖库版本
 ├── --verbose             显示详细日志
 ├── --quiet               仅显示关键信息
+├── --config              加载 YAML/JSON 配置文件路径（可多次指定）
 ├── --log-file            日志文件路径
 ├── --low-memory          低内存模式
 ├── self-test             执行自检
@@ -737,14 +738,15 @@ PyiTOL/
 
 | 库 | 版本 | 许可证 |
 |----|------|--------|
-| typer | >=0.15.0 | MIT |
+| typer | >=0.15.0,<1.0 | MIT |
 | rich | ~=13.0 | MIT |
 | pandas | ~=2.0 | BSD-3-Clause |
 | dendropy | >=4.6,<6.0 | BSD-3-Clause |
-| numpy | >=1.24 | BSD-3-Clause |
+| numpy | >=1.24,<3.0 | BSD-3-Clause |
 | requests | ~=2.32 | Apache-2.0 |
 | PyYAML | ~=6.0 | MIT |
 | pydantic | ~=2.5 | MIT |
+| scipy | ~=1.11 | BSD-3-Clause |
 
 ## 引用
 

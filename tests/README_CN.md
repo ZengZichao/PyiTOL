@@ -69,11 +69,11 @@ tests/
 │
 ├── templates/                          # 模板模块层测试
 │   ├── __init__.py                     # 包标记文件（空文件）
-│   ├── test_base.py                    # TemplateGenerator 基础引擎
+│   ├── test_base.py                    # 基础 schema 类（TemplateSchema/LegendConfig/create_schema）
 │   ├── test_boundary_exceptions.py     # 单列 COLLAPSE/PRUNE 不丢数据、缺列行告警、pie FIELD_COLORS 对齐、InvalidColumnError
 │   ├── test_domain_exceptions.py       # generator/presets 抛 InvalidColumnError/TemplateError/TemplateTypeError 而非裸 ValueError
 │   ├── test_domain_exceptions_regression.py # 模板域异常回归（InvalidColumnError/TemplateError/TemplateTypeError）
-│   ├── test_generator.py               # 全部 generate_*_template() 端到端生成
+│   ├── test_generator.py               # 30+ 个 generate_*_template() 函数的端到端生成
 │   ├── test_learner.py                 # 模板反向学习 / train_theme
 │   ├── test_merge_embedded_conflict.py # merge_embedded_taxonomy 冲突分支不抛 KeyError 且保留 embedded 值
 │   ├── test_presets.py                 # 预设与调色板（Nature/Cell/Colorblind）
@@ -161,7 +161,7 @@ tests/
 | `test_learner.py` | `pyitol.templates.learner` | `HEADER_REVERSE` 完整性、单模板反向解析、`train_theme`（空/单/多文件聚合/JSON 序列化/容错） |
 | `test_presets.py` | `pyitol.templates.presets` | 全部 schema preset、未知 preset 报错、Nature/Cell/Colorblind 调色板、色盲友好性 |
 | `test_schemas_*.py` | `pyitol.templates.schemas.*` | base / annotations / datasets_simple / datasets_advanced / presets / tree_structure 各 schema 完整性 |
-| `test_base.py` | `pyitol.templates.generator` | TemplateGenerator 基础引擎 |
+| `test_base.py` | `pyitol.templates.schemas.base` | 基础 schema 类（`TemplateSchema` / `LegendConfig` / `create_schema`） |
 | `test_domain_exceptions_regression.py` | `pyitol.templates.generator` / `presets` | 域异常回归：确认 InvalidColumnError/TemplateError/TemplateTypeError 而非裸 ValueError |
 
 ### 工具模块层（`utils/`）

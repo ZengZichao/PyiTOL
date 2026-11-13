@@ -69,7 +69,7 @@ pyitol validate --tree tree.nwk --taxonomy tax.csv --sequence seqs.fasta --alpha
 | `--color` | | 颜色代码（可多次指定） |
 
 **深度验证内容**：
-- 树文件：括号平衡、负分支长度(CRITICAL)、空节点名(ERROR)、重复tip名(ERROR)、多根节点(CRITICAL)
+- 树文件：括号平衡、负分支长度(CRITICAL)、空节点名(ERROR)、重复tip名(ERROR)、多根节点(ERROR)
 - 序列文件：字母表检测(DNA/RNA/protein)、ID唯一性、长度一致性
 - 对抗性防护：恶意字符(控制字符/双向文本)、循环依赖、空文件
 
@@ -147,8 +147,8 @@ pyitol template create-collapse \
 | `style` | 分支/标签样式 | `--taxonomy`, `--tree`, `--column` |
 | `arrow` | 箭头注释 | `--data-file` |
 | `linechart` | 折线图 | `--taxonomy`, `--tree`, `--column` |
-| `image` | 图像嵌入 | `--taxonomy`, `--tree` |
-| `alignment` | 序列比对 | `--taxonomy`, `--tree` |
+| `image` | 图像嵌入 | `--taxonomy`, `--tree`, `--column` 或 `--image-column` |
+| `alignment` | 序列比对 | `--taxonomy`, `--tree`, `--column` 或 `--alignment-column` |
 | `tanglegram` | 纠缠图 | `--connections` |
 | `placement` | 系统发育放置 | `--data-file` |
 | `timescale` | 时间尺度 | `--data-file` |
@@ -167,10 +167,10 @@ pyitol template create-collapse \
 | `--column` / `-c` | | | 数据列名 |
 | `--columns` | | | 多个数据列名,逗号分隔 |
 | `--colors` | | | 自定义颜色映射JSON |
-| `--label` / `-l` | | `dataset` | 数据集标签 |
+| `--label` / `-l` | | `dataset` | 数据集标签（保持默认时按类型替换为该类型的默认标签，如 `color_strip`、`heatmap`） |
 | `--id-column` | | `id` | ID列名 |
 | `--separator` / `-s` | | `TAB` | 数据分隔符（模板数据行的字段分隔符，非名称内的分类等级分隔符） |
-| `--palette` | | | 配色预设 |
+| `--palette` | | | 配色预设（仅 `color-strip` 会读取该值，且当前保留不生效，见子命令参考） |
 | `--data-file` / `-d` | | | 数据文件路径 |
 | `--force` / `-f` | | `False` | 覆盖已存在的输出文件 |
 | `--no-clobber` | | `False` | 跳过已存在的输出文件 |
@@ -521,7 +521,7 @@ pyitol tree format-support-values --tree tree.nwk --output formatted.nwk
 
 ### `pyitol utils tree-info`
 
-显示树文件基本信息。
+显示树文件基本信息。**已弃用**：与 `pyitol tree info` 重复（后者为规范命令），此处仅为向后兼容保留，执行时会发出 DeprecationWarning。
 
 ```bash
 pyitol utils tree-info --tree tree.nwk
@@ -545,7 +545,7 @@ pyitol utils taxonomy-parse --taxonomy tax.csv
 
 ### `pyitol utils learn-template`
 
-从已有 iTOL 模板文件反向学习配置。
+从已有 iTOL 模板文件反向学习配置。**已弃用**：与 `pyitol learn template` 重复（后者为规范命令），此处仅为向后兼容保留，执行时会发出 DeprecationWarning。
 
 ```bash
 pyitol utils learn-template --template colors.txt --output learned.json

@@ -134,7 +134,7 @@ twine upload --repository testpypi dist/*     # 按提示输入 TestPyPI 的 use
 
 ## 5. 故障排查 / 回滚
 
-- **误发错版本**：PyPI 不允许覆盖同一版本号，只能发新的 `patch` 版本（如 `v1.0.4`）。无法删除已发版本，**发布前务必演练**。
+- **误发错版本**：PyPI 不允许覆盖同一版本号，只能发新的 `patch` 版本（如 `v1.0.4`）。Release 虽可删除，但已删除的文件永远无法重新上传或恢复，**发布前务必演练**。
 - **publish.yml 失败**：多在 Actions 日志看原因。常见：Trusted Publisher 的 owner/repo/workflow 任一不匹配 → 核对 1.4。
 - **版本号不对（出现 `0.2.3.dev0` 之类）**：说明 `setuptools_scm` 没拿到 tag。确认 `git push origin --tags` 已执行，且 Actions checkout 用了 `fetch-depth: 0`（publish.yml 已配置）。
 - **想重发同版本**：删本地+远程旧 tag 后重打：

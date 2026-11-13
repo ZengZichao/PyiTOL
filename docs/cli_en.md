@@ -69,7 +69,7 @@ pyitol validate --tree tree.nwk --taxonomy tax.csv --sequence seqs.fasta --alpha
 | `--color` | | Color code (can be specified multiple times) |
 
 **Deep validation contents**:
-- Tree file: bracket balance, negative branch lengths (CRITICAL), empty node names (ERROR), duplicate tip names (ERROR), multiple root nodes (CRITICAL)
+- Tree file: bracket balance, negative branch lengths (CRITICAL), empty node names (ERROR), duplicate tip names (ERROR), multiple root nodes (ERROR)
 - Sequence file: alphabet detection (DNA/RNA/protein), ID uniqueness, length consistency
 - Adversarial protection: malicious characters (control characters/bidirectional text), circular dependencies, empty files
 
@@ -147,8 +147,8 @@ pyitol template create-collapse \
 | `style` | Branch/label style | `--taxonomy`, `--tree`, `--column` |
 | `arrow` | Arrow annotations | `--data-file` |
 | `linechart` | Line chart | `--taxonomy`, `--tree`, `--column` |
-| `image` | Image embedding | `--taxonomy`, `--tree` |
-| `alignment` | Sequence alignment | `--taxonomy`, `--tree` |
+| `image` | Image embedding | `--taxonomy`, `--tree`, `--column` or `--image-column` |
+| `alignment` | Sequence alignment | `--taxonomy`, `--tree`, `--column` or `--alignment-column` |
 | `tanglegram` | Tanglegram | `--connections` |
 | `placement` | Phylogenetic placement | `--data-file` |
 | `timescale` | Timescale | `--data-file` |
@@ -167,10 +167,10 @@ pyitol template create-collapse \
 | `--column` / `-c` | | | Data column name |
 | `--columns` | | | Multiple data column names, comma-separated |
 | `--colors` | | | Custom color mapping JSON |
-| `--label` / `-l` | | `dataset` | Dataset label |
+| `--label` / `-l` | | `dataset` | Dataset label (when left at the default it is replaced by the type-specific default label, e.g. `color_strip`, `heatmap`) |
 | `--id-column` | | `id` | ID column name |
 | `--separator` / `-s` | | `TAB` | Data separator (field separator for the template's data lines, not the rank separator inside a tip name) |
-| `--palette` | | | Color palette preset |
+| `--palette` | | | Color palette preset (only `color-strip` reads this value, and it is currently reserved and has no effect — see the subcommand reference) |
 | `--data-file` / `-d` | | | Data file path |
 | `--force` / `-f` | | `False` | Overwrite existing output file |
 | `--no-clobber` | | `False` | Skip existing output file |
@@ -296,7 +296,7 @@ pyitol taxonomy monophyly --taxonomy taxonomy.csv --tree tree.nwk \
 | `--output` / `-o` | Output file path |
 | `--id-column` | ID column name |
 | `--multi-tree-mode` / `-m` | Accepted but currently has **no effect**: declared for future use and never forwarded to the tree-loading code. The strategies `ask`/`first`/`last`/`split` (`all` being an internal alias for `split`) are a library capability of `core/parser.load_tree` |
-| `--polytomy-mode` | Polytomy handling strategy: `strict`/`relaxed`/`data-insufficient`, default `strict`. When a group's members occupy only some child clades of a polytomous LCA: `strict` (default) and `data-insufficient` return data_insufficient; `relaxed` returns paraphyletic instead of polyphyletic |
+| `--polytomy-mode` | Polytomy handling strategy: `strict`/`relaxed`/`data-insufficient`, default `strict`. When a group's members occupy only some child branches of a polytomous LCA: `strict` (default) and `data-insufficient` return data_insufficient; `relaxed` returns paraphyletic instead of polyphyletic |
 
 **Special identifiers**:
 - `LUCA`: MRCA of all bacteria and archaea
@@ -521,7 +521,7 @@ pyitol tree format-support-values --tree tree.nwk --output formatted.nwk
 
 ### `pyitol utils tree-info`
 
-Displays basic tree file information.
+Displays basic tree file information. **Deprecated**: duplicated by `pyitol tree info` (the canonical command); kept only for backward compatibility and emits a DeprecationWarning when run.
 
 ```bash
 pyitol utils tree-info --tree tree.nwk
@@ -545,7 +545,7 @@ pyitol utils taxonomy-parse --taxonomy tax.csv
 
 ### `pyitol utils learn-template`
 
-Learns the configuration back from an existing iTOL template file.
+Learns the configuration back from an existing iTOL template file. **Deprecated**: duplicated by `pyitol learn template` (the canonical command); kept only for backward compatibility and emits a DeprecationWarning when run.
 
 ```bash
 pyitol utils learn-template --template colors.txt --output learned.json

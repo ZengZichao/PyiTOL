@@ -76,14 +76,14 @@ All `api_demos/` scripts and the tree files of `template_demos/01`, `02`, `03` l
 **Key features**:
 - `ITOLAPIClient` initialization (auto-reads `.itolapi.key`)
 - `upload_and_export()` convenience method
-- Built-in render polling (`query_status`) to wait for readiness
+- Built-in fixed wait before the export (`wait_time` / `poll_interval`); no `query_status` polling, because iTOL offers no official "tree ready" status API
 - Suitable for first-time users of the PyiTOL API
 
 ### 02_multi_dataset_publication.py
 **Nature**: Comprehensive academic publication-grade example
 **Purpose**: Demonstrates how to upload a **multi-dataset combination** (color strip + heatmap + bar) and export journal-grade images.
 **Key features**:
-- Uses `TemplateGenerator` to dynamically generate templates
+- Uses `generate_color_strip_template()` to dynamically generate templates
 - Applies the `colorblind` preset palette (Tol Bright)
 - **300 DPI PDF** export (meets print requirements for journals such as Nature / Cell / ISME J)
 - Simultaneously exports SVG vector graphics for post-editing

@@ -76,14 +76,14 @@ examples/
 **关键特性**：
 - `ITOLAPIClient` 初始化（自动读取 `.itolapi.key`）
 - `upload_and_export()` 便捷方法
-- 内置渲染轮询（`query_status`）等待就绪
+- 导出前的内置固定等待（`wait_time` / `poll_interval`）；不进行 `query_status` 轮询，因为 iTOL 未提供官方就绪状态接口
 - 适用于首次体验 PyiTOL API 的用户
 
 ### 02_multi_dataset_publication.py
 **性质**：学术发表级综合示例
-**用途**：演示如何上传 **多数据集组合**（色带 + heatmap + bar）并导出期刊级图片。
+**用途**：演示如何上传 **多数据集组合**（色带 + 热图 + 柱状图）并导出期刊级图片。
 **关键特性**：
-- 使用 `TemplateGenerator` 动态生成模板
+- 使用 `generate_color_strip_template()` 动态生成模板
 - 应用 `colorblind` 预设调色板（Tol Bright）
 - **300 DPI PDF** 导出（满足 Nature / Cell / ISME J 等期刊印刷要求）
 - 同时导出 SVG 矢量图供后期编辑
@@ -190,7 +190,7 @@ python examples/api_demos/02_multi_dataset_publication.py
 | **分辨率** | 导出 300 DPI 的 PDF 或 PNG | `02_multi_dataset_publication.py`、`03_publication_quality_figure.py` |
 | **配色** | 使用色盲友好预设（Tol Bright / Vibrant） | `02_multi_dataset_publication.py` |
 | **项目名** | 使用英文专业名称，避免中文或"临时"字样 | 全部示例 |
-| **图层组合** | 将色带、heatmap、bar 等互补数据集叠加 | `03_publication_quality_figure.py` |
+| **图层组合** | 将色带、热图、柱状图等互补数据集叠加 | `03_publication_quality_figure.py` |
 | **矢量编辑** | 同时导出 SVG 供 Illustrator / Inkscape 微调 | `02_multi_dataset_publication.py` |
 | **格式多样性** | 根据投稿要求输出 PDF（印刷）、TIFF（部分期刊）、PNG（PPT） | `04_batch_format_export.py` |
 

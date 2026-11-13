@@ -413,7 +413,7 @@ print(schema)  # 'newick'
 | `wide_to_long(input_file, output_file, id_column='id', value_name='value', var_name='variable')` | 宽表转长表 |
 | `long_to_wide(input_file, output_file, id_column='id', variable_column='variable', value_column='value')` | 长表转宽表 |
 | `df_tree(df_or_path, columns=None, main='col', order='none', metric='euclidean', linkage_method='average')` | 从数据框构建 Newick 树 |
-| `convert_to_binary_matrix(...)` / `category_to_connect(...)` | 分类转二元矩阵 / 共现转连接对 |
+| `convert_to_binary_matrix(...)` / `category_to_connect(...)` | 数值区间转二元矩阵（-1/0/1）/ 同类群两两转连接对 |
 
 ```python
 from pyitol.utils.data_converters import wide_to_long, long_to_wide, df_tree

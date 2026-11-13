@@ -21,7 +21,7 @@ tests/
 ├── api/                                # API client layer tests
 │   ├── __init__.py                     # package marker (empty file)
 │   ├── test_client.py                  # ITOLAPIClient: upload/export/delete/status/response parsing
-│   ├── test_client_robustness.py       # QA regression suite: network errors wrapped as UploadError/ExportError, temp zip cleanup
+│   ├── test_client_robustness.py       # QA independent regression suite: network errors wrapped as UploadError/ExportError, temp zip cleanup
 │   ├── test_client_robustness_regression.py # regression lock: same upload/export wrapping and temp-zip cleanup (sibling suite)
 │   └── test_error_translation.py       # API error translation and reporting
 │
@@ -69,11 +69,11 @@ tests/
 │
 ├── templates/                          # template module layer tests
 │   ├── __init__.py                     # package marker (empty file)
-│   ├── test_base.py                    # TemplateGenerator base engine
+│   ├── test_base.py                    # base schema classes (TemplateSchema/LegendConfig/create_schema)
 │   ├── test_boundary_exceptions.py     # single-column COLLAPSE/PRUNE keep all IDs, under-filled row warning, pie FIELD_COLORS, InvalidColumnError
 │   ├── test_domain_exceptions.py       # generators/presets raise InvalidColumnError/TemplateError/TemplateTypeError, not bare ValueError
 │   ├── test_domain_exceptions_regression.py # template domain exception regression (InvalidColumnError/TemplateError/TemplateTypeError)
-│   ├── test_generator.py               # end-to-end generation of every generate_*_template() function
+│   ├── test_generator.py               # end-to-end generation of the 30+ generate_*_template() functions
 │   ├── test_learner.py                 # template reverse learning / train_theme
 │   ├── test_merge_embedded_conflict.py # merge_embedded_taxonomy conflict branch keeps the embedded value without KeyError
 │   ├── test_presets.py                 # presets and palettes (Nature/Cell/Colorblind)
@@ -161,7 +161,7 @@ tests/
 | `test_learner.py` | `pyitol.templates.learner` | `HEADER_REVERSE` completeness, reverse parsing of a single template, `train_theme` (empty / single / multi-file aggregation / JSON serialization / error tolerance) |
 | `test_presets.py` | `pyitol.templates.presets` | all schema presets, unknown-preset errors, the Nature/Cell/Colorblind palettes, colorblind friendliness |
 | `test_schemas_*.py` | `pyitol.templates.schemas.*` | completeness of the base / annotations / datasets_simple / datasets_advanced / presets / tree_structure schemas |
-| `test_base.py` | `pyitol.templates.generator` | the TemplateGenerator base engine |
+| `test_base.py` | `pyitol.templates.schemas.base` | the base schema classes (`TemplateSchema` / `LegendConfig` / `create_schema`) |
 | `test_domain_exceptions_regression.py` | `pyitol.templates.generator` / `presets` | domain exception regression: confirms InvalidColumnError/TemplateError/TemplateTypeError instead of a bare ValueError |
 
 ### Utility module layer (`utils/`)

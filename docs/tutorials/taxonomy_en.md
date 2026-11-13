@@ -10,7 +10,7 @@ PyiTOL provides a complete taxonomy analysis toolchain: rank identification, inf
 pyitol taxonomy ranks --taxonomy taxonomy.csv
 ```
 
-`taxonomy ranks` lists every column of the taxonomy table except the ID column (`--id-column`, default `id`): standard ranks (domain, phylum, class, order, family, genus, species, etc.) and custom columns are reported the same way, with no recognition step and no reordering.
+`taxonomy ranks` lists every column of the taxonomy table except the ID column (`--id-column`, default `id`): standard ranks (domain, phylum, class, order, family, genus, species, etc.) and custom columns are reported the same way, with no recognition step and no filtering. Column names are not necessarily kept in the order they appear in the table: columns whose names match a standard rank name exactly (`Domain`, `Kingdom`, `Phylum`, `Class`, `Order`, `Family`, `Genus`, `Species`) are re-sorted into that fixed rank order, while all other columns (including lowercase spellings and custom columns) keep their relative order at the end; if the table consists only of the ID column plus one semicolon-separated GTDB lineage column, that column is parsed into standard rank columns before being listed.
 
 ## 2. Taxonomic Information Extraction
 

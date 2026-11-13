@@ -14,7 +14,7 @@
 
 ## API-Related Issues
 
-### `ValueError: No API key provided`
+### `APIKeyError: No API key provided`
 - Pass it in via a command-line parameter: `pyitol task upload --api-key YOUR_KEY`
 - Set an environment variable: `export ITOL_API_KEY=YOUR_KEY`
 - Create a `.itolapi.key` file in the current directory containing the plain-text API Key
@@ -27,7 +27,7 @@ See [API Usage Guide](api_en.md#api-key-configuration) for details.
 - Confirm the network can access `https://itol.embl.de`
 
 ### Export timeout
-- Large file exports may take longer; increase the wait time via `--wait`
+- Large file exports may take longer; increase the wait time via `--wait` (the value only takes effect for `task upload-and-export` and for `task upload` with `--download`; `task export`'s `--wait` is parsed and then discarded, so it neither waits nor caps the timeout)
 - If timeouts occur frequently, check whether the resolution/dimensions are set too large: `task upload-and-export` uses `--dpi`, `--width`, `--height`; `task export` has no such options, so they must be given as `--parameter dpi=300`, `--parameter width=2400`, etc.
 
 ## Template Generation Issues
@@ -38,7 +38,7 @@ See [API Usage Guide](api_en.md#api-key-configuration) for details.
 
 ### Colors not displayed or displayed incorrectly
 - Confirm the color format is correct: `#RRGGBB`, `rgb(r,g,b)`, `hsl(h,s,l)`, or a named color (such as `red`)
-- When a categorical variable exceeds 7 values, it is recommended to use `--palette colorblind` to select a colorblind-friendly palette
+- When a categorical variable exceeds 7 values, it is recommended to use `--palette colorblind` to select a colorblind-friendly palette (the option currently takes effect only in `taxonomy style` and `taxonomy check-and-style`; `template create`/`create-*` accept `--palette` but never pass its value to the generators)
 
 ### Separator conflict warning
 - If data values contain commas, spaces, or tabs, use `--separator` to switch to a non-conflicting separator

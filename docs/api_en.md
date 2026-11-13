@@ -413,7 +413,7 @@ print(schema)  # 'newick'
 | `wide_to_long(input_file, output_file, id_column='id', value_name='value', var_name='variable')` | Wide to long |
 | `long_to_wide(input_file, output_file, id_column='id', variable_column='variable', value_column='value')` | Long to wide |
 | `df_tree(df_or_path, columns=None, main='col', order='none', metric='euclidean', linkage_method='average')` | Build a Newick tree from a dataframe |
-| `convert_to_binary_matrix(...)` / `category_to_connect(...)` | Category to binary matrix / co-occurrence to connection pairs |
+| `convert_to_binary_matrix(...)` / `category_to_connect(...)` | Numeric ranges to a binary matrix (-1/0/1) / same-category nodes to connection pairs |
 
 ```python
 from pyitol.utils.data_converters import wide_to_long, long_to_wide, df_tree

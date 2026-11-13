@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.2] - 2026-08-22
 
 ### Added
-- Benchmark provenance stamping: all benchmark result artifacts now embed
+- Benchmark provenance stamping: all benchmark result JSON files now embed
   `_provenance` (`pyitol_version` + `git_commit`) via `bench_provenance()` in
   `benchmarks/_bench_utils.py`.
 
@@ -55,6 +55,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   RELEASE.md DOI records (Zenodo 22046669); version fallback synced to 1.0.1.
   No code-logic changes relative to 1.0.0.
 
-## [1.0.0] - 2026-08-13
+## [1.0.0] - 2026-08-21
 
 Initial release of PyiTOL.

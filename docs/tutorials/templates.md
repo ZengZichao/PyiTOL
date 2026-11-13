@@ -2,11 +2,11 @@
 
 [English](templates_en.md) | 中文
 
-PyiTOL 支持 iTOL v7 规范下的 33 种模板类型（通过统一入口 `template create <类型>` 创建）。另有 `external-shape-bubble`（气泡外部形状，`external-shape` 的变体）不在统一入口支持范围内，只能通过专用子命令 `create-external-shape-bubble` 创建。统一入口的 33 种类型加上 `external-shape-bubble` 变体，共对应 34 个专用 `create-*` 子命令，其中 33 个与统一入口功能等价：例如 `pyitol template create arrow` 与 `pyitol template create-arrow` 等价，可按习惯选用。
+PyiTOL 支持 iTOL v7 规范下的 33 种模板类型（通过统一入口 `template create <类型>` 创建）。另有 `external-shape-bubble`（气泡外部形状，`external-shape` 的变体）不在统一入口支持范围内，只能通过专用子命令 `create-external-shape-bubble` 创建。统一入口的 33 种类型加上 `external-shape-bubble` 变体，共对应 34 个专用 `create-*` 子命令，其中 33 个与统一入口一一对应：例如 `pyitol template create arrow` 与 `pyitol template create-arrow` 可按习惯选用。但两者在选项缺省时用的默认值并不相同——统一入口对所有类型共用一套通用默认值，专用子命令各自带有为该类型调过的默认值（如 gradient 的 `--strip-width` 在统一入口为 50、`create-gradient` 为 25；boxplot 的 `--width` 分别为 1000 与 1500；connections 的 `--color` 分别为 `#ff0000` 与 `#e64b35`）。需要完全一致的输出时，请显式写出这些选项。
 
 ## 统一入口
 
-除 `--output` 之外，统一入口的必选参数**按类型而变**：多数类型要 `--taxonomy` + `--tree` 再加一个分类列（`--column` 或 `--columns`），数据文件类只给 `--data-file`，连接类只给 `--connections`，结构类给 `--node-ids`。下面的骨架演示最常见的一类，注释里给出各类型的必选参数：
+除 `--output`（可省略，缺省写入 `config_template.txt`）外，统一入口的必选参数**按类型而变**：多数类型要 `--taxonomy` + `--tree` 再加一个分类列（`--column` 或 `--columns`），数据文件类只给 `--data-file`，连接类只给 `--connections`，结构类给 `--node-ids`。下面的骨架演示最常见的一类，注释里给出各类型的必选参数：
 
 ```bash
 # 必选参数按类型分组：
@@ -14,7 +14,7 @@ PyiTOL 支持 iTOL v7 规范下的 33 种模板类型（通过统一入口 `temp
 #     external-shape、tree-colors、branch-gradient、ranges、highlight、style、linechart
 #   --taxonomy + --tree + --columns：multi-bar、heatmap、pie、binary
 #   --taxonomy + --tree + --column（也可用替代名 --label-column/--image-column/--alignment-column）：
-#     labels、image、alignment；boxplot、popup-info 只需 --taxonomy + --tree（统计列名有默认值）
+#     labels、image、alignment；boxplot、popup-info 只需 --taxonomy + --tree（各自的列名选项有默认值）
 #   --data-file：domains、spacing、arrow、placement、timescale、meme、manual
 #   --connections：connections（JSON 文件路径）、tanglegram（内联 id1,id2;id3,id4）
 #   --node-ids：prune；collapse 用 --node-ids，或 --taxon + --rank + --taxonomy + --tree
@@ -49,7 +49,7 @@ pyitol template create color-strip \
 
 ### Tree Colors（树着色）
 
-对分支、标签、范围或宽度进行着色。
+按 `--color-type`（`clade`/`branch`/`label`/`width`/`range`/`gradient`，默认 `clade`）为单系群（clade）、分支、标签、范围、宽度或渐变着色，其中 `gradient` 要求该列为数值列。
 
 ```bash
 # 分支着色（clade）
@@ -73,7 +73,7 @@ pyitol template create symbols \
   --column Type --symbol-type diamond --output symbols.txt
 ```
 
-符号类型：`diamond`, `circle`, `square`, `triangle`, `star`
+符号类型：`circle`, `square`, `triangle`, `star`, `left-triangle`, `right-triangle`；`diamond`（上文示例所用，也是 `--symbol-type` 在两种入口下的默认值）仅为兼容保留，iTOL 的 DATASET_SYMBOL 没有菱形，生成时会回退为 `square` 并给出警告。
 
 ### External Shapes（外部形状）
 
@@ -313,7 +313,7 @@ pyitol template create alignment \
   --alignment-column AlignedSeq --color-scheme amino_acid --output alignment.txt
 ```
 
-颜色方案：`nucleotide`, `amino_acid`
+配色方案：`nucleotide`, `amino_acid`
 
 ### Tanglegram（纠缠图）
 
@@ -329,7 +329,7 @@ pyitol template create domains \
   --data-file domains.json --output domains.txt
 ```
 
-domains.json 为 JSON 内容（不是 CSV），格式为 `[{"id":"TaxonA","domains":[{"start":1,"end":50,"name":"PF001","color":"#ff0000"}]}]`。
+domains.json 为 JSON 内容（不是 CSV），每个结构域一条记录，格式为 `[{"id":"TaxonA","from":"10","to":"50","type":"PF001","color":"#ff0000"}]`。
 
 ### Arrows（箭头注释）v7+
 

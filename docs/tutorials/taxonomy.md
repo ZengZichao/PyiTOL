@@ -10,7 +10,7 @@ PyiTOL 提供完整的分类分析工具链：等级识别、信息提取、单�
 pyitol taxonomy ranks --taxonomy taxonomy.csv
 ```
 
-`taxonomy ranks` 原样列出分类表格中除 ID 列（`--id-column`，默认 `id`）之外的所有列名：标准分类等级（domain、phylum、class、order、family、genus、species 等）与自定义列一视同仁，既不做识别判断，也不重新排序。
+`taxonomy ranks` 列出分类表格中除 ID 列（`--id-column`，默认 `id`）之外的所有列名：标准分类等级（domain、phylum、class、order、family、genus、species 等）与自定义列一视同仁，既不做识别判断，也不筛选。列名不一定保持表格中的原始顺序：列名精确命中标准等级名（`Domain`、`Kingdom`、`Phylum`、`Class`、`Order`、`Family`、`Genus`、`Species`）时会按该固定等级顺序重排，其余列（包括小写写法与自定义列）保持原有相对顺序并排在最后；若表格只有 ID 列加一列 GTDB 分号分隔谱系串，该串会先被解析为标准等级列再列出。
 
 ## 2. 分类信息提取
 
