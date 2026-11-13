@@ -741,7 +741,7 @@ PyiTOL/
 | Library | Version | License |
 |---------|---------|---------|
 | typer | >=0.15.0,<1.0 | MIT |
-| rich | ~=13.0 | MIT |
+| rich | >=13,<16 | MIT |
 | pandas | ~=2.0 | BSD-3-Clause |
 | dendropy | >=4.6,<6.0 | BSD-3-Clause |
 | numpy | >=1.24,<3.0 | BSD-3-Clause |
