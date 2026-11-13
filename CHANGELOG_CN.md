@@ -9,6 +9,16 @@
 
 ## [未发布]
 
+### 修复
+- **文档**：中英文文档对已互校并与代码实况同步——修正 `create-domains` 的数据文件列名、
+  `--multi-tree-mode` / `--palette` / `--wait` 的适用范围、多根节点的严重级别
+  （ERROR 而非 CRITICAL）、模板数量口径（33 种类型、34 个专用子命令），
+  以及 README、CLI、API、故障排查与教程各页的翻译漂移。
+- **示例**：API 与模板示例不再于导出前轮询 `query_status()`。iTOL 未提供就绪状态接口，
+  且每次 `query_status()` 调用都会触发一次完整 SVG 导出，因此示例改为一次固定等待，
+  与 `ITOLAPIClient.upload_and_export()` 的行为一致；基础上传示例同时显式传入
+  `poll_interval`，因为导出前的等待时长由它（而非 `wait_time`）决定。
+
 ## [1.0.3] - 2026-08-26
 
 ### 新增

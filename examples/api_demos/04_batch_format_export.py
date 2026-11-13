@@ -28,19 +28,16 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 PROJECT_NAME = "PyiTOL_Batch_Export_Demo"
 
 
-def _wait_until_ready(client, tree_id: str, max_wait: int = 120) -> None:
-    """Poll iTOL rendering status until ready or timeout (replaces fixed sleep)."""
-    elapsed = 0
-    interval = 10
-    while elapsed < max_wait:
-        status = client.query_status(tree_id)
-        if status.get("status") == "ready":
-            print(f"  Tree ready after {elapsed}s")
-            return
-        print(f"  Waiting for rendering... ({elapsed}s elapsed, status={status.get('status')})")
-        time.sleep(interval)
-        elapsed += interval
-    print(f"  Polling timeout after {elapsed}s; attempting export anyway")
+def _wait_until_ready(tree_id: str, max_wait: int = 120) -> None:
+    """Wait once before exporting: iTOL exposes no tree-readiness endpoint.
+
+    ``query_status()`` probes readiness by performing one full SVG export per
+    call, so polling it burns export quota for an unstable answer — the same
+    reason ``upload_and_export()`` waits once and exports exactly once.
+    """
+    wait = min(10, max_wait)
+    print(f"  Waiting {wait}s before exporting tree {tree_id}")
+    time.sleep(wait)
 
 
 def main():
@@ -63,7 +60,7 @@ def main():
         )
         print(f"  Tree ID: {tree_id}")
 
-        _wait_until_ready(client, tree_id, max_wait=120)
+        _wait_until_ready(tree_id, max_wait=120)
 
         # fmt -> export kwargs. Note the API uses fmt= (not format=) to avoid
         # shadowing the built-in.
