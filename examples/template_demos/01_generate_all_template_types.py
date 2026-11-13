@@ -22,37 +22,37 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from pyitol.templates.generator import (
-    generate_color_strip_template,
-    generate_simple_bar_template,
-    generate_multibar_template,
-    generate_heatmap_template,
-    generate_symbols_template,
-    generate_pie_template,
-    generate_boxplot_template,
-    generate_gradient_template,
-    generate_connection_template,
-    generate_domain_template,
-    generate_text_template,
-    generate_external_shape_template,
-    generate_linechart_template,
-    generate_image_template,
     generate_alignment_template,
-    generate_tanglegram_template,
-    generate_placement_template,
-    generate_timescale_template,
-    generate_meme_template,
     generate_arrow_template,
     generate_binary_template,
-    generate_collapse_template,
-    generate_prune_template,
-    generate_spacing_template,
-    generate_labels_template,
-    generate_popup_info_template,
-    generate_tree_colors_template,
-    generate_ranges_template,
-    generate_style_template,
+    generate_boxplot_template,
     generate_branch_template,
+    generate_collapse_template,
+    generate_color_strip_template,
+    generate_connection_template,
+    generate_domain_template,
+    generate_external_shape_template,
+    generate_gradient_template,
+    generate_heatmap_template,
+    generate_image_template,
+    generate_labels_template,
+    generate_linechart_template,
     generate_manual_template,
+    generate_meme_template,
+    generate_multibar_template,
+    generate_pie_template,
+    generate_placement_template,
+    generate_popup_info_template,
+    generate_prune_template,
+    generate_ranges_template,
+    generate_simple_bar_template,
+    generate_spacing_template,
+    generate_style_template,
+    generate_symbols_template,
+    generate_tanglegram_template,
+    generate_text_template,
+    generate_timescale_template,
+    generate_tree_colors_template,
 )
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
@@ -69,7 +69,7 @@ TIPS = [t.taxon.label for t in _tree.leaf_nodes() if t.taxon]
 TIP_A, TIP_B, TIP_C, TIP_D = TIPS[0], TIPS[1], TIPS[2], TIPS[3]
 
 
-def main():
+def main() -> None:
     generated = []
 
     # Datasets requiring taxonomy + tree.
@@ -214,14 +214,16 @@ def main():
     generated.append("manual")
 
     # Boxplot requires specific columns; build a minimal data frame with real tip IDs.
-    bp_df = pd.DataFrame({
-        "id": [TIP_A, TIP_B, TIP_C, TIP_D],
-        "minimum": [1, 2, 1.5, 0.5],
-        "q1": [2, 3, 2.5, 1.5],
-        "median": [3, 4, 3.5, 2.5],
-        "q3": [4, 5, 4.5, 3.5],
-        "maximum": [5, 6, 5.5, 4.5],
-    })
+    bp_df = pd.DataFrame(
+        {
+            "id": [TIP_A, TIP_B, TIP_C, TIP_D],
+            "minimum": [1, 2, 1.5, 0.5],
+            "q1": [2, 3, 2.5, 1.5],
+            "median": [3, 4, 3.5, 2.5],
+            "q3": [4, 5, 4.5, 3.5],
+            "maximum": [5, 6, 5.5, 4.5],
+        }
+    )
     bp_path = OUTPUT_DIR / "boxplot_data.tsv"
     bp_df.to_csv(bp_path, sep="\t", index=False)
     generate_boxplot_template(OUTPUT_DIR / "boxplot.txt", str(bp_path), TREE_FILE)

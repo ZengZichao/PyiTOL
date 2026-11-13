@@ -20,9 +20,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from pyitol.api.client import ITOLAPIClient
+from pyitol.exceptions import APIKeyError
 from pyitol.templates.generator import generate_color_strip_template
 from pyitol.templates.presets import get_palette
-from pyitol.exceptions import APIKeyError
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 TREE_FILE = str(DATA_DIR / "synthetic_32tips.nwk")
@@ -44,7 +44,7 @@ def _wait_until_ready(tree_id: str, max_wait: int = 120) -> None:
     time.sleep(wait)
 
 
-def main():
+def main() -> None:
     for f in [TREE_FILE, TAXONOMY_FILE]:
         if not Path(f).exists():
             print(f"Error: File not found: {f}")
@@ -66,7 +66,10 @@ def main():
 
     cs_path = OUTPUT_DIR / "colorstrip.txt"
     generate_color_strip_template(
-        cs_path, TAXONOMY_FILE, TREE_FILE, "Phylum",
+        cs_path,
+        TAXONOMY_FILE,
+        TREE_FILE,
+        "Phylum",
         label="Phylum",
         colors={"Phylum_01": palette[0], "Phylum_02": palette[1]},
     )
