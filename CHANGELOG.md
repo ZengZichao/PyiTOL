@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- **Dependencies**: `rich` was widened from `~=13.0` to `>=13,<16`, so installs
+  may now resolve rich 14 or 15. CI installs from `pyproject.toml`, so the
+  matrix runs against the resolved version (already verified green for rich 15
+  on Dependabot's PR #9). `environment.yml` and the README dependency tables
+  were updated to match, and `environment.yml`'s `mypy` floor was aligned with
+  `pyproject.toml` (`>=1.11.0`).
+
 ### Fixed
 - **Documentation**: the bilingual document pairs were reconciled with each
   other and with the code — corrected the `create-domains` data-file columns,

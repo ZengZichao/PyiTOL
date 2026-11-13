@@ -9,6 +9,13 @@
 
 ## [未发布]
 
+### 变更
+- **依赖**：`rich` 的约束由 `~=13.0` 放宽为 `>=13,<16`，安装时可能解析到 rich 14 或 15。
+  CI 依据 `pyproject.toml` 安装依赖，因此矩阵测试针对的是实际解析到的版本
+  （rich 15 已在 Dependabot 的 PR #9 上验证为全绿）。`environment.yml` 与 README
+  依赖表已同步更新，并把 `environment.yml` 的 `mypy` 下限对齐到
+  `pyproject.toml` 的 `>=1.11.0`。
+
 ### 修复
 - **文档**：中英文文档对已互校并与代码实况同步——修正 `create-domains` 的数据文件列名、
   `--multi-tree-mode` / `--palette` / `--wait` 的适用范围、多根节点的严重级别
