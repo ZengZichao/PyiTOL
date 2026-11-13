@@ -1,10 +1,24 @@
 # 模板生成教程
 
-PyiTOL 支持 iTOL v7 规范下的 31 种模板类型（通过统一入口 `template create <类型>` 创建）。另有 `external-shape-bubble`（气泡外部形状，`external-shape` 的变体）需通过专用子命令 `create-external-shape-bubble` 创建，不在统一入口支持范围内。除统一入口外，还提供 31 个功能等价的专用 `create-*` 子命令：例如 `pyitol template create arrow` 与 `pyitol template create-arrow` 等价，可按习惯选用。
+[English](templates_en.md) | 中文
+
+PyiTOL 支持 iTOL v7 规范下的 33 种模板类型（通过统一入口 `template create <类型>` 创建）。另有 `external-shape-bubble`（气泡外部形状，`external-shape` 的变体）不在统一入口支持范围内，只能通过专用子命令 `create-external-shape-bubble` 创建。统一入口的 33 种类型加上 `external-shape-bubble` 变体，共对应 34 个专用 `create-*` 子命令，其中 33 个与统一入口一一对应：例如 `pyitol template create arrow` 与 `pyitol template create-arrow` 可按习惯选用。但两者在选项缺省时用的默认值并不相同——统一入口对所有类型共用一套通用默认值，专用子命令各自带有为该类型调过的默认值（如 gradient 的 `--strip-width` 在统一入口为 50、`create-gradient` 为 25；boxplot 的 `--width` 分别为 1000 与 1500；connections 的 `--color` 分别为 `#ff0000` 与 `#e64b35`）。需要完全一致的输出时，请显式写出这些选项。
 
 ## 统一入口
 
+除 `--output`（可省略，缺省写入 `config_template.txt`）外，统一入口的必选参数**按类型而变**：多数类型要 `--taxonomy` + `--tree` 再加一个分类列（`--column` 或 `--columns`），数据文件类只给 `--data-file`，连接类只给 `--connections`，结构类给 `--node-ids`。下面的骨架演示最常见的一类，注释里给出各类型的必选参数：
+
 ```bash
+# 必选参数按类型分组：
+#   --taxonomy + --tree + --column：color-strip、branch、simple-bar、symbols、gradient、text、
+#     external-shape、tree-colors、branch-gradient、ranges、highlight、style、linechart
+#   --taxonomy + --tree + --columns：multi-bar、heatmap、pie、binary
+#   --taxonomy + --tree + --column（也可用替代名 --label-column/--image-column/--alignment-column）：
+#     labels、image、alignment；boxplot、popup-info 只需 --taxonomy + --tree（各自的列名选项有默认值）
+#   --data-file：domains、spacing、arrow、placement、timescale、meme、manual
+#   --connections：connections（JSON 文件路径）、tanglegram（内联 id1,id2;id3,id4）
+#   --node-ids：prune；collapse 用 --node-ids，或 --taxon + --rank + --taxonomy + --tree
+#   external-shape-bubble 不在统一入口内，只能用专用子命令 create-external-shape-bubble
 pyitol template create <类型> \
   --taxonomy data.csv --tree tree.nwk \
   --column <列名> --output output.txt
@@ -16,22 +30,26 @@ pyitol template create <类型> \
 pyitol template create --help
 ```
 
+> 注意：两种调用方式的**数据文件参数名不同**。统一入口 `template create` 一律使用 `--data-file`；专用子命令中 `create-domains`、`create-spacing` 使用 `--data`，而 `create-arrow`、`create-placement`、`create-timescale`、`create-meme`、`create-manual` 仍使用 `--data-file`。在两种写法之间复制示例时请先核对参数名。
+
 ## 分类数据类模板
 
-### Color Strip（颜色条带）
+### Color Strip（色带）
 
-为每个末端节点添加颜色条带，用于展示分类信息。
+为每个末端（叶）添加色带（color strip），用于展示分类信息。
 
 ```bash
 pyitol template create color-strip \
   --taxonomy taxonomy.csv --tree tree.nwk \
   --column Phylum --output colors.txt \
-  --strip-width 50 --palette nature
+  --strip-width 50
 ```
+
+`--palette` 虽是此类型的合法选项，但目前是保留选项、对输出无影响，故示例里不再使用（原因见“配色预设（`--palette` 暂不生效）”一节）。
 
 ### Tree Colors（树着色）
 
-对分支、标签、范围或宽度进行着色。
+按 `--color-type`（`clade`/`branch`/`label`/`width`/`range`/`gradient`，默认 `clade`）为单系群（clade）、分支、标签、范围、宽度或渐变着色，其中 `gradient` 要求该列为数值列。
 
 ```bash
 # 分支着色（clade）
@@ -55,9 +73,9 @@ pyitol template create symbols \
   --column Type --symbol-type diamond --output symbols.txt
 ```
 
-符号类型：`diamond`, `circle`, `square`, `triangle`, `star`
+符号类型：`circle`, `square`, `triangle`, `star`, `left-triangle`, `right-triangle`；`diamond`（上文示例所用，也是 `--symbol-type` 在两种入口下的默认值）仅为兼容保留，iTOL 的 DATASET_SYMBOL 没有菱形，生成时会回退为 `square` 并给出警告。
 
-### External Shape（外部形状）
+### External Shapes（外部形状）
 
 在节点外部添加形状标记。
 
@@ -143,7 +161,9 @@ pyitol template create boxplot \
 
 数据文件需包含：minimum, q1, median, q3, maximum 列。
 
-### Gradient（颜色渐变）
+### Gradient（渐变色带）
+
+按数值列为末端（叶）添加渐变色带（gradient strip）。
 
 ```bash
 pyitol template create gradient \
@@ -201,7 +221,7 @@ spacing.csv 格式：id, factor
 
 ### Ranges（彩色范围）
 
-为分组类群标注彩色范围带，突出 clade 分布。
+为分组类群标注彩色范围带，突出单系群（clade）分布。
 
 ```bash
 pyitol template create ranges \
@@ -278,8 +298,22 @@ pyitol template create highlight \
 
 ```bash
 pyitol template create connections \
-  --connections "[[A,B],[C,D]]" --output connections.txt
+  --connections pairs.json --output connections.txt
 ```
+
+`--connections` 接收的是 JSON **文件路径**（不是内联字符串），文件格式：`[["TaxonA","TaxonB"],["TaxonC","TaxonD"]]`
+
+### Alignment（序列比对）
+
+在节点旁展示序列比对结果，按核苷酸或氨基酸方案着色。
+
+```bash
+pyitol template create alignment \
+  --taxonomy taxonomy.csv --tree tree.nwk \
+  --alignment-column AlignedSeq --color-scheme amino_acid --output alignment.txt
+```
+
+配色方案：`nucleotide`, `amino_acid`
 
 ### Tanglegram（纠缠图）
 
@@ -292,10 +326,10 @@ pyitol template create tanglegram \
 
 ```bash
 pyitol template create domains \
-  --data-file domains.csv --output domains.txt
+  --data-file domains.json --output domains.txt
 ```
 
-domains.csv 格式：id, from, to, type, color
+domains.json 为 JSON 内容（不是 CSV），每个结构域一条记录，格式为 `[{"id":"TaxonA","from":"10","to":"50","type":"PF001","color":"#ff0000"}]`。
 
 ### Arrows（箭头注释）v7+
 
@@ -356,9 +390,13 @@ pyitol template validate --template colors.txt
 
 ## 从已有模板学习
 
+规范命令是 `learn template`（`--template`/`-t` 可重复指定多个模板文件，`--output`/`-o` 指定输出）：
+
 ```bash
-pyitol utils learn-template --template colors.txt --output learned.json
+pyitol learn template --template colors.txt --output learned.json
 ```
+
+> `utils learn-template` 是与 `learn template` 功能重复的命令，源码 docstring 已标注该重复并建议改用 `learn template`，调用时还会发出 DeprecationWarning；受支持的写法是 `learn template`。
 
 ## 批量学习主题
 
@@ -368,9 +406,9 @@ pyitol utils learn-template --template colors.txt --output learned.json
 pyitol learn train-theme --dir ./templates --output theme.json
 ```
 
-## 分隔符选择
+## 数据字段分隔符选择
 
-所有模板命令支持 `--separator` 参数：
+统一入口 `template create`、34 个专用 `create-*` 子命令以及 `template bundle` 都支持 `--separator`（数据字段分隔符，决定模板数据行各字段之间用什么字符分隔）：
 
 | 值 | 说明 |
 |----|------|
@@ -384,20 +422,29 @@ pyitol template create color-strip \
   --column Phylum --separator COMMA --output colors.txt
 ```
 
-## 配色预设
+> `--separator` 与 `taxonomy extract-from-names` 的 `--delimiter`（名称分段符）是两回事：后者拆分末端（叶）名称内部的分类等级片段（如 `Bacteria_Firmicutes_...`），前者拆分模板数据行的字段。
 
-使用 `--palette` 指定预设配色：
+## 配色预设（`--palette` 暂不生效）
 
-```bash
-pyitol template create color-strip \
-  --taxonomy taxonomy.csv --tree tree.nwk \
-  --column Phylum --palette nature --output colors.txt
-```
+`--palette` 是统一入口 `template create` 与专用子命令 `create-color-strip` 的合法选项，但两处都没有把它的值交给任何生成函数：`create-color-strip` 调用 `generate_color_strip_template()` 时不带 `palette` 实参，而该函数也没有 `palette` 形参（源码里注明它是保留参数）。因此 `--palette nature` 与省略该选项产出的模板内容相同，其余 32 种类型更是直接忽略它。
 
-可用预设：`nature`, `cell`, `colorblind`
-
-查看预设颜色：
+要用上预设配色，先用 `learn palette` 查出预设里的颜色，再经 `--colors` 显式传入（`--colors` 对 `color-strip`、`branch`、`tree-colors`、`ranges`、`highlight`、`style`、`symbols`、`pie`、`multi-bar`、`external-shape` 这 10 个命令有效）：
 
 ```bash
 pyitol learn palette --preset-name nature
 ```
+
+```bash
+pyitol template create color-strip \
+  --taxonomy taxonomy.csv --tree tree.nwk \
+  --column Phylum --output colors.txt \
+  --colors '{"Firmicutes":"#1f77b4","Proteobacteria":"#ff7f0e"}'
+```
+
+可查询的预设名：`nature`, `cell`, `colorblind`
+
+## 相关文档
+
+- [模板生成专用子命令参考](../templates-reference.md)：34 个专用 `create-*` 子命令的完整选项与示例。
+- [CLI 完整参考](../cli.md)：命令总览、统一入口 `template create`、全局参数与退出码。
+- [API 使用指南](../api.md)：iTOL 批量 API 与 Python API 用法。

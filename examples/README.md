@@ -1,5 +1,7 @@
 # PyiTOL 示例说明文档
 
+[English](README_EN.md) | 中文
+
 本目录包含 **PyiTOL** 项目的官方示例代码，分为两大类别：
 - **`api_demos/`** — 演示 iTOL API 的完整功能（上传、导出、删除、状态查询）
 - **`template_demos/`** — 演示 iTOL 模板文件的生成、批量处理与学术级绘图工作流
@@ -7,7 +9,7 @@
 所有示例均遵循以下设计原则：
 - **不重复、不冗余**：每个示例展示独特的功能组合或工作流模式
 - **学术期刊发表级别**：使用 300 DPI 导出、英文项目名、色盲友好（colorblind-friendly）配色预设
-- **完整覆盖**：示例 collectively 覆盖全部 31 种 iTOL 模板类型（含 `external-shape-bubble` 变体）以及 API 的所有核心方法
+- **完整覆盖**：示例共调用 31 个类型专属模板生成函数（`generator.py` 定义了 32 个 `generate_*_template()`，唯一未被调用的是 `generate_external_shape_bubble_template()`），并覆盖 API 的所有核心方法
 
 ---
 
@@ -28,8 +30,41 @@ examples/
 │   ├── 04_cli_workflow.py
 │   └── 05_reverse_learn_template.py
 │
-└── README.md
+├── data/
+│   ├── synthetic_32tips.nwk
+│   ├── synthetic_32tips_taxonomy.csv
+│   ├── synthetic_32tips_enriched.csv
+│   ├── synthetic_32tips_auto_taxonomy.csv
+│   ├── synthetic_130tips.nwk
+│   ├── synthetic_130tips_taxonomy.csv
+│   ├── synthetic_130tips_enriched.csv
+│   ├── synthetic_130tips_auto_taxonomy.csv
+│   ├── synthetic_130tips_amr.csv
+│   ├── synthetic_4096tips.nwk
+│   ├── synthetic_4096tips_taxonomy.csv
+│   ├── synthetic_4096tips_traits.csv
+│   ├── synthetic_5000tips.nwk
+│   ├── synthetic_5000tips_taxonomy.csv
+│   └── synthetic_5000tips_traits.csv
+│
+├── README.md
+└── README_EN.md
 ```
+
+---
+
+## 示例数据文件（`data/`）
+
+`data/` 目录提供合成数据文件（共 15 个），按规模分为 32 / 130 / 4096 / 5000 tips 四组；其中只有 `synthetic_32tips.nwk` 与 `synthetic_32tips_enriched.csv` 被示例脚本读取，其余文件供更大规模的演示与外部测试使用：
+
+- `.nwk` — Newick 系统发育树
+- `_taxonomy.csv` — 分类学元数据（门/纲/目/科/属/种）
+- `_enriched.csv` — 富化后的性状表（基因组大小、GC 含量等）
+- `_traits.csv` — 4096/5000 tips 规模的性状表
+- `_auto_taxonomy.csv` — 由树末端名称自动解析的分类表
+- `_amr.csv` — 130 tips 的耐药基因（AMR）数据
+
+`api_demos/` 的全部脚本以及 `template_demos/01`、`02`、`03` 的树文件通过 `Path(__file__).resolve().parents[1] / "data"` 定位本目录；而 `template_demos/02_batch_upload_existing_templates.py:28`、`04_cli_workflow.py:23-25` 与 `05_reverse_learn_template.py:27` 则通过 `parents[2] / "tests" / "data"` 使用项目根目录下的 `tests/data/`。请勿移动这些文件。
 
 ---
 
@@ -41,14 +76,14 @@ examples/
 **关键特性**：
 - `ITOLAPIClient` 初始化（自动读取 `.itolapi.key`）
 - `upload_and_export()` 便捷方法
-- 内置渲染轮询（`query_status`）等待就绪
+- 导出前的内置固定等待（`wait_time` / `poll_interval`）；不进行 `query_status` 轮询，因为 iTOL 未提供官方就绪状态接口
 - 适用于首次体验 PyiTOL API 的用户
 
 ### 02_multi_dataset_publication.py
 **性质**：学术发表级综合示例
-**用途**：演示如何上传 **多数据集组合**（color strip + heatmap + bar）并导出期刊级图片。
+**用途**：演示如何上传 **多数据集组合**（色带 + 热图 + 柱状图）并导出期刊级图片。
 **关键特性**：
-- 使用 `TemplateGenerator` 动态生成模板
+- 使用 `generate_color_strip_template()` 动态生成模板
 - 应用 `colorblind` 预设调色板（Tol Bright）
 - **300 DPI PDF** 导出（满足 Nature / Cell / ISME J 等期刊印刷要求）
 - 同时导出 SVG 矢量图供后期编辑
@@ -58,7 +93,7 @@ examples/
 **性质**：API 全生命周期管理示例
 **用途**：演示树上传后的完整管理操作，适合自动化流水线。
 **关键特性**：
-- `force=True` 覆盖已上传的同名将
+- `force=True` 覆盖已上传的同名树
 - `query_status()` 渲染状态查询
 - PNG（300 DPI）与 TIFF 双格式导出
 - `batch_delete()` 批量清理临时上传
@@ -69,7 +104,7 @@ examples/
 **关键特性**：
 - PDF / SVG / PNG / TIFF 全覆盖
 - 针对不同用途优化参数（PDF→印刷、SVG→矢量编辑、PNG→演示文稿、TIFF→期刊投稿）
-- 统一的 `batch_export` 逻辑
+- 统一的循环导出逻辑（输出 `batch_export.<fmt>` 文件）
 
 ---
 
@@ -77,10 +112,10 @@ examples/
 
 ### 01_generate_all_template_types.py
 **性质**：模板类型兼容性全景测试
-**用途**：程序化生成 **全部 31 种 iTOL v7 模板类型**（含 `external-shape-bubble` 变体），作为语法参考与引擎兼容性验证。
+**用途**：程序化调用 **31 个类型专属 `generate_*_template()` 生成函数**（`generator.py` 共定义 32 个，唯一未调用的是 `generate_external_shape_bubble_template()`），作为语法参考与引擎兼容性验证。
 **关键特性**：
-- 调用所有 `generate_*_template()` 函数
-- 覆盖 `DATASET_SIMPLEBAR`、`DATASET_HEATMAP`、`DATASET_COLORSTRIP`、`TREE_COLORS`、`COLLAPSE`、`PRUNE`、`SPACING`、`DATASET_BINARY`、`DATASET_CONNECTION`、`DATASET_DOMAINS`、`DATASET_ALIGNMENT`、`DATASET_ARROWS`、`DATASET_TANGLEGRAM`、`DATASET_TIMESCALE`、`DATASET_MEME`、`DATASET_MANUAL` 等全部类型
+- 调用 32 个类型专属 `generate_*_template()` 函数中的 31 个（不调用 `generate_external_shape_bubble_template()`，也不调用通用写出函数 `generate_template()`）
+- 覆盖 `DATASET_SIMPLEBAR`、`DATASET_HEATMAP`、`DATASET_COLORSTRIP`、`TREE_COLORS`、`COLLAPSE`、`PRUNE`、`SPACING`、`DATASET_BINARY`、`DATASET_CONNECTION`、`DATASET_DOMAINS`、`DATASET_ALIGNMENT`、`DATASET_ARROWS`、`DATASET_TANGLEGRAM`、`DATASET_TIMESCALE`、`DATASET_MEME`、`DATASET_MANUAL`（这 16 项只是重点示例，完整清单见下方 31 行的模板类型覆盖矩阵）
 - 输出至 `outputs/all_types/`，便于批量检查
 
 ### 02_batch_upload_existing_templates.py
@@ -96,7 +131,7 @@ examples/
 **性质**：高影响力期刊级多图层示例
 **用途**：从 taxonomy 元数据表构建一个 **三层叠加** 的发表级系统发育图。
 **关键特性**：
-- 图层 1：Color Strip（Phylum，NATURE primary 调色板）
+- 图层 1：色带（Phylum，NATURE primary 调色板）
 - 图层 2：Simple Bar（Genome Size）
 - 图层 3：Heatmap（Genomic Features）
 - 使用 `generate_*_template()` 函数精细控制参数
@@ -154,8 +189,8 @@ python examples/api_demos/02_multi_dataset_publication.py
 |---|---|---|
 | **分辨率** | 导出 300 DPI 的 PDF 或 PNG | `02_multi_dataset_publication.py`、`03_publication_quality_figure.py` |
 | **配色** | 使用色盲友好预设（Tol Bright / Vibrant） | `02_multi_dataset_publication.py` |
-| **项目名** | 使用英文专业名称，避免中文或"临时"字样 | 全部新示例 |
-| **图层组合** | 将 color strip、heatmap、bar 等互补数据集叠加 | `03_publication_quality_figure.py` |
+| **项目名** | 使用英文专业名称，避免中文或"临时"字样 | 全部示例 |
+| **图层组合** | 将色带、热图、柱状图等互补数据集叠加 | `03_publication_quality_figure.py` |
 | **矢量编辑** | 同时导出 SVG 供 Illustrator / Inkscape 微调 | `02_multi_dataset_publication.py` |
 | **格式多样性** | 根据投稿要求输出 PDF（印刷）、TIFF（部分期刊）、PNG（PPT） | `04_batch_format_export.py` |
 
@@ -189,6 +224,7 @@ python examples/api_demos/02_multi_dataset_publication.py
 | `DATASET_MANUAL` | `01_generate_all_template_types.py` |
 | `DATASET_RANGE` | `01_generate_all_template_types.py` |
 | `DATASET_STYLE` | `01_generate_all_template_types.py` |
+| `BRANCH` | `01_generate_all_template_types.py` |
 | `TREE_COLORS` | `01_generate_all_template_types.py` |
 | `LABELS` | `01_generate_all_template_types.py` |
 | `POPUP_INFO` | `01_generate_all_template_types.py` |
@@ -202,4 +238,4 @@ python examples/api_demos/02_multi_dataset_publication.py
 
 - 新增模板类型时，请在 `01_generate_all_template_types.py` 中添加对应的 `generate_*_template()` 调用。
 - 新增 API 方法时，请在 `api_demos/` 中创建新的独立示例，避免与现有示例功能重叠。
-- 所有示例的输出目录均使用相对路径 `outputs/`，不会被版本控制跟踪。
+- 所有示例运行时会在各自子目录下生成输出目录 `examples/<子目录>/outputs/`（由 `Path(__file__).parent / "outputs"` 解析得到，例如 `examples/template_demos/outputs/all_types/`）。该目录当前**未**列入 `.gitignore`，因此其中的产物可能被 git 视为未跟踪文件；如不需要，请在提交前自行清理。

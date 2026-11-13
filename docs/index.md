@@ -1,16 +1,22 @@
 # PyiTOL 文档
 
-PyiTOL 是一个基于 Python 的 iTOL (Interactive Tree of Life) 可视化全流程自动化命令行工具。
+[English](index_en.md) | 中文
+
+PyiTOL 是一个基于 Python 的 iTOL (Interactive Tree Of Life) 可视化全流程自动化命令行工具。
 
 ## 文档导航
 
 | 文档 | 说明 |
 |------|------|
 | [CLI 完整参考](cli.md) | 所有命令和参数的详细说明 |
+| [模板生成专用子命令参考](templates-reference.md) | 34 个 `template create-*` 专用子命令的完整选项与示例 |
 | [API 使用指南](api.md) | iTOL API 交互与自动化上传导出 |
+| [错误码参考](error_codes.md) | 退出码、E 系列错误码与 V 系列验证错误码对照表 |
+| [故障排除指南](troubleshooting.md) | 常见问题及其解决方法 |
 | [快速入门教程](tutorials/quickstart.md) | 从安装到出图的 10 分钟教程 |
 | [分类分析教程](tutorials/taxonomy.md) | 单系性检测与分类信息提取 |
-| [模板生成教程](tutorials/templates.md) | 30+ 种 iTOL v7 模板生成指南 |
+| [模板生成教程](tutorials/templates.md) | 33 种 iTOL v7 模板生成指南（另有 `external-shape-bubble` 变体，合计 34 个专用子命令） |
+| [贡献指南](contributing.md) | 项目结构、代码规范与参与开发流程 |
 
 ## 核心功能
 
@@ -18,7 +24,7 @@ PyiTOL 是一个基于 Python 的 iTOL (Interactive Tree of Life) 可视化全�
 PyiTOL 功能体系：
 ├── 树结构操作 (Tree Structure)
 │   ├── 折叠分支 (Collapse Clades)
-│   ├── 修剪树 (Prune Tree)
+│   ├── 修剪分支 (Prune Branches)
 │   ├── 节点间距 (Node Spacing)
 │   └── 节点标识 (Node Labels)
 ├── 注释配置 (Annotation)
@@ -30,13 +36,13 @@ PyiTOL 功能体系：
 │   ├── 二元数据 (Binary Data)
 │   ├── 条形图 (Simple Bar / Multibar)
 │   ├── 饼图 (Pie Chart)
-│   ├── 颜色条带 (Color Strip)
+│   ├── 色带 (Color Strip)
 │   ├── 热图 (Heatmap)
 │   ├── 箱线图 (Boxplot)
 │   ├── 符号标记 (Symbols)
 │   ├── 蛋白结构域 (Protein Domains)
 │   ├── 渐变色带 (Color Gradients)
-│   ├── 外部形状 (Shape Plots)
+│   ├── 外部形状 (External Shapes)
 │   ├── 文本标签 (Text Labels)
 │   ├── 箭头注释 (Arrows)
 │   ├── 连接线 (Connections)
@@ -60,7 +66,7 @@ PyiTOL 功能体系：
 │   ├── 导出 (Export)
 │   └── 状态查询 (Status)
 └── 工具模块 (Utilities)
-    ├── 模板反向解析 (Template Learning)
+    ├── 模板反向学习 (Learning from Existing Templates)
     ├── 树信息统计 (Tree Info)
     ├── 颜色工具 (Color Tools)
     ├── 计数数据建树 (Count to Tree)

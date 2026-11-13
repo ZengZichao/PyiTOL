@@ -1,5 +1,7 @@
 # PyiTOL API Usage Guide
 
+[中文](api.md) | English
+
 PyiTOL wraps iTOL's three batch API endpoints, supporting automatic retry, error translation, and multi-format export.
 
 ## API Endpoints
@@ -42,7 +44,7 @@ Or specify a custom path:
 pyitol task upload --tree tree.nwk --api-key-file /path/to/.itolapi.key
 ```
 
-> **Security note**: PyiTOL checks the key file permissions and issues a warning if group/other have read or write permissions. It is recommended to use `chmod 600 .itolapi.key`.
+> **Security note**: PyiTOL checks the key file permissions and issues a warning if group or other have any read, write, or execute permission. It is recommended to use `chmod 600 .itolapi.key`.
 
 ## task Command Overview
 
@@ -88,7 +90,7 @@ pyitol task upload-and-export \
   --output result.svg --format svg --wait 60
 ```
 
-`--wait` specifies the maximum time (in seconds) to wait for iTOL rendering; the command fails after timeout.
+`--wait` is a fixed delay (in seconds, default 60) applied before exporting: once the upload finishes the command sleeps for that many seconds and then issues a single export. It is not a deadline, so the elapse of the wait does not make the command fail.
 
 ## Export Control
 
@@ -99,13 +101,15 @@ PyiTOL supports 8 export formats:
 | Format | Description | Extra Parameters |
 |------|------|---------|
 | `svg` | Vector graphic (recommended) | |
-| `png` | Bitmap image | `--dpi` |
-| `pdf` | Document | `--dpi` |
-| `tiff` | TIFF image | `--dpi` |
-| `eps` | Encapsulated PostScript | `--dpi` |
+| `png` | Bitmap image | `dpi` |
+| `pdf` | Document | `dpi` |
+| `tiff` | TIFF image | `dpi` |
+| `eps` | Encapsulated PostScript | `dpi` |
 | `newick` | Newick tree format | |
 | `nexus` | Nexus tree format | |
 | `phyloxml` | PhyloXML format | |
+
+> How you pass the format and dimension parameters depends on the command: `pyitol task export` has no standalone `--format`/`--dpi` options, so they must be passed via `--parameter key=value`; only `pyitol task upload-and-export` provides the `--format` (svg/png/pdf), `--dpi` (PNG/PDF only), `--width` and `--height` options directly.
 
 ### Export Dimensions
 
@@ -113,13 +117,13 @@ PyiTOL supports 8 export formats:
 pyitol task export \
   --upload-id TREE_ID \
   --download ./output \
-  --format png \
+  --parameter format=png \
   --parameter dpi=300 \
   --parameter width=2400 \
   --parameter height=1600
 ```
 
-Supported dimension parameters: `--dpi`, `--width`, `--height`.
+`task export` only accepts the `--upload-id/-u`, `--download/-d`, `--api-key`, `--api-key-file`, `--parameters-file`, `--parameter`, `--wait` and `--retry` options, so the export format (`format=`, default `pdf`) and the dimensions (`dpi=`, `width=`, `height=`) must all be passed through `--parameter`. Use `pyitol task upload-and-export` if you want to pass `--format`, `--dpi`, `--width` and `--height` directly.
 
 ## Delete Operation
 
@@ -134,8 +138,10 @@ pyitol task delete --upload-id ID1 --upload-id ID2
 ## Status Query
 
 ```bash
-pyitol task status --upload-id TREE_ID
+pyitol task status --tree-name TREE_NAME
 ```
+
+> `task status` takes the uploaded tree name via `--tree-name/-n` (not `--upload-id`); it probes the rendering status internally.
 
 ## Batch Operations
 
@@ -188,17 +194,17 @@ name: MyTree
 
 ## Error Handling
 
-PyiTOL has a built-in iTOL API error translation table that converts English error messages into user-friendly suggestions:
+PyiTOL has a built-in iTOL API error translation table that converts the English error messages returned by iTOL into user-friendly suggestions. These suggestions are always printed in Chinese at runtime — they are hardcoded in `src/pyitol/utils/reporter.py` and there is no locale switch — so the English below is an abridged reference translation of that output.
 
-| iTOL Error Keyword | PyiTOL Translation |
+| iTOL Error Keyword | Meaning of the suggestion PyiTOL prints (abridged) |
 |----------------|------------|
-| `invalid api key` | Invalid API Key: please check the --api-key parameter or the .itolapi.key file |
-| `file too large` | File too large: iTOL limits the total upload size to no more than 2MB |
-| `tree format` | Tree file format error: please ensure the file is in standard Newick or Nexus format |
-| `rate limit` | Requests too frequent: please retry later |
-| `rendering` | Rendering failed: iTOL server rendering timed out |
+| `invalid api key` | Invalid API key: check the `--api-key` parameter or the key stored in `.itolapi.key` |
+| `file too large` | File too large: iTOL limits the total upload size to 2 MB |
+| `tree format` | Tree file format error: make sure the file is valid Newick or Nexus |
+| `rate limit` | Too many requests: retry later |
+| `rendering` | Rendering failed: the iTOL server timed out while rendering |
 
-For the complete error code table, see [Error Codes Reference](error_codes.md) or `src/pyitol/utils/reporter.py`.
+For the complete error code table, see [Error Codes Reference](error_codes_en.md) or `src/pyitol/utils/reporter.py`.
 
 ## Network Retry
 
@@ -228,10 +234,10 @@ Wraps upload, export, delete, and status queries, with built-in exponential-back
 | Method | Description |
 |--------|-------------|
 | `upload(tree_file, template_files, force=False, datasets_visible=None, project_name=None, tree_description=None)` | Package a zip and upload; returns the tree ID (string) |
-| `export(tree_ids, fmt='pdf', output_dir=None, dpi=None, width=None, height=None, extra_params=None)` | Export; returns `{tree_id: local_path}` |
+| `export(tree_ids, fmt='pdf', output_dir=None, datasets_visible=None, dpi=None, width=None, height=None, extra_params=None)` | Export; returns `{tree_id: local_path}` |
 | `delete(tree_id)` / `batch_delete(tree_ids)` | Delete a single / batch of trees |
-| `delete_project(name)` / `batch_delete_projects(names)` | Delete projects |
-| `upload_and_export(tree_file, template_files, fmt='pdf', output_dir='.', wait_time=120, poll_interval=10, ...)` | Upload, poll until ready, then export; returns the local path |
+| `delete_project(project_name)` / `batch_delete_projects(project_names)` | Delete projects |
+| `upload_and_export(tree_file, template_files, fmt='pdf', output_dir='.', wait_time=120, poll_interval=10, ...)` | Upload, sleep once for the fixed `min(poll_interval, wait_time)` seconds, then call `export` exactly once; iTOL offers no readiness endpoint, so there is no polling. Returns the local path |
 | `query_status(tree_name, timeout=10)` | Indirectly probe render status; returns a dict |
 | `close()` | Close the session (also usable as a context manager) |
 
@@ -304,9 +310,9 @@ path = gen.write("my_template.txt")              # merged template
 paths = gen.write_multiple("./templates", prefix="ds_")  # separate files
 ```
 
-> `type_name` values: see `pyitol.templates.presets.list_presets()` (31 types, e.g. `color_strip`, `simple_bar`, `heatmap`, `tree_colors`).
+> `type_name` values: see `pyitol.templates.presets.list_presets()` (it returns 30 preset names, e.g. `color_strip`, `simple_bar`, `heatmap`, `tree_colors`; note this is a different list from the 33 template types supported by the unified entry `pyitol template create`).
 
-### `pyitol.templates.learner` — Template Reverse Learning
+### `pyitol.templates.learner` — Learning from Existing Templates
 
 | Function | Description |
 |----------|-------------|
@@ -329,7 +335,7 @@ Equivalent CLI: `pyitol learn template --template colors.txt --output learned.js
 
 | Function | Description |
 |----------|-------------|
-| `list_presets()` | List all 31 dataset template preset names |
+| `list_presets()` | List all 30 dataset template preset names |
 | `get_preset(name)` | Get a template schema class instance by name |
 | `get_palette(preset_name, palette_name='primary', n=None)` | Get a color list (`preset_name` is `nature`/`cell`/`colorblind`) |
 | `list_all_palettes()` | List all available palette names grouped by preset |
@@ -337,7 +343,7 @@ Equivalent CLI: `pyitol learn template --template colors.txt --output learned.js
 ```python
 from pyitol.templates.presets import get_palette, list_all_palettes, list_presets
 
-print(list_presets())            # 31 template type names
+print(list_presets())            # 30 preset names
 print(list_all_palettes())       # palette names grouped by nature/cell/colorblind
 colors = get_palette("nature")            # default primary
 colors = get_palette("nature", "vibrant") # specific sub-palette
@@ -352,7 +358,7 @@ Equivalent CLI: `pyitol learn palette --preset-name nature`.
 | `get_ranks(taxonomy_path, id_column='id')` | Return the list of taxonomic ranks |
 | `extract_taxonomy(taxonomy_path, tree_path, rank, id_column='id', multi_tree='error')` | Extract taxonomy at a rank; returns `list[dict]` |
 | `extract_taxonomy_with_stats(...)` | Extract with member counts, LCA stats, etc. |
-| `extract_taxonomy_from_tip_names(tree_path, format='auto', ...)` | Infer a taxonomy table from tip names |
+| `extract_taxonomy_from_tip_names(tree_path, output_path=None, name_format='auto', delimiter='_', taxonomy_levels=None, delimiter_mode='segment')` | Infer a taxonomy table from tip names |
 
 ```python
 from pyitol.core.taxonomy import get_ranks, extract_taxonomy
@@ -362,7 +368,7 @@ print(ranks)  # ['Domain', 'Phylum', 'Class', ...]
 
 rows = extract_taxonomy("taxonomy.csv", "tree.nwk", rank="Phylum")
 for r in rows:
-    print(r["id"], r["label"])
+    print(r["id"], r["name"])
 ```
 
 ### `pyitol.core.monophyly` — Monophyly Checking
@@ -382,7 +388,7 @@ results = check_monophyly_with_taxa_list(
     taxa_list=["Proteobacteria", "Firmicutes"],
 )
 for r in results:
-    print(r["taxon"], r["status"])   # monophyletic / paraphyletic / polyphyletic
+    print(r["group"], r["status"])   # monophyletic / paraphyletic / polyphyletic / incomplete_sampling / data_insufficient / unknown
 ```
 
 ### `pyitol.core.parser` — Tree Parsing
@@ -407,7 +413,7 @@ print(schema)  # 'newick'
 | `wide_to_long(input_file, output_file, id_column='id', value_name='value', var_name='variable')` | Wide to long |
 | `long_to_wide(input_file, output_file, id_column='id', variable_column='variable', value_column='value')` | Long to wide |
 | `df_tree(df_or_path, columns=None, main='col', order='none', metric='euclidean', linkage_method='average')` | Build a Newick tree from a dataframe |
-| `convert_to_binary_matrix(...)` / `category_to_connect(...)` | Category to binary matrix / co-occurrence to connection pairs |
+| `convert_to_binary_matrix(...)` / `category_to_connect(...)` | Numeric ranges to a binary matrix (-1/0/1) / same-category nodes to connection pairs |
 
 ```python
 from pyitol.utils.data_converters import wide_to_long, long_to_wide, df_tree
@@ -436,7 +442,7 @@ print(files, first)
 
 | Function | Description |
 |----------|-------------|
-| `get_tree_info(tree_path)` | Return a summary dict (tip count, internal node count, etc.) |
+| `get_tree_info(tree_path)` | Return a summary dict (tip count, internal node count, total nodes, whether branch lengths are present, max depth, sample tip names); it only reports the presence of branch lengths, a tree with branch lengths is not required |
 | `get_tip_order(tree_path)` | Return the ordered list of tip names |
 | `extract_tree_info(...)` | Low-level extraction |
 
@@ -444,7 +450,7 @@ print(files, first)
 from pyitol.utils.tree_info import get_tree_info
 
 info = get_tree_info("tree.nwk")
-print(info)  # {'tip_count': ..., 'internal_count': ..., ...}
+print(info)  # {'tip_count': ..., 'internal_node_count': ..., 'total_nodes': ..., 'has_branch_lengths': ..., 'max_depth': ..., 'sample_tips': ...}
 ```
 
 ### `pyitol.utils.color_tools` — Color Utilities

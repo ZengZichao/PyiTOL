@@ -1,15 +1,17 @@
 # PyiTOL CLI 完整参考
 
+[English](cli_en.md) | 中文
+
 ## 全局参数
 
 所有子命令共享以下全局参数：
 
 | 参数 | 简写 | 默认值 | 说明 |
 |------|------|--------|------|
-| `--version` | | | 显示版本号、Git哈希、依赖库版本及许可证 |
+| `--version` | | | 显示版本号、发布日期、Git哈希、依赖库版本及许可证 |
 | `--verbose` | | `False` | 显示详细日志（DEBUG级别） |
 | `--quiet` | `-q` | `False` | 仅显示关键信息（WARNING级别） |
-| `--config` | `-c` | | YAML/JSON 配置文件路径 |
+| `--config` | `-c` | | YAML/JSON 配置文件路径（可多次指定，后者覆盖前者） |
 | `--log-file` | | | 日志文件路径（同时输出到文件） |
 | `--low-memory` | | `False` | 低内存模式（适用于大型数据集） |
 
@@ -67,7 +69,7 @@ pyitol validate --tree tree.nwk --taxonomy tax.csv --sequence seqs.fasta --alpha
 | `--color` | | 颜色代码（可多次指定） |
 
 **深度验证内容**：
-- 树文件：括号平衡、负分支长度(CRITICAL)、空节点名(ERROR)、重复tip名(ERROR)、多根节点(CRITICAL)
+- 树文件：括号平衡、负分支长度(CRITICAL)、空节点名(ERROR)、重复tip名(ERROR)、多根节点(ERROR)
 - 序列文件：字母表检测(DNA/RNA/protein)、ID唯一性、长度一致性
 - 对抗性防护：恶意字符(控制字符/双向文本)、循环依赖、空文件
 
@@ -108,8 +110,8 @@ pyitol template create heatmap \
   --taxonomy expr.csv --tree tree.nwk \
   --columns Sample1,Sample2,Sample3 --output heatmap.txt
 
-# 示例：单系群条件折叠
-pyitol template create collapse \
+# 示例：单系群条件折叠（专用子命令，只有它提供 --strict）
+pyitol template create-collapse \
   --tree tree.nwk --taxonomy tax.csv \
   --taxon Cyanobacteriota --rank Phylum \
   --strict -o collapse.txt
@@ -119,7 +121,7 @@ pyitol template create collapse \
 
 | 类型 | 说明 | 必需参数 |
 |------|------|---------|
-| `color-strip` | 颜色条带 | `--taxonomy`, `--tree`, `--column` |
+| `color-strip` | 色带 | `--taxonomy`, `--tree`, `--column` |
 | `branch` | 分支着色 | `--taxonomy`, `--tree`, `--column` |
 | `simple-bar` | 单值柱状图 | `--taxonomy`, `--tree`, `--column` |
 | `multi-bar` | 多值柱状图 | `--taxonomy`, `--tree`, `--columns` |
@@ -127,7 +129,7 @@ pyitol template create collapse \
 | `symbols` | 符号标记 | `--taxonomy`, `--tree`, `--column` |
 | `pie` | 饼图 | `--taxonomy`, `--tree`, `--columns` |
 | `boxplot` | 箱线图 | `--taxonomy`, `--tree` |
-| `gradient` | 颜色渐变 | `--taxonomy`, `--tree`, `--column` |
+| `gradient` | 渐变色带 | `--taxonomy`, `--tree`, `--column` |
 | `connections` | 连接线 | `--connections` |
 | `labels` | 标签重命名 | `--taxonomy`, `--tree`, `--column` |
 | `popup-info` | 悬停信息 | `--taxonomy`, `--tree` |
@@ -145,15 +147,15 @@ pyitol template create collapse \
 | `style` | 分支/标签样式 | `--taxonomy`, `--tree`, `--column` |
 | `arrow` | 箭头注释 | `--data-file` |
 | `linechart` | 折线图 | `--taxonomy`, `--tree`, `--column` |
-| `image` | 图像嵌入 | `--taxonomy`, `--tree` |
-| `alignment` | 序列比对 | `--taxonomy`, `--tree` |
+| `image` | 图像嵌入 | `--taxonomy`, `--tree`, `--column` 或 `--image-column` |
+| `alignment` | 序列比对 | `--taxonomy`, `--tree`, `--column` 或 `--alignment-column` |
 | `tanglegram` | 纠缠图 | `--connections` |
 | `placement` | 系统发育放置 | `--data-file` |
 | `timescale` | 时间尺度 | `--data-file` |
 | `meme` | MEME基序 | `--data-file` |
 | `manual` | 手动注释 | `--data-file` |
 
-> **注意**：统一入口 `template create` 支持 31 种类型。另有 `external-shape-bubble`（气泡外部形状，`external-shape` 的变体）需通过专用子命令 `pyitol template create-external-shape-bubble` 创建，不在统一入口支持范围内。此外还有 31 个专用 `create-*` 子命令可用（`pyitol template create-color-strip` 等），与统一入口功能等价。
+> **注意**：统一入口 `template create` 支持 33 种类型。另有 `external-shape-bubble`（气泡外部形状，`external-shape` 的变体）需通过专用子命令 `pyitol template create-external-shape-bubble` 创建，不在统一入口支持范围内。此外还有 34 个专用 `create-*` 子命令可用（`pyitol template create-color-strip` 等）：其中 33 个与统一入口的 33 种类型一一对应、功能等价，另 1 个即 `create-external-shape-bubble`。
 
 **公共参数**：
 
@@ -165,10 +167,10 @@ pyitol template create collapse \
 | `--column` / `-c` | | | 数据列名 |
 | `--columns` | | | 多个数据列名,逗号分隔 |
 | `--colors` | | | 自定义颜色映射JSON |
-| `--label` / `-l` | | `dataset` | 数据集标签 |
+| `--label` / `-l` | | `dataset` | 数据集标签（保持默认时按类型替换为该类型的默认标签，如 `color_strip`、`heatmap`） |
 | `--id-column` | | `id` | ID列名 |
-| `--separator` / `-s` | | `TAB` | 数据分隔符 |
-| `--palette` | | | 配色预设 |
+| `--separator` / `-s` | | `TAB` | 数据分隔符（模板数据行的字段分隔符，非名称内的分类等级分隔符） |
+| `--palette` | | | 配色预设（仅 `color-strip` 会读取该值，且当前保留不生效，见子命令参考） |
 | `--data-file` / `-d` | | | 数据文件路径 |
 | `--force` / `-f` | | `False` | 覆盖已存在的输出文件 |
 | `--no-clobber` | | `False` | 跳过已存在的输出文件 |
@@ -181,6 +183,8 @@ pyitol template create collapse \
 | `--taxon` | 要折叠的类群名称（需配合 `--taxonomy` 和 `--tree`） |
 | `--rank` | 分类等级（如 Phylum, Class） |
 | `--strict` | 严格模式: 非单系群时终止（默认跳过） |
+
+> **注意**：`--strict` 仅由专用子命令 `template create-collapse` 接受；统一入口 `template create collapse` 没有该选项。
 
 ### `pyitol template bundle`
 
@@ -256,9 +260,9 @@ pyitol taxonomy extract-from-names --tree tree.nwk \
 | `--tree` / `-r` | | 树文件路径 |
 | `--output` / `-o` | `taxonomy_from_names.csv` | 输出分类表格路径 |
 | `--format` / `-f` | `auto` | 命名格式: `auto`/`gtdb`/`embedded`/`ncbi` |
-| `--delimiter` / `-d` | `_` | 名称分隔符 |
+| `--delimiter` / `-d` | `_` | 名称分段符（拆分末端名称内的分类等级片段） |
 | `--taxonomy-levels` | | 自定义分类级别前缀 |
-| `--taxonomy-delimiter-mode` | 嵌入式格式解析策略 | `segment` (默认) / `reverse` / `greedy` |
+| `--taxonomy-delimiter-mode` | `segment` | 嵌入式格式的名称解析策略：`segment`（默认，正向逐段匹配）/ `reverse`（严格逆序）/ `greedy`（从首个 `_d_` 截取） |
 
 **支持的格式**：
 - **GTDB (Format B)**: `d__Bacteria;p__Proteobacteria;c__Gammaproteobacteria;...`
@@ -291,7 +295,8 @@ pyitol taxonomy monophyly --taxonomy taxonomy.csv --tree tree.nwk \
 | `--taxa-file` | 包含分类群名称的文件(每行一个) |
 | `--output` / `-o` | 输出文件路径 |
 | `--id-column` | ID列名 |
-| `--multi-tree-mode` / `-m` | 多棵树处理策略: `ask`/`first`/`last`/`random`/`split` |
+| `--multi-tree-mode` / `-m` | 已接收但当前**无效果**：为将来预留的声明，从未传给读树代码。策略 `ask`/`first`/`last`/`split`（`all` 为 `split` 的内部别名）是库函数 `core/parser.load_tree` 的能力 |
+| `--polytomy-mode` | 多歧节点处理策略: `strict`/`relaxed`/`data-insufficient`，默认 `strict`。当类群成员只占据多歧 LCA 的部分子分支时：`strict`（默认）与 `data-insufficient` 判为数据不足（data_insufficient）；`relaxed` 判为并系（paraphyletic）而非复系 |
 
 **特殊标识符**：
 - `LUCA`：所有细菌和古菌的 MRCA
@@ -320,17 +325,19 @@ pyitol taxonomy check-and-style \
 | 参数 | 说明 |
 |------|------|
 | `--tree` / `-r` | 树文件路径 |
-| `--taxonomy` / `-t` | 分类表格文件路径(可选) |
+| `--taxonomy` / `-t` | 分类表格文件路径(可选,不提供则从树末端名称提取) |
 | `--taxon` | 要检查的类群名称(支持 LUCA/LACA/LBCA/ROOT) |
 | `--rank` | 分类等级(默认 Genus) |
-| `--action` / `-a` | 美化类型: `color-branch`/`highlight`/`color-strip` |
-| `--color` | 指定颜色(HEX) |
-| `--output` / `-o` | 输出模板文件路径 |
-| `--name-format` | 命名格式: `auto`/`gtdb`/`embedded`/`ncbi` |
-| `--palette` | 配色预设 |
+| `--action` / `-a` | 美化类型: `color-branch`/`highlight`/`color-strip`（默认 `color-branch`） |
+| `--color` | 指定颜色(HEX)，不指定则自动分配 |
+| `--output` / `-o` | 输出模板文件路径（默认 `styled_template.txt`） |
+| `--id-column` | ID列名（默认 `id`） |
+| `--name-format` | 命名格式: `auto`/`gtdb`/`embedded`/`ncbi`（默认 `auto`，仅无 `--taxonomy` 时使用） |
+| `--palette` | 配色预设（默认 `nature`） |
+| `--separator` | 数据分隔符: `TAB`/`SPACE`/`COMMA`（默认 `TAB`） |
 | `--domain-column` | Domain列名(用于LUCA/LACA/LBCA解析) |
-| `--multi-tree-mode` / `-m` | 多棵树处理策略 |
-| `--taxonomy-source-priority` | 混合来源优先级 | `table` (默认) / `embedded` |
+| `--multi-tree-mode` / `-m` | 已接收但当前**无效果**：为将来预留的声明，从未传给读树代码。策略 `ask`/`first`/`last`/`split`（`all` 为 `split` 的内部别名）是库函数 `core/parser.load_tree` 的能力 |
+| `--taxonomy-source-priority` | 混合来源优先级：`table`（默认，表格优先）/ `embedded`（树名优先） |
 
 ### `pyitol taxonomy style`
 
@@ -377,13 +384,44 @@ pyitol task upload --tree tree.nwk \
   --api-key YOUR_KEY --dataset-name MyTree
 ```
 
+| 参数 | 简写 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--tree` | `-r` | | 树文件路径（必填） |
+| `--config` | `-c` | | 模板/配置文件路径（可多次指定） |
+| `--api-key` | | | iTOL API 密钥 |
+| `--api-key-file` | | | API 密钥文件路径 |
+| `--dataset-name` | | | 数据集（树）名称，默认取树文件名主干 |
+| `--tree-description` | | | 树描述信息 |
+| `--verbose` | | `False` | 显示详细响应 |
+| `--retry` | | `3` | 网络请求重试次数 |
+| `--wait` | | `60` | 上传后固定等待 iTOL 渲染的秒数（固定延时，非超时上限；仅在指定 `--download` 时生效） |
+| `--download` | `-d` | | 指定后上传完成即导出图片到该目录 |
+| `--parameters-file` | | | 导出参数文件（每行 `key=value`） |
+| `--parameter` | | | 导出参数 `key=value`（可多次指定） |
+
+> **注意**：`task upload` 没有 `--format` 选项，随 `--download` 导出时格式须写成 `--parameter format=svg`（缺省为 `pdf`）。
+
 ### `pyitol task export`
 
 导出 iTOL 可视化图片。
 
 ```bash
-pyitol task export --upload-id TREE_ID --download ./output --format svg
+pyitol task export --upload-id TREE_ID --download ./output \
+  --parameter format=svg
 ```
+
+| 参数 | 简写 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--upload-id` | `-u` | | 上传 ID（必填） |
+| `--download` | `-d` | | 下载输出目录（必填） |
+| `--api-key` | | | iTOL API 密钥 |
+| `--api-key-file` | | | API 密钥文件路径 |
+| `--parameters-file` | | | 导出参数文件（每行 `key=value`） |
+| `--parameter` | | | 导出参数 `key=value`（可多次指定） |
+| `--wait` | | `60` | 已接受但当前不生效：该值被解析后即丢弃，不会等待、也不是超时上限，导出请求立即发出（固定等待仅见于 `task upload --download` 与 `task upload-and-export`） |
+| `--retry` | | `3` | 重试次数 |
+
+> **注意**：`task export` **不提供** `--format`、`--dpi`、`--width`、`--height` 选项。导出格式须写成 `--parameter format=svg`（可选 `svg`/`png`/`pdf`/`tiff`/`eps`/`newick`/`nexus`/`phyloxml`，缺省为 `pdf`），尺寸同理写成 `--parameter dpi=300`、`--parameter width=2400` 等。需要这些独立选项时请改用 `pyitol task upload-and-export`。
 
 ### `pyitol task upload-and-export`
 
@@ -394,6 +432,25 @@ pyitol task upload-and-export \
   --tree tree.nwk --config colors.txt \
   --output output.svg --format svg --wait 60
 ```
+
+| 参数 | 简写 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--tree` | `-r` | | 树文件路径（必填） |
+| `--output` | `-o` | | 输出图片路径（必填） |
+| `--config` | `-c` | | 模板/配置文件路径（可多次指定） |
+| `--api-key` | | | iTOL API 密钥 |
+| `--api-key-file` | | | API 密钥文件路径 |
+| `--dataset-name` | | | 数据集（树）名称 |
+| `--tree-description` | | | 树描述信息 |
+| `--verbose` | | `False` | 显示详细响应 |
+| `--wait` | | `60` | 上传后、发出导出请求前固定等待 iTOL 渲染的秒数（固定延时，非超时上限） |
+| `--retry` | | `3` | 重试次数 |
+| `--format` | `-f` | `svg` | 导出格式：`svg`/`png`/`pdf` |
+| `--dpi` | | | 导出图片 DPI（仅 PNG/PDF 生效） |
+| `--width` | | | 导出图片宽度（像素） |
+| `--height` | | | 导出图片高度（像素） |
+| `--parameters-file` | | | 导出参数文件（每行 `key=value`） |
+| `--parameter` | | | 导出参数 `key=value`（可多次指定） |
 
 支持 `--parameter` 参数传递 iTOL 导出参数（如 `datasets_visible`、`display_mode`、`background` 等），与 `task export` 一致：
 
@@ -406,14 +463,17 @@ pyitol task upload-and-export \
   --parameter background=ffffff
 ```
 
-`--parameter` 常用值：`datasets_visible`（数据集可见性）、`display_mode`（0=矩形/1=圆形/2=无根圆形/3=无根矩形）、`background`（背景色）、`ignore_branch_length`、`line_width`、`current_font_size`、`margin`、`arc`。
+`--parameter` 常用值：`datasets_visible`（数据集可见性）、`display_mode`（0=矩形/1=圆形/2=无根圆形/3=无根矩形）、`background`（背景色）、`ignore_branch_length`（忽略分支长度）、`line_width`（线宽）、`current_font_size`（当前字体大小）、`margin`（页边距）、`arc`（圆弧）。
 
 ### `pyitol task delete`
 
-删除已上传的树。
+删除已上传的树或项目。
 
 ```bash
 pyitol task delete --upload-id ID1 --upload-id ID2 --api-key YOUR_KEY
+
+# 删除整个项目
+pyitol task delete --project MyProject --confirm
 ```
 
 ### `pyitol task status`
@@ -421,8 +481,10 @@ pyitol task delete --upload-id ID1 --upload-id ID2 --api-key YOUR_KEY
 查询已上传树的状态。
 
 ```bash
-pyitol task status --upload-id TREE_ID --api-key YOUR_KEY
+pyitol task status --tree-name TREE_NAME --api-key YOUR_KEY
 ```
+
+> **注意**：`task status` 用 `--tree-name/-n` 指定树名称（不是 `--upload-id`）。
 
 ### `pyitol task run`
 
@@ -459,7 +521,7 @@ pyitol tree format-support-values --tree tree.nwk --output formatted.nwk
 
 ### `pyitol utils tree-info`
 
-显示树文件基本信息。
+显示树文件基本信息。**已弃用**：与 `pyitol tree info` 重复（后者为规范命令），此处仅为向后兼容保留，执行时会发出 DeprecationWarning。
 
 ```bash
 pyitol utils tree-info --tree tree.nwk
@@ -483,7 +545,7 @@ pyitol utils taxonomy-parse --taxonomy tax.csv
 
 ### `pyitol utils learn-template`
 
-从已有 iTOL 模板文件反向学习配置。
+从已有 iTOL 模板文件反向学习配置。**已弃用**：与 `pyitol learn template` 重复（后者为规范命令），此处仅为向后兼容保留，执行时会发出 DeprecationWarning。
 
 ```bash
 pyitol utils learn-template --template colors.txt --output learned.json
@@ -585,6 +647,12 @@ pyitol learn train-theme --dir ./templates --output theme.json --min-freq 0.5
 ```bash
 pyitol replay --session ~/.pyitol/session_logs/pyitol_20240115_120000.yaml
 ```
+
+| 参数 | 简写 | 默认值 | 说明 |
+|------|------|--------|------|
+| `--session` | `-s` | | 快照（session.yaml）文件路径（必填） |
+| `--dry-run` | | `False` | 仅显示建议命令，不实际执行 |
+| `--use-cli` | | `True` | 优先使用记录的命令行参数直接复现（关闭后按参数逐项重建） |
 
 ---
 

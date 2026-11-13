@@ -1,24 +1,26 @@
 # PyiTOL 错误码参考
 
+[English](error_codes_en.md) | 中文
+
 ## 退出码
 
-| Code | Meaning | Description |
+| 退出码 | 含义 | 描述 |
 |------|---------|-------------|
-| 0 | Success | 操作正常完成 |
-| 1 | Runtime Error | 内部错误、依赖问题、API 失败、连接/超时/权限错误 |
-| 2 | Parameter Error | 无效的 CLI 参数、验证失败、ValueError |
-| 3 | Data Error | 输入文件格式/内容错误、模板错误、文件未找到 |
-| 130 | User Interrupt | 收到 SIGINT (Ctrl+C) |
+| 0 | 成功 | 操作正常完成 |
+| 1 | 运行时错误 | 内部错误、依赖问题、API 失败、连接/超时/权限错误 |
+| 2 | 参数错误 | 无效的 CLI 参数、验证失败、ValueError |
+| 3 | 数据错误 | 输入文件格式/内容错误、模板错误、文件未找到 |
+| 130 | 用户中断 | 收到 SIGINT (Ctrl+C) |
 
-退出码由 `src/pyitol/cli/main.py` 的 `main()` 函数根据异常类型映射，详见异常处理逻辑。
+退出码由 `src/pyitol/cli/main.py` 的 `main()` 函数根据异常类型映射（`src/pyitol/cli/main.py:1192-1274`）；个别命令也会直接抛出 `typer.Exit`，例如 `pyitol validate` 在出现验证错误时抛出退出码 3（`src/pyitol/cli/main.py:404`）。
 
 ## 结构化错误码
 
-PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E001–E055 共 55 个结构化错误码，每个错误码对应一个异常类和用户友好的中文错误描述。
+PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E001–E055 共 55 个结构化错误码；每个条目的值是二元组 `(错误标签, 中文错误描述)`，本身不带级别字段——表中所有条目都是错误型标签，没有 warning/info 之分。下表第二列就是这个元组的第一个字段（标签字符串）：E001–E005 是 Python 内置异常名；E006–E022、E052、E054、E055 与 `src/pyitol/exceptions.py` 中定义的同名异常类一致；E023–E051 与 E053 共 30 个标签在代码中并没有同名异常类，仅是本表的显示字符串（例如 E053 的 `DataSeparatorConflictError`，`src/pyitol/utils/reporter.py:62`）。描述文案在代码中只有中文一种，没有英文回退，因此下表第三列即代码内置的中文原文（未作翻译）；`get_error_message()` 找不到代码时返回 `未知错误: {code}`（`src/pyitol/utils/reporter.py:150-155`）。在 `src/pyitol/` 内真正被调用的 reporter 函数只有 `translate_itol_api_error()`（由 `src/pyitol/api/client.py:21` 引入），`get_error_message()`、`translate_error()`、`translate_errors()`、`format_result_summary()` 仅被 `tests/` 调用，因此 `[E0NN]` 形式的错误码不会出现在 `pyitol` 命令的输出里。
 
 ### 基础错误 (E001–E015)
 
-| Code | 异常类 | 描述 |
+| 代码 | 错误标签 | 描述 |
 |------|--------|------|
 | E001 | FileNotFoundError | 文件未找到：请检查输入文件路径是否正确。 |
 | E002 | ValueError | 参数错误：提供的参数值不合法或格式不正确。 |
@@ -38,7 +40,7 @@ PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E0
 
 ### 扩展错误 (E016–E030)
 
-| Code | 异常类 | 描述 |
+| 代码 | 错误标签 | 描述 |
 |------|--------|------|
 | E016 | SessionError | 会话错误：无法加载或保存会话快照，请检查文件路径和权限。 |
 | E017 | ReplayError | 复现失败：快照中缺少必要的参数或文件，请检查session.yaml内容。 |
@@ -58,7 +60,7 @@ PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E0
 
 ### 网络与服务错误 (E031–E040)
 
-| Code | 异常类 | 描述 |
+| 代码 | 错误标签 | 描述 |
 |------|--------|------|
 | E031 | NetworkTimeoutError | 网络超时：连接iTOL服务器超时，请检查网络并重试。 |
 | E032 | SSLError | SSL证书错误：无法建立安全连接，请检查系统时间或代理设置。 |
@@ -73,7 +75,7 @@ PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E0
 
 ### 文件与渲染错误 (E041–E055)
 
-| Code | 异常类 | 描述 |
+| 代码 | 错误标签 | 描述 |
 |------|--------|------|
 | E041 | CorruptFileError | 文件损坏：上传的文件无法解析，请检查文件完整性。 |
 | E042 | ExtensionNotAllowedError | 文件扩展名不允许：请使用iTOL支持的文件格式。 |
@@ -87,52 +89,61 @@ PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E0
 | E050 | MaxTreesReachedError | 达到最大树数量：iTOL账户中树的数量已达上限，请删除旧树。 |
 | E051 | TreeLockedError | 树已锁定：该树当前被锁定，无法修改或删除，请稍后再试。 |
 | E052 | InvalidColumnError | 无效列：指定的列名在数据中不存在，请检查列名拼写。 |
-| E053 | SeparatorConflictError | 分隔符冲突：数据内容中包含与分隔符相同的字符，请更换分隔符。 |
+| E053 | DataSeparatorConflictError | 分隔符冲突：数据内容中包含与分隔符相同的字符，请更换分隔符。 |
 | E054 | DataFormatError | 数据格式错误：模板数据区格式不正确，请对照iTOL v7规范检查。 |
 | E055 | UnsupportedFormatError | 不支持的导出格式：请使用svg、png或pdf格式。 |
 
+术语说明：E010 与 E053 的标签 `SeparatorConflictError`、`DataSeparatorConflictError`（`src/pyitol/utils/reporter.py:18,62`）以及 `ITOL_API_ERROR_TRANSLATIONS` 的关键字 `"separator conflict"`（`src/pyitol/utils/reporter.py:99`）用的是 "separator"，三处对应的中文描述也都写作"分隔符冲突：…"；而校验器的 V005 常量名为 `DELIMITER_CONFLICT`（`src/pyitol/core/validator.py:80`），英文文案是 `Delimiter conflict: row {0}, column '{1}' contains '{2}': {3}`（`src/pyitol/core/validator.py:135`）、中文文案是 `分隔符冲突: 行 {0}, 列 '{1}' 的值包含 '{2}': {3}`（`src/pyitol/core/validator.py:109`），由 `check_delimiter_conflict()` 产生（`src/pyitol/core/validator.py:360-388`）。这是两个模块各自的两套文案，不应互相替换。
+
 ## 验证错误 (V001-V024)
 
-验证错误由 `src/pyitol/core/validator.py` 产生，不对应退出码，而是作为 `validate` 命令的输出和警告/错误信息。
+验证消息由 `src/pyitol/core/validator.py` 产生，本身不是异常类，而是作为 `validate` 命令的输出信息。文案来自双语字典 `_ERROR_MESSAGES` 的 `"zh"` / `"en"` 两个子表（`src/pyitol/core/validator.py:103-156`）：默认语言是中文（`src/pyitol/core/validator.py:158-160`），语言由 `set_error_language()` 按线程切换（`src/pyitol/core/validator.py:174-181`），传入未知语言时同样回退到中文而不是英文（`src/pyitol/core/validator.py:166`）。包内没有任何代码调用 `set_error_language()`，CLI 选项和配置文件也不提供语言开关，因此命令行用户看到的始终是下表中的中文原文；英文文案只有在 Python 代码里显式调用 `set_error_language("en")` 后才会输出。ERROR/CRITICAL 级消息会让 `pyitol validate` 以退出码 3 结束（`src/pyitol/cli/main.py:399-404`）；`TemplateValidator.raise_if_errors()` 抛出的 `TemplateValidationError` 则映射到退出码 2（`src/pyitol/cli/main.py:1228-1232`）。下表描述列即代码内置的中文文案原文，其中 `{0}`、`{1}` 等为运行时填充的占位符。
 
-| Code | Level | Description |
+| 代码 | 级别 | 描述 |
 |------|-------|-------------|
-| V001 | ERROR | Color code cannot be empty |
-| V002 | WARNING | Color code missing `#` prefix |
-| V003 | ERROR | Invalid color code length (should be `#RRGGBB`) |
-| V004 | ERROR | Invalid color code format |
-| V005 | ERROR | Delimiter conflict in data |
-| V006 | WARNING | High cardinality categorical variable |
-| V007 | WARNING | Numeric value below biological lower bound |
-| V008 | WARNING | Numeric value exceeds biological upper bound |
-| V009 | WARNING | Orphan nodes: metadata IDs not in tree |
-| V010 | WARNING | Missing annotations: tree nodes not in metadata |
-| V011 | WARNING | Special characters in node IDs |
-| V012 | ERROR | File not found |
-| V013 | ERROR | File is empty |
-| V014 | WARNING | File format may be incorrect |
-| V015 | ERROR | Template file missing iTOL header |
-| V016 | WARNING | Template file missing separator specification |
-| V017 | ERROR | Parse failed |
-| V018 | WARNING | Unsupported tree file format |
-| V019 | WARNING | Unsupported sequence file format |
-| V020 | ERROR | Invalid tree file content |
-| V021 | ERROR | Invalid sequence file content |
-| V022 | ERROR | Malicious characters in node names (control chars or bidi text) |
-| V023 | ERROR | Circular dependency in taxonomy table |
-| V024 | CRITICAL | File is empty, cannot process |
+| V001 | ERROR | 颜色代码不能为空 |
+| V002 | ERROR | 颜色代码缺少#前缀，建议改为 #{0} |
+| V003 | ERROR | 颜色代码长度不正确，应为 #RRGGBB (6位十六进制) |
+| V004 | ERROR | 非法颜色代码: {0}，请使用 #RRGGBB、rgb()、hsl() 或命名颜色格式 |
+| V005 | ERROR | 分隔符冲突: 行 {0}, 列 '{1}' 的值包含 '{2}': {3} |
+| V006 | WARNING | 分类变量过多警告: 列 '{0}' 有 {1} 个唯一值，超过建议上限 {2}，可能导致图例重叠和渲染问题 |
+| V007 | WARNING | 数值范围警告: 列 '{0}' 最小值 {1:.2f} 低于生物学合理下限 {2} |
+| V008 | WARNING | 数值范围警告: 列 '{0}' 最大值 {1:.2f} 超过生物学合理上限 {2} |
+| V009 | WARNING† | 孤立节点: {0} 个 metadata ID 不在树文件中，例如: {1} |
+| V010 | WARNING† | 缺失注释: {0} 个树节点在 metadata 中无对应记录，例如: {1} |
+| V011 | WARNING† | 节点ID包含特殊符号: {0} 个节点 ID 包含空格/tab/逗号/分号/竖线，建议替换为下划线。例如: {1} |
+| V012 | ERROR | 文件不存在: {0} |
+| V013 | ERROR | 文件为空: {0} |
+| V014 | WARNING | 文件格式可能不正确: {0} |
+| V015 | ERROR | 模板文件缺少 iTOL 头部标识: {0} |
+| V016 | WARNING | 模板文件未指定分隔符: {0} |
+| V017 | ERROR | 解析失败: {0} |
+| V018 | WARNING | 不支持的树文件格式: {0}。支持的格式: Newick (.nwk/.newick/.tree/.tre), Nexus (.nexus/.nex), PhyloXML (.xml) |
+| V019 | WARNING | 不支持的序列文件格式: {0}。支持的格式: FASTA (.fa/.fasta/.fna), FASTQ (.fq/.fastq), GenBank (.gb/.gbk), Phylip (.phy/.phylip) |
+| V020 | ERROR† | 树文件内容格式不正确: {0} |
+| V021 | ERROR | 序列文件内容格式不正确: {0} |
+| V022 | ERROR | 节点名包含恶意字符(控制字符或双向文本): {0} |
+| V023 | ERROR | 分类表格中检测到循环依赖: {0} |
+| V024 | CRITICAL | 文件为空，无法处理: {0} |
+
+级别列的依据是代码把消息放进了哪个列表，`pyitol validate` 再据此打印 `ERR` / `WARN` / `CRIT`（一处例外：分类表格的文件检查结果虽打印为 `ERR`，但不设置错误标志，单独出现时不会改变退出码，`src/pyitol/cli/main.py:367-368`）：
+
+- ERROR：V001–V005、V012、V013、V015、V017、V021–V023。颜色校验失败时 `validate_color_code()` 返回 `(False, 文案)`，`validate_color_codes()` 将其并入 `errors`（`src/pyitol/core/validator.py:334,350-357`），所以 V002 虽以"建议"措辞、级别仍是 ERROR；V005 由 `check_delimiter_conflict()` 返回并经 `TemplateValidator.validate_dataframe()` 并入 `self.errors`（`src/pyitol/core/validator.py:1489-1491`）。
+- WARNING：V006、V007、V008 由 `validate_dataframe()` 并入 `self.warnings`（`src/pyitol/core/validator.py:1493-1503`）——V006 在 `check_categorical_cardinality()` 内部虽然用名为 `errors` 的局部列表返回（`src/pyitol/core/validator.py:397-403`），其唯一调用方仍把它归入 warnings；V014、V016、V018、V019 分别进入 `warnings`（`src/pyitol/core/validator.py:1423,1472,681,687`）。
+- CRITICAL：V024 由 `validate_file_not_empty()` 返回，`pyitol validate` 打印为 `CRIT` 并置错误标志（`src/pyitol/cli/main.py:283-286`）。
+- 标 † 的 V009–V011 只由 `check_tree_ids_against_metadata()` / `check_special_characters_in_ids()` 返回（`src/pyitol/core/validator.py:451-494`），而这两个函数目前仅被 `tests/` 调用；V020 的消息模板 `ErrorCode.INVALID_TREE_CONTENT`（`src/pyitol/core/validator.py:95,124,150`）在包内（含 `tests/`）没有任何引用点。这些消息在运行时不会输出，表中对应的级别是按文案语义推定，而非代码实际路由的结果。树内容类错误实际使用的是不带 V 码的硬编码消息（如 `Bracket mismatch: …`、`CRITICAL: Negative branch lengths detected …`，`src/pyitol/core/validator.py:942-1074`）。
 
 ## 日志级别
 
-| Level | Tag | Description |
-|-------|-----|-------------|
-| DEBUG | DBG | 详细调试信息 |
-| INFO | INF | 正常操作消息 |
-| WARNING | WRN | 警告消息（非致命） |
-| ERROR | ERR | 错误消息 |
-| CRITICAL | CRT | 严重错误（立即退出） |
+| 级别 | 描述 |
+|-------|-------------|
+| DEBUG | 详细调试信息 |
+| INFO | 正常操作消息 |
+| WARNING | 警告消息（非致命） |
+| ERROR | 错误消息 |
+| CRITICAL | 严重错误（立即退出） |
 
-日志格式：`2025-03-21T10:15:30.123 | INFO     | message`
+日志级别输出全称，右侧补空格对齐至 9 个字符宽度，不缩写（`src/pyitol/utils/logger.py:18-24`，未知级别同样用 `levelname.ljust(9)`，`src/pyitol/utils/logger.py:59`）。日志格式：`2025-03-21T10:15:30.123 | INFO     | message`；用 `--log-file` 写文件时级别字段为 `%(levelname)-8s`（8 个字符宽度，`src/pyitol/utils/logger.py:191-193`），DEBUG 级消息还会在末尾追加 `[模块:行号]`（`src/pyitol/utils/logger.py:61-64`）。
 
 ## 常见错误场景
 
@@ -141,18 +152,18 @@ PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E0
 - 确认文件存在于指定位置
 - 建议使用绝对路径
 
-### "Multiple trees detected" (exit code 2)
-- 使用 `--multi-tree-mode` 指定处理策略：
-  - `ask`：提示用户（默认）
+### "Multiple trees detected"（告警，按策略处理）
+- 检测到多棵树时，`load_tree()` 先以 WARNING 输出每棵树的摘要，再按其 `multi_tree` 形参指定的策略处理，不必然以错误码退出（`src/pyitol/core/parser.py:216-249`）。命令行目前只有 `taxonomy monophyly` 与 `taxonomy check-and-style` 声明 `--multi-tree-mode`，且两者都不转发该值；其余命令以源码内硬编码的策略调用库函数：
+  - `ask`：默认。非交互终端自动回退到 `first`；交互终端下抛出 `TreeParseError` 并列出可选策略（退出码 3）
   - `first`：仅使用第一棵树
   - `last`：仅使用最后一棵树
-  - `random`：随机选择一棵
-  - `split`：分别处理所有树
+  - `split`：分别处理所有树（代码内部等价别名 `all`）
 
 ### "Taxon is not monophyletic" (WARNING)
-- 类群成员未形成单一支系
+- 类群成员未形成单系群（clade）
 - 检查分类学分配是否正确
-- 使用 `--strict` 在非单系群时强制终止
+- 在 `template create-collapse` 中，非单系群打印为 `WARN` 并跳过（`src/pyitol/cli/template_treeops.py:233`），加 `--strict` 才以退出码 1 终止（`src/pyitol/cli/template_treeops.py:246-247`）
+- 在 `taxonomy` 的类群操作中，并系群/复系群会直接以退出码 1 终止（`src/pyitol/cli/taxonomy_cmd.py:867-882`）
 
 ### "Duplicate sequence IDs" (ERROR)
 - 在 FASTA 文件中重命名重复序列
@@ -186,12 +197,26 @@ PyiTOL 在 `src/pyitol/utils/reporter.py` 的 `ERROR_CODE_TABLE` 中定义了 E0
 pyitol self-test
 ```
 
-输出示例：
+`pyitol self-test` 共执行 20 项检查：8 个依赖库 + 8 个内部模块 + 4 项功能自检（`src/pyitol/cli/main.py:1033-1184`）。输出示例（括号内的版本号按实际安装显示）：
 ```
   PyiTOL Self-Test Results
   =======================================================
   [PASS] Import typer (v0.x.x)
+  [PASS] Import rich (v0.x.x)
   [PASS] Import pandas (v2.x.x)
+  [PASS] Import dendropy (v4.x.x)
+  [PASS] Import pydantic (v2.x.x)
+  [PASS] Import PyYAML (v6.x.x)
+  [PASS] Import requests (v2.x.x)
+  [PASS] Import numpy (v1.x.x)
+  [PASS] Import parser
+  [PASS] Import taxonomy
+  [PASS] Import monophyly
+  [PASS] Import validator
+  [PASS] Import generator
+  [PASS] Import io
+  [PASS] Import logger
+  [PASS] Import shutdown
   [PASS] Parse sample Newick (4 tips)
   [PASS] Extract embedded taxonomy (Domain=Bacteria)
   [PASS] Monophyly detection (G1=mono, G2=mono)

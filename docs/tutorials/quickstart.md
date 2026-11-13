@@ -1,5 +1,7 @@
 # 快速入门：从安装到出图
 
+[English](quickstart_en.md) | 中文
+
 本教程带你用 10 分钟完成 PyiTOL 的首次使用，生成一张发表级系统发育树图。
 
 ## 前提条件
@@ -29,7 +31,7 @@ pyitol --help
 (A:0.1,B:0.2,(C:0.15,D:0.1):0.05);
 ```
 
-**taxonomy.csv** — 末端节点分类信息
+**taxonomy.csv** — 末端（叶）分类信息
 ```csv
 id,Phylum,Genus,GC_content
 A,Proteobacteria,Escherichia,52
@@ -101,8 +103,10 @@ pyitol task upload \
 ```bash
 pyitol task export \
   --upload-id YOUR_TREE_ID \
-  --download ./output --format svg
+  --download ./output --parameter format=svg
 ```
+
+> **提示**：`pyitol task export` 没有 `--format` 选项，导出格式须通过 `--parameter format=svg` 传入；若要直接使用 `--format`/`--dpi`/`--width`/`--height`，请用下文的 `task upload-and-export`。
 
 或者一步完成上传+导出：
 
@@ -110,14 +114,14 @@ pyitol task export \
 pyitol task upload-and-export \
   --tree tree.nwk \
   --config colors.txt --config bars.txt \
-  --output result.svg --format svg --wait 60
+  --output result.png --format png --dpi 300 --wait 60
 ```
 
 ## 步骤8：使用配置文件简化操作
 
 > **提示**：项目根目录提供 `config.example.yaml` 模板，包含所有可配置项及注释，可直接 `cp config.example.yaml my_config.yaml` 后修改使用。
 
-`pyitol task run` 通过配置文件执行批量任务，每个配置项通过 `command` 字段指定操作类型。支持的 `command` 值包括：`upload`、`export`、`extract`、`monophyly`、`convert-binary`。
+`pyitol task run` 通过配置文件执行批量任务，每个配置项通过 `command` 字段指定操作类型。支持的 `command` 值包括：`upload`、`export`、`extract`、`monophyly`、`convert-binary`、`convert-connect`、`template`。
 
 创建单配置文件 `workflow.yaml`：
 
@@ -133,7 +137,7 @@ name: MyFirstTree
 pyitol task run --config workflow.yaml
 ```
 
-如果需要一步完成上传和导出，可以创建批量列表文件 `batch.yaml`：
+如果希望把上传和导出串联在同一个批量清单里按顺序执行（真正一步完成的命令是上文的 `task upload-and-export`），可以创建批量列表文件 `batch.yaml`：
 
 ```yaml
 - command: upload
@@ -158,4 +162,4 @@ pyitol task run --config-list batch.yaml
 ## 下一步
 
 - [分类分析教程](taxonomy.md) — 深入了解单系性检测和美化配置
-- [模板生成教程](templates.md) — 探索 30+ 种模板类型
+- [模板生成教程](templates.md) — 探索统一入口支持的 33 种模板类型（另有 `external-shape-bubble` 变体）

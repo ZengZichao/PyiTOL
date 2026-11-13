@@ -1,5 +1,7 @@
 # PyiTOL Agent 指南
 
+[English](AGENTS.md) | 中文
+
 ## 项目简介
 
 PyiTOL 是一个用于自动化 iTOL（Interactive Tree Of Life）系统发育树可视化的 Python CLI 工具。主包位于 `src/pyitol/`，入口为 `pyitol` 命令或 `python -m pyitol`。
@@ -10,7 +12,7 @@ PyiTOL 是一个用于自动化 iTOL（Interactive Tree Of Life）系统发育�
 - `src/pyitol/cli/` — Typer 命令行接口
 - `src/pyitol/core/` — 树解析、分类法、单系性、输入校验
 - `src/pyitol/templates/` — iTOL v7 模板生成与反向解析
-- `src/pyitol/utils/` — 日志、session、颜色、I/O 等工具
+- `src/pyitol/utils/` — 日志、会话、颜色、I/O 等工具
 - `tests/` — pytest 测试套件
 
 ## 常用命令
@@ -33,10 +35,10 @@ ruff format src/ tests/
 ## 代码规范
 
 - 遵循 PEP 8，行宽 120 字符
-- 所有公共函数需类型提示和 docstring
-- 错误信息优先使用中文，英文作为 fallback
+- 所有公共函数需类型提示与文档字符串（docstring）；`ruff` 的 `ANN` 规则目前豁免 `src/pyitol/cli/*` 与 `tests/**`（见 `pyproject.toml` 的 `[tool.ruff.lint.per-file-ignores]`），因此 CLI 回调的注解应逐步补全、不要批量添加
+- 错误文案为双语：`src/pyitol/core/validator.py` 的 `_ERROR_MESSAGES` 中中英文各维护一份表。运行时语言是线程本地的，默认中文；语言未知或缺失时回退到中文，而非英文。`src/pyitol/utils/reporter.py` 中的 iTOL API 错误翻译表仅有中文
 - 保持确定性行为，避免随机算法
 
 ## 版本说明
 
-`pyproject.toml` 使用 `setuptools_scm` 动态生成版本；非 git 仓库时使用 fallback version `1.0.0`。`src/pyitol/__init__.py` 优先从 `_version.py` 读取版本，失败时回退到 `1.0.0`。
+`pyproject.toml` 使用 `setuptools_scm` 动态生成版本；非 git 仓库时回退到版本 `1.0.3`。`src/pyitol/__init__.py` 优先从 `_version.py` 读取版本，读取失败时回退到 `1.0.3`。

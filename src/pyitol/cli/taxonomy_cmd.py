@@ -97,9 +97,7 @@ def taxonomy_monophyly(
     taxa_file: str = typer.Option(None, "--taxa-file", help="包含分类群名称的文件(每行一个)"),
     output: str = typer.Option("monophyly.csv", "--output", "-o", help="输出文件路径"),
     id_column: str = typer.Option("id", "--id-column", help="ID列名"),
-    multi_tree_mode: str = typer.Option(
-        "ask", "--multi-tree-mode", "-m", help="多棵树处理策略: ask/first/last/random/split"
-    ),
+    multi_tree_mode: str = typer.Option("ask", "--multi-tree-mode", "-m", help="多棵树处理策略: ask/first/last/split"),
     # NOTE: multi_tree_mode parameter reserved for future use
     polytomy_mode: str = typer.Option(
         "strict", "--polytomy-mode", help="多歧节点处理策略: strict/relaxed/data-insufficient"
@@ -717,9 +715,7 @@ def taxonomy_check_and_style(
     palette: str = typer.Option("nature", "--palette", help="配色预设"),
     separator: str = typer.Option(DEFAULT_SEPARATOR, "--separator", help="分隔符: TAB/SPACE/COMMA"),
     domain_column: str = typer.Option("Domain", "--domain-column", help="Domain列名(用于LUCA/LACA/LBCA解析)"),
-    multi_tree_mode: str = typer.Option(
-        "ask", "--multi-tree-mode", "-m", help="多棵树处理策略: ask/first/last/random/split"
-    ),
+    multi_tree_mode: str = typer.Option("ask", "--multi-tree-mode", "-m", help="多棵树处理策略: ask/first/last/split"),
     source_priority: str = typer.Option(
         "table", "--taxonomy-source-priority", help="混合来源优先级: embedded(树名优先)/table(表格优先),默认table"
     ),

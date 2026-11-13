@@ -1,5 +1,7 @@
 # Taxonomy Analysis Tutorial
 
+[中文](taxonomy.md) | English
+
 PyiTOL provides a complete taxonomy analysis toolchain: rank identification, information extraction, monophyly detection, and automated styling.
 
 ## 1. Taxonomic Rank Identification
@@ -8,7 +10,7 @@ PyiTOL provides a complete taxonomy analysis toolchain: rank identification, inf
 pyitol taxonomy ranks --taxonomy taxonomy.csv
 ```
 
-Automatically identifies standard taxonomic ranks (domain, phylum, class, order, family, genus, species) as well as custom columns.
+`taxonomy ranks` lists every column of the taxonomy table except the ID column (`--id-column`, default `id`): standard ranks (domain, phylum, class, order, family, genus, species, etc.) and custom columns are reported the same way, with no recognition step and no filtering. Column names are not necessarily kept in the order they appear in the table: columns whose names match a standard rank name exactly (`Domain`, `Kingdom`, `Phylum`, `Class`, `Order`, `Family`, `Genus`, `Species`) are re-sorted into that fixed rank order, while all other columns (including lowercase spellings and custom columns) keep their relative order at the end; if the table consists only of the ID column plus one semicolon-separated GTDB lineage column, that column is parsed into standard rank columns before being listed.
 
 ## 2. Taxonomic Information Extraction
 
@@ -20,7 +22,7 @@ pyitol taxonomy extract \
   --rank Phylum --output phylum_tips.txt
 ```
 
-Output format: one terminal node per line, including ID and taxonomic name.
+Output format: one tip (leaf) per line, including ID and taxonomic name.
 
 ### Statistical Extraction (with LCA and member count)
 
@@ -34,7 +36,7 @@ Output columns: rank, group, member_count, lca_node, members
 
 ### Extract from Tree Tip Names
 
-Extract taxonomic information automatically directly from tree tip (leaf node) names, without preparing a taxonomy table in advance:
+Extract taxonomic information automatically directly from tree tip (leaf) names, without preparing a taxonomy table in advance:
 
 ```bash
 pyitol taxonomy extract-from-names \
@@ -42,7 +44,7 @@ pyitol taxonomy extract-from-names \
   --output taxonomy_from_names.csv
 ```
 
-Supports six naming formats (specified via `--format`):
+The `--format` help text lists only 4 values (`auto`/`gtdb`/`embedded`/`ncbi`), while the implementation additionally supports `underscore` and `mixed`, giving six naming formats in total:
 
 | Format | Description | Example |
 |------|------|------|
@@ -104,7 +106,7 @@ Use `--polytomy-mode` to control the decision behavior when the LCA is a polytom
 
 | Mode | Description |
 |------|------|
-| `strict` | Strict mode (default), decides according to standard binary tree classification rules |
+| `strict` | Strict mode (default), deciding by the standard binary-tree classification rules; but when the LCA is a polytomy, members occupy only some child branches and intruding nodes exist, it likewise returns `data_insufficient` |
 | `relaxed` | Relaxed mode; if members occupy only some of the child branches of the polytomy, the group is judged paraphyletic rather than polyphyletic |
 | `data-insufficient` | Data-insufficient mode; the above case is judged as `data_insufficient`, indicating the topology is unresolved and no conclusion can be reached |
 
@@ -117,27 +119,30 @@ pyitol taxonomy monophyly \
 
 ### Multiple Tree Handling
 
-When the tree file contains multiple trees, specify the processing strategy via `--multi-tree-mode`:
+`--multi-tree-mode` (the help text lists `ask`/`first`/`last`/`split`, default `ask`) is only accepted on `taxonomy monophyly` and `taxonomy check-and-style`: `monophyly` parses the value (and lets a configuration file override it), while `check-and-style` does not even read it; neither passes it on to the tree-loading code of monophyly detection (the source comment marks the parameter as reserved for future use). Those two commands load the tree with a plain `dendropy.Tree.get_from_path` call, so nothing is prompted and nothing is split — any value currently has no effect.
+
+The semantics of the strategies themselves are as follows (implemented by `pyitol/core/parser.py::load_tree`):
 
 | Strategy | Description |
 |------|------|
 | `ask` | Default; prompts the user to choose (automatically falls back to `first` in non-interactive environments) |
 | `first` | Use only the first tree |
 | `last` | Use only the last tree |
-| `random` | Randomly select one tree |
-| `split` | Process all trees separately; result files get a numeric suffix |
-| `all` | Same as `split`; returns results for all trees processed separately |
+| `split` | Return all trees as a list so the caller can process them one by one |
+| `all` | Internal alias equivalent to `split`: returns all trees for separate processing (not listed in the help text) |
+
+Only code paths that load trees through `pyitol/core/parser.py::load_tree` actually apply the strategies above; those paths are currently invoked internally with hard-coded values (`validate` uses `first` and `all`), and the command line does not forward this option yet. The command below therefore behaves identically whether or not `--multi-tree-mode` is passed:
 
 ```bash
 pyitol taxonomy monophyly \
   --taxonomy taxonomy.csv --tree trees.nexus \
-  --rank Phylum --multi-tree-mode split \
+  --rank Phylum \
   --output monophyly.csv
 ```
 
 ## 4. Monophyly Decision Principle
 
-PyiTOL performs the following algorithm for each group of terminal nodes:
+PyiTOL performs the following algorithm for each group of tips (leaves):
 
 1. **Find LCA**: Compute the most recent common ancestor of all members of the taxon
 2. **Compute differences**:
@@ -145,11 +150,11 @@ PyiTOL performs the following algorithm for each group of terminal nodes:
    - `M = taxon members \ LCA descendants` (missing nodes)
 3. **Decision**:
    - `E=∅` and `M=∅` → **monophyletic**
-   - `M=∅` and `E≠∅` → **paraphyletic**
-   - `M≠∅` → **polyphyletic**
-   - `--polytomy-mode=data-insufficient`, the LCA is a polytomy, members occupy only some child branches, and intruding nodes are present → **data_insufficient**
+   - `M≠∅` (some members are absent from the tree) → **incomplete_sampling**
+   - `M=∅` and `E≠∅` → **paraphyletic** or **polyphyletic** according to topology; if every intruding node maps to the same group the group is still judged monophyletic, and if none of them can be mapped it is judged `data_insufficient`
+   - The LCA is a polytomy, members occupy only some child branches and `E≠∅` → the default `strict` mode and `data-insufficient` mode both return **data_insufficient**, while `relaxed` returns paraphyletic
 
-The fourth state, `data_insufficient`, occurs only under `--polytomy-mode data-insufficient`: when the LCA is a polytomy (an unresolved multifurcation) and the taxon members are spread across some but not all child branches, accompanied by intruding nodes, the topology is insufficiently resolved to make a reliable monophyletic/paraphyletic/polyphyletic decision. In this case the `data_insufficient` status is emitted to remind the user to supplement data or switch to the `relaxed`/`strict` mode.
+`data_insufficient` has two origins: the polytomy case above (returned by both the default `strict` mode and `data-insufficient` mode; only `relaxed` does not return it), and the non-polytomy case where every intruding node is absent from the taxonomy mapping so its affiliation cannot be decided. In either case the `data_insufficient` status is emitted to prompt the user to complete the taxonomy table, or — in the polytomy case — to switch to `relaxed` mode.
 
 Polyphyletic groups are further decomposed into subgroups, outputting the LCA and members of each subgroup.
 
@@ -174,7 +179,7 @@ pyitol taxonomy style \
   --color "#e64b35" --output highlight.txt
 ```
 
-### Add Symbol Markers for High-Rank Taxa
+### Add Symbol Markers for Genus-Level Taxa
 
 ```bash
 pyitol taxonomy style \
@@ -192,15 +197,15 @@ pyitol taxonomy style \
 | `color-strip` | DATASET_COLORSTRIP | Color strip |
 | `style-branch` | DATASET_STYLE | Branch line style |
 | `style-label` | DATASET_STYLE | Label style |
-| `width` | TREE_COLORS (width) | Branch width |
+| `width` | DATASET_STYLE | Branch width |
 | `highlight` | DATASET_STYLE | Label background highlight |
-| `symbol` | DATASET_SYMBOLS | Symbol markers |
+| `symbol` | DATASET_SYMBOL | Symbol markers |
 | `range` | DATASET_RANGE | Colored range |
 | `gradient` | DATASET_GRADIENT | Gradient strip |
 
 ### Check and Style (One Step)
 
-The `check-and-style` command merges monophyly checking and styling template generation into a single step: it first checks whether the specified taxon is monophyletic; if so, it generates a styling template, otherwise it emits a warning and skips.
+The `check-and-style` command merges monophyly checking and styling template generation into a single step: it first checks whether the specified taxon is monophyletic; if so, it generates a styling template, otherwise it emits a warning or error and exits with status 1, writing no template file.
 
 ```bash
 pyitol taxonomy check-and-style \
@@ -228,14 +233,16 @@ When `--taxonomy` is not provided, taxonomic information can be automatically ex
 
 #### Special Identifiers
 
-`--taxon` supports four special identifiers for locating key ancestor nodes at the root of the tree of life (`--taxonomy` and `--domain-column` are required):
+`--taxon` supports four special identifiers for locating key ancestor nodes at the root of the tree of life. Any of them requires `--taxonomy`; `--domain-column` is optional and defaults to the column name `Domain` (a column whose name differs only in case is matched automatically), but `LUCA`/`LACA`/`LBCA` require the taxonomy table to actually contain a domain column, otherwise a `MetadataParseError` is raised:
 
 | Identifier | Meaning |
 |--------|------|
 | `LUCA` | Most recent common ancestor of all archaea and bacteria |
 | `LACA` | Most recent common ancestor of all archaea |
 | `LBCA` | Most recent common ancestor of all bacteria |
-| `ROOT` | Root of the whole tree; returns all terminal nodes in the tree without specifying a domain |
+| `ROOT` | Root of the whole tree; returns the IDs in the taxonomy table that intersect the tree tip (leaf) labels, without using a domain column |
+
+The `--taxa`/`--taxa-file` options of `taxonomy monophyly` accept the same set of identifiers (`LUCA`/`LACA`/`LBCA`/`ROOT`, although its help text lists only the first three), but that command has no `--domain-column` option and looks the domain column up under the fixed name `Domain`.
 
 ```bash
 pyitol taxonomy check-and-style \
@@ -246,7 +253,7 @@ pyitol taxonomy check-and-style \
 
 ## 6. Binary Data Conversion
 
-Convert categorical data into a 0/1 matrix:
+Convert the presence/absence data of the columns given by `--columns` (e.g., gene presence/absence) into a 0/1 matrix:
 
 ```bash
 pyitol taxonomy convert-binary \

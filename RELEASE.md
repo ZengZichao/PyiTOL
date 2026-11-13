@@ -1,168 +1,161 @@
-# PyiTOL 发布操作手册
+# PyiTOL Release Runbook
 
-本手册覆盖完整的「GitHub 发布 + PyPI 发布」流程。当前仓库已具备：
-- 初始 commit `c8220f1`，已打本地 tag `v1.0.0`（`setuptools_scm` 据此推导版本 `1.0.0`）；
-- `.github/workflows/publish.yml`：打 `v*` tag 自动构建并发布到 PyPI（Trusted Publishing / OIDC，无需令牌）；
-- 全仓链接已统一为占位符 `https://github.com/ZengZichao/PyiTOL`。
+English | [中文](RELEASE_CN.md)
 
-> ⚠️ **最重要的时序原则**：`publish.yml` 在「推送 `v*` tag」时自动发布到 PyPI。因此 **tag 必须放到所有验证都通过之后再推送**，绝不能一开始就 `git push --tags`。
+This runbook covers the full "GitHub release + PyPI release" workflow. The current repository already has:
+- an initial commit `c8220f1`, with releases published up to the latest tag `v1.0.3` (at that tag `setuptools_scm` derives version `1.0.3`; a working tree holding commits after it derives `1.0.4.devN+g…` instead);
+- `.github/workflows/publish.yml`: pushing a `v*` tag automatically builds and publishes to PyPI (Trusted Publishing / OIDC, no token required);
+- repository-wide links already point to the live repository `https://github.com/ZengZichao/PyiTOL`
+  (owner `ZengZichao`, repository `PyiTOL`, as in `git remote -v`, `pyproject.toml`, `CITATION.cff`,
+  `.zenodo.json`, `mkdocs.yml` and the READMEs), and `.github/workflows/publish.yml` documents the
+  matching Trusted Publisher owner `ZengZichao`.
+
+> WARNING: **the most important ordering principle** — `publish.yml` publishes to PyPI as soon as a `v*` tag is pushed. Therefore the **tag must be pushed only after every check passes**; never `git push --tags` at the very start.
 
 ---
 
-## 0. 发布前置检查（必须完成）
+## 0. Pre-release checks (must be completed)
 
-### 0.1 替换 `OWNER` 占位符
-全仓有 6 个文件含 `github.com/ZengZichao/PyiTOL`（pyproject.toml、README.md、README_CN.md、CITATION.cff、mkdocs.yml、CONTRIBUTING.md）。把 `<owner>` 换成你的真实 GitHub 用户名或组织名（例如 `zengzichao`）：
+### 0.1 Handle the `/discussions` link
+If README / README_CN contain a `…/discussions` link, enable **Discussions** under the repository **Settings -> General -> Features**, otherwise it returns 404. If you do not want Discussions, simply delete that link.
 
-```bash
-cd /path/to/PyiTOL
-OWNER=zengzichao   # ← 改成你的真实 GitHub 用户名 / 组织名
-grep -rl 'github.com/ZengZichao/PyiTOL' --exclude-dir=.git --exclude-dir=.venv --exclude-dir='*.egg-info' . \
-  | xargs sed -i '' "s#github.com/ZengZichao/PyiTOL#github.com/$OWNER/pyitol#g"
-# 复查：应无输出
-grep -rn 'github.com/ZengZichao/PyiTOL' --exclude-dir=.git --exclude-dir=.venv --exclude-dir='*.egg-info' .
-```
-
-### 0.2 处理 `/discussions` 链接
-README / README_CN 中若含 `…/discussions` 链接，需在仓库 **Settings → General → Features** 勾选 **Discussions**，否则会 404。若不想启用，直接删除该链接。
-
-### 0.3 本地干净构建验证
+### 0.2 Clean local build verification
 ```bash
 rm -rf build dist src/pyitol.egg-info src/pyitol/_version.py
 python -m build
-twine check dist/*        # 校验 sdist / wheel 元数据是否合法
+twine check dist/*        # validate sdist / wheel metadata
 ```
-若 `twine` / `build` 未安装：`pip install build twine`。
+If `twine` / `build` are not installed: `pip install build twine`.
 
 ---
 
-## 1. 路径 A：私有验证 → 改公开（推荐）
+## 1. Path A: private verification -> make public (recommended)
 
-### 1.1 在 GitHub 新建**私有**仓库
-- 仓库名 `pyitol`，**不要**勾选 Initialize with README / .gitignore / License（本地已有完整历史）。
-- 记下仓库 URL：`https://github.com/<owner>/pyitol.git`
+### 1.1 Create a **private** repository on GitHub
+- Repository name `PyiTOL` (the name every link in this repository uses; the PyPI distribution name remains the lowercase `pyitol`); do **not** check "Initialize with README / .gitignore / License" (the local history is already complete).
+- Note the repository URL: `https://github.com/ZengZichao/PyiTOL.git`
 
-### 1.2 推送 `main`（先**不要**推送 tag）
+### 1.2 Push `main` (do **not** push tags yet)
 ```bash
 git branch -M main
-git remote add origin https://github.com/<owner>/pyitol.git
-git push -u origin main          # 只推 main，不推 tag
+git remote add origin https://github.com/ZengZichao/PyiTOL.git
+git push -u origin main          # push only main, not the tags
 ```
 
-### 1.3 私有阶段验证
-- 打开仓库 **Actions** 页，确认 CI（`ci.yml`）通过。
-- 本地跑功能自检：
+### 1.3 Verify while still private
+- Open the repository **Actions** page and confirm CI (`ci.yml`) passes.
+- Run the local functional self-check:
   ```bash
   pip install -e ".[dev]"
   pyitol self-test
   pytest tests/ -m "not integration"
   ```
-- 此时仓库仍是 Private，外界看不到，可安心检查代码、密钥、日志等。
+- At this point the repository is still Private and invisible to others, so you can safely inspect the code, secrets, and logs.
 
-### 1.4 在 PyPI 配置 Trusted Publisher（一次性）
-1. 注册 / 登录 https://pypi.org
-2. **Account settings → Publishing → Add a new trusted publisher**：
+### 1.4 Configure the Trusted Publisher on PyPI (one-time)
+1. Register / log in at https://pypi.org
+2. **Account settings -> Publishing -> Add a new trusted publisher**:
    - PyPI project name: `pyitol`
-   - Owner: `<owner>`（与 0.1 一致）
-   - Repository name: `pyitol`
+   - Owner: `ZengZichao` (exactly as recorded in the prerequisite comment of `.github/workflows/publish.yml`)
+   - Repository name: `pyitol`, also verbatim from that comment (the GitHub repository itself is named `PyiTOL` — if you ever change the name or casing, update `publish.yml` and this list together)
    - Workflow name: `publish.yml`
-   - Environment name: 留空或填 `pypi`
-3. 保存。**此时仓库即使是 Private 也能发布**，Trusted Publisher 不限制可见性——所以下面步骤 1.5 改公开之前，只要你不 push tag，就不会误发。
+   - Environment name: leave blank or set to `pypi`
+3. Save. **The repository can publish even while Private**, since the Trusted Publisher does not depend on visibility — so before step 1.5 flips it to public, as long as you do not push a tag, nothing is accidentally published.
 
-### 1.5 改为公开
-仓库 **Settings → General → Danger Zone → Change repository visibility → Make public**。
-历史、tag、`v1.0.0` 全部保留，零搬运。
+### 1.5 Switch to public
+Repository **Settings -> General -> Danger Zone -> Change repository visibility -> Make public**.
+The history, existing tags, and the current version `v1.0.3` are all preserved, with zero migration.
 
-### 1.6 正式发布（最后一步：推送 tag）
+### 1.6 Final release (last step: push the tag)
 ```bash
-git push origin --tags        # 推送 v1.0.0 → 触发 publish.yml → 发布到 PyPI
+git push origin --tags        # push v* tag -> triggers publish.yml -> publishes to PyPI
 ```
-- 在 **Actions** 页观察 `Publish to PyPI` 是否成功。
-- 成功后仓库会多出一次 Release（GitHub 自动为 tag 创建）。
+- Watch the **Actions** page to see whether `Publish to PyPI` succeeds.
+- `publish.yml` only builds and publishes to PyPI — **nothing in CI creates a GitHub Release**, and pushing a tag does not create one either. If you want a Release (Zenodo requires one), create it explicitly with `gh release create`, as shown in 4.2.
 
 ---
 
-## 2. TestPyPI 演练（强烈建议在正式发布前做一次）
+## 2. TestPyPI dry run (strongly recommended once before a real release)
 
-PyPI 没有「私有」概念，但可用 **TestPyPI**（`test.pypi.org`）演练发布，确认 sdist/wheel 能正常上传、元数据无误。
+PyPI has no "private" concept, but you can use **TestPyPI** (`test.pypi.org`) to rehearse the release and confirm the sdist/wheel upload and metadata are correct.
 
 ```bash
-# 1) 注册 TestPyPI 账号，并生成 API token（Account settings → API tokens）
-# 2) 本地构建并上传到 TestPyPI
+# 1) Register a TestPyPI account and generate an API token (Account settings -> API tokens)
+# 2) Build locally and upload to TestPyPI
 rm -rf build dist
 python -m build
-twine upload --repository testpypi dist/*     # 按提示输入 TestPyPI 的 username(__token__)/password(token)
+twine upload --repository testpypi dist/*     # Enter TestPyPI username(__token__)/password(token) when prompted
 ```
-- 演练验证的是「打包 + 上传」链路；正式发布仍走 1.6 的 GitHub Actions（Trusted Publishing）。
-- 可选：也可在 TestPyPI 后台配 Trusted Publisher，用 `git tag -a v0.0.0-test ...` 走 Actions 演练，但本地 `twine` 更简单。
+- The dry run validates the "packaging + upload" path; the real release still goes through the GitHub Actions in 1.6 (Trusted Publishing).
+- Optional: you can also configure a Trusted Publisher in the TestPyPI console and rehearse via Actions with `git tag -a v0.0.0-test ...`, but local `twine` is simpler.
 
 ---
 
-## 3. 发布后验证
+## 3. Post-release verification
 
-- PyPI 页面：https://pypi.org/project/pyitol/ 应显示 `1.0.0`。
-- 安装验证：
+- PyPI page: https://pypi.org/project/pyitol/ should show the current version `1.0.3`.
+- Install verification:
   ```bash
   python -m venv /tmp/verify
   /tmp/verify/bin/pip install pyitol
   /tmp/verify/bin/pyitol --help
   ```
-- GitHub Release 页：`https://github.com/<owner>/pyitol/releases` 出现 `v1.0.0`。
+- GitHub Release page: `https://github.com/ZengZichao/PyiTOL/releases` shows the corresponding tag (e.g. `v1.0.3`) — but only if you created the Release yourself (see 1.6 and 4.2); it does not appear just because the tag was pushed.
 
 ---
 
-## 4. Zenodo DOI（论文引用）
+## 4. Zenodo DOI (paper citation)
 
-### 4.1 一次性配置（网页操作）
-1. 登录 https://zenodo.org（建议直接用 GitHub 账号登录）。
-2. **Settings → GitHub → Connect GitHub account**（或 Sync now），同步仓库列表。
-3. 找到 `<owner>/pyitol`，点击开关 **Enable**。
-4. 仓库根目录已含 `.zenodo.json`（标题 / 作者 / ORCID / license / 关键词，Zenodo 归档时自动读取），无需额外设置。
+### 4.1 One-time setup (web console)
+1. Log in at https://zenodo.org (logging in with your GitHub account is recommended).
+2. **Settings -> GitHub -> Connect GitHub account** (or "Sync now") to sync your repository list.
+3. Find `ZengZichao/PyiTOL` and flip the **Enable** switch on.
+4. The repository root already contains `.zenodo.json` (title / authors / ORCID / license / keywords, read automatically by Zenodo when archiving), so no extra configuration is needed.
 
-### 4.2 触发与验证
-- 每次发布 GitHub **Release** 时，Zenodo 自动抓取仓库快照并生成 DOI（约 1 分钟内，可在 Zenodo 记录页看到）。
-- ⚠️ Zenodo 只响应 **Release**，不响应 tag 推送。而 GitHub 推 tag 不会自动建 Release，需显式创建：
+### 4.2 Triggering and verification
+- Each time a GitHub **Release** is published, Zenodo automatically captures a repository snapshot and mints a DOI (within about one minute; visible on the Zenodo record page).
+- WARNING: Zenodo responds only to a **Release**, not to a tag push. Pushing a tag on GitHub does not automatically create a Release, so create one explicitly:
   ```bash
-  gh release create v1.0.0 --generate-notes
+  gh release create v1.0.3 --generate-notes
   ```
-- ⚠️ 钩子必须**先启用、后建 Release**，否则该 Release 不会自动归档。
-- 查询 DOI：
+- WARNING: the hook must be **enabled before the Release is created**, otherwise that Release will not be archived automatically.
+- Query the DOI:
   ```bash
   curl -s "https://zenodo.org/api/records?q=pyitol" | jq '.hits.hits[].doi'
   ```
 
-### 4.3 DOI 语义
-- **版本 DOI**（每个 Release 一个）：`10.5281/zenodo.<id>`，指向该次快照。
-- **概念 DOI**（整个软件系列，不随版本变化）：`10.5281/zenodo.<conceptid>`，始终解析到最新版本。
-- v1.0.0 首发记录：版本 DOI `10.5281/zenodo.22043046`，概念 DOI `10.5281/zenodo.22043045`。
-- v1.0.1 记录：版本 DOI `10.5281/zenodo.22046669`（元数据修复补丁，代码逻辑与 v1.0.0 一致）。
-- v1.0.2 记录：版本 DOI `10.5281/zenodo.22056427`（重跑全部基准 B1–B5，产物内嵌 `_provenance` 版本戳；修复 B4 诊断重发的 key 解析与 zip 树文件名问题）。
-- v1.0.3 记录：版本 DOI `10.5281/zenodo.22106806`（验证器重复标签硬错误、API 客户端 POST 重试告警、模板基准扩展至 50,000 叶；提交 `b9a1207`）。
-- **论文引用决定**：Bioinformatics 投稿论文引用 **最新版本 DOI**（`10.5281/zenodo.22106806`，v1.0.3；正文摘要与参考文献 [34]）；一般性引用可选用概念 DOI。
+### 4.3 DOI semantics
+- **Version DOI** (one per Release): `10.5281/zenodo.<id>`, pointing to that specific snapshot.
+- **Concept DOI** (the whole software series, version-independent): `10.5281/zenodo.<conceptid>`, always resolving to the latest version.
+- v1.0.0 first release: version DOI `10.5281/zenodo.22043046`, concept DOI `10.5281/zenodo.22043045`.
+- v1.0.1 record: version DOI `10.5281/zenodo.22046669` (a metadata fix patch; code logic identical to v1.0.0).
+- v1.0.2 record: version DOI `10.5281/zenodo.22056427` (reran all benchmarks B1–B5 with an embedded `_provenance` version stamp; fixed the key resolution and zip tree-filename issues in the B4 diagnostic re-post).
+- v1.0.3 record: version DOI `10.5281/zenodo.22106806` (duplicate-label hard error in the validator, POST-retry warning in the API client, and an extra 50,000-leaf data point in the archived template scalability results, generated with `--sizes` since the benchmark's default sizes are 100 / 1,000 / 10,000; commit `b9a1207`).
+- **Citation decision**: the Bioinformatics submission cites the **latest version DOI** (`10.5281/zenodo.22106806`, v1.0.3; abstract and reference [34]); general citations may use the concept DOI.
 
 ---
 
-## 5. 故障排查 / 回滚
+## 5. Troubleshooting / rollback
 
-- **误发错版本**：PyPI 不允许覆盖同一版本号，只能发新的 `patch` 版本（如 `v1.0.1`）。无法删除已发版本，**发布前务必演练**。
-- **publish.yml 失败**：多在 Actions 日志看原因。常见：Trusted Publisher 的 owner/repo/workflow 任一不匹配 → 核对 1.4。
-- **版本号不对（出现 `0.2.3.dev0` 之类）**：说明 `setuptools_scm` 没拿到 tag。确认 `git push origin --tags` 已执行，且 Actions checkout 用了 `fetch-depth: 0`（publish.yml 已配置）。
-- **想重发同版本**：删本地+远程旧 tag 后重打：
+- **Published the wrong version**: PyPI does not allow overwriting the same version number, so you can only publish a new `patch` version (e.g. `v1.0.4`). A release can be deleted, but deleted files can never be re-uploaded or restored, so **always rehearse before releasing**.
+- **publish.yml fails**: inspect the Actions log for the cause. A common reason is that the Trusted Publisher's owner/repo/workflow do not match — recheck 1.4.
+- **Wrong version number (e.g. `0.2.3.dev0` appears)**: this means `setuptools_scm` did not pick up a tag. Confirm `git push origin --tags` ran and that the Actions checkout uses `fetch-depth: 0` (already configured in publish.yml).
+- **Want to re-publish the same version**: delete the old local and remote tag, then re-tag:
   ```bash
-  git tag -d v1.0.0 && git push origin :refs/tags/v1.0.0
-  git tag -a v1.0.0 -m "Release v1.0.0" && git push origin v1.0.0
+  git tag -d v1.0.3 && git push origin :refs/tags/v1.0.3
+  git tag -a v1.0.3 -m "Release v1.0.3" && git push origin v1.0.3
   ```
 
 ---
 
-## 附录：备选路径 B（镜像到公开仓库）
+## Appendix: alternative Path B (mirror to a public repository)
 
-若你希望代码先在另一个独立私有仓库验证、再整体迁移（而非改可见性），用 `git push --mirror` 一次性搬运分支+tag（**切勿 Download ZIP**，会丢 `.git` 历史和 tag，导致版本号错乱）：
+If you would rather first validate the code in a separate independent private repository and then migrate everything wholesale (instead of changing visibility), use `git push --mirror` to carry branches and tags in one shot (**never "Download ZIP"**, which drops the `.git` history and tags and scrambles the version number):
 
 ```bash
-git remote add public https://github.com/<owner>/pyitol.git
+git remote add public https://github.com/ZengZichao/PyiTOL.git
 git push --mirror public
 ```
-之后同样执行 1.4（把公开仓库登记为 Trusted Publisher）→ 1.6 触发发布。
+Afterwards, still run 1.4 (register the public repository as the Trusted Publisher) -> 1.6 to trigger the release.
 
-> 路径 A（改可见性）更省事、零搬运，推荐优先使用。
+> Path A (change visibility) is less effort and involves no migration; it is the recommended default.

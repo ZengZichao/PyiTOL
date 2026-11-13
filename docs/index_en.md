@@ -1,16 +1,22 @@
 # PyiTOL Documentation
 
-PyiTOL is a Python-based, full-pipeline automation command-line tool for iTOL (Interactive Tree of Life) visualization.
+[中文](index.md) | English
+
+PyiTOL is a Python-based, full-pipeline automation command-line tool for iTOL (Interactive Tree Of Life) visualization.
 
 ## Documentation Navigation
 
 | Document | Description |
 |------|------|
-| [Complete CLI Reference](cli.md) | Detailed description of all commands and parameters |
-| [API Usage Guide](api.md) | iTOL API interaction and automated upload/export |
-| [Quick Start Tutorial](tutorials/quickstart.md) | A 10-minute tutorial from installation to figure output |
-| [Taxonomy Analysis Tutorial](tutorials/taxonomy.md) | Monophyly detection and taxonomy information extraction |
-| [Template Generation Tutorial](tutorials/templates.md) | Generation guide for 31 iTOL v7 template types (plus the `external-shape-bubble` variant) |
+| [Complete CLI Reference](cli_en.md) | Detailed description of all commands and parameters |
+| [Template Subcommand Reference](templates-reference_en.md) | Full options and examples for the 34 dedicated `template create-*` subcommands |
+| [API Usage Guide](api_en.md) | iTOL API interaction and automated upload/export |
+| [Error Codes Reference](error_codes_en.md) | Tables of exit codes, E-series error codes and V-series validation codes |
+| [Troubleshooting Guide](troubleshooting_en.md) | Common problems and their solutions |
+| [Quick Start Tutorial](tutorials/quickstart_en.md) | A 10-minute tutorial from installation to figure output |
+| [Taxonomy Analysis Tutorial](tutorials/taxonomy_en.md) | Monophyly detection and taxonomy information extraction |
+| [Template Generation Tutorial](tutorials/templates_en.md) | Generation guide for the 33 iTOL v7 template types (plus the `external-shape-bubble` variant, 34 dedicated subcommands in total) |
+| [Contributing Guide](contributing_en.md) | Project structure, coding conventions and development workflow |
 
 ## Core Features
 
@@ -18,7 +24,7 @@ PyiTOL is a Python-based, full-pipeline automation command-line tool for iTOL (I
 PyiTOL Feature System:
 ├── Tree Structure
 │   ├── Collapse Clades
-│   ├── Prune Tree
+│   ├── Prune Branches
 │   ├── Node Spacing
 │   └── Node Labels
 ├── Annotation
@@ -36,7 +42,7 @@ PyiTOL Feature System:
 │   ├── Symbols
 │   ├── Protein Domains
 │   ├── Color Gradients
-│   ├── Shape Plots
+│   ├── External Shapes
 │   ├── Text Labels
 │   ├── Arrows
 │   ├── Connections
@@ -60,7 +66,7 @@ PyiTOL Feature System:
 │   ├── Export
 │   └── Status
 └── Utilities
-    ├── Template Learning
+    ├── Learning from Existing Templates
     ├── Tree Info
     ├── Color Tools
     ├── Count to Tree

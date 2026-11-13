@@ -1,15 +1,17 @@
 # PyiTOL CLI Complete Reference
 
+[中文](cli.md) | English
+
 ## Global Parameters
 
 All subcommands share the following global parameters:
 
 | Parameter | Shortcut | Default | Description |
 |------|------|--------|------|
-| `--version` | | | Show version number, Git hash, dependency library versions, and license |
+| `--version` | | | Show version number, release date, Git hash, dependency library versions, and license |
 | `--verbose` | | `False` | Show verbose logs (DEBUG level) |
 | `--quiet` | `-q` | `False` | Show only key information (WARNING level) |
-| `--config` | `-c` | | YAML/JSON configuration file path |
+| `--config` | `-c` | | YAML/JSON configuration file path (can be specified multiple times; later files override earlier ones) |
 | `--log-file` | | | Log file path (also output to file) |
 | `--low-memory` | | `False` | Low memory mode (suitable for large datasets) |
 
@@ -67,7 +69,7 @@ pyitol validate --tree tree.nwk --taxonomy tax.csv --sequence seqs.fasta --alpha
 | `--color` | | Color code (can be specified multiple times) |
 
 **Deep validation contents**:
-- Tree file: bracket balance, negative branch lengths (CRITICAL), empty node names (ERROR), duplicate tip names (ERROR), multiple root nodes (CRITICAL)
+- Tree file: bracket balance, negative branch lengths (CRITICAL), empty node names (ERROR), duplicate tip names (ERROR), multiple root nodes (ERROR)
 - Sequence file: alphabet detection (DNA/RNA/protein), ID uniqueness, length consistency
 - Adversarial protection: malicious characters (control characters/bidirectional text), circular dependencies, empty files
 
@@ -108,8 +110,8 @@ pyitol template create heatmap \
   --taxonomy expr.csv --tree tree.nwk \
   --columns Sample1,Sample2,Sample3 --output heatmap.txt
 
-# Example: conditional collapse of a monophyletic group
-pyitol template create collapse \
+# Example: conditional collapse of a monophyletic group (dedicated subcommand, only one with --strict)
+pyitol template create-collapse \
   --tree tree.nwk --taxonomy tax.csv \
   --taxon Cyanobacteriota --rank Phylum \
   --strict -o collapse.txt
@@ -127,7 +129,7 @@ pyitol template create collapse \
 | `symbols` | Symbol markers | `--taxonomy`, `--tree`, `--column` |
 | `pie` | Pie chart | `--taxonomy`, `--tree`, `--columns` |
 | `boxplot` | Boxplot | `--taxonomy`, `--tree` |
-| `gradient` | Color gradient | `--taxonomy`, `--tree`, `--column` |
+| `gradient` | Gradient strip | `--taxonomy`, `--tree`, `--column` |
 | `connections` | Connection lines | `--connections` |
 | `labels` | Label renaming | `--taxonomy`, `--tree`, `--column` |
 | `popup-info` | Hover information | `--taxonomy`, `--tree` |
@@ -145,15 +147,15 @@ pyitol template create collapse \
 | `style` | Branch/label style | `--taxonomy`, `--tree`, `--column` |
 | `arrow` | Arrow annotations | `--data-file` |
 | `linechart` | Line chart | `--taxonomy`, `--tree`, `--column` |
-| `image` | Image embedding | `--taxonomy`, `--tree` |
-| `alignment` | Sequence alignment | `--taxonomy`, `--tree` |
+| `image` | Image embedding | `--taxonomy`, `--tree`, `--column` or `--image-column` |
+| `alignment` | Sequence alignment | `--taxonomy`, `--tree`, `--column` or `--alignment-column` |
 | `tanglegram` | Tanglegram | `--connections` |
 | `placement` | Phylogenetic placement | `--data-file` |
 | `timescale` | Timescale | `--data-file` |
 | `meme` | MEME motifs | `--data-file` |
 | `manual` | Manual annotations | `--data-file` |
 
-> **Note**: The unified entry `template create` supports 31 types. Additionally, `external-shape-bubble` (bubble external shape, a variant of `external-shape`) must be created via the dedicated subcommand `pyitol template create-external-shape-bubble` and is not covered by the unified entry. There are also 31 dedicated `create-*` subcommands available (`pyitol template create-color-strip`, etc.), which are functionally equivalent to the unified entry.
+> **Note**: The unified entry point `template create` supports 33 types. In addition, `external-shape-bubble` (bubble external shape, a variant of `external-shape`) must be created via the dedicated subcommand `pyitol template create-external-shape-bubble` and is not part of the unified entry point. There are also 34 dedicated `create-*` subcommands available (`pyitol template create-color-strip`, etc.): 33 of them map one-to-one to the 33 types of the unified entry point and are functionally equivalent to it, and the remaining one is `create-external-shape-bubble`.
 
 **Common parameters**:
 
@@ -165,10 +167,10 @@ pyitol template create collapse \
 | `--column` / `-c` | | | Data column name |
 | `--columns` | | | Multiple data column names, comma-separated |
 | `--colors` | | | Custom color mapping JSON |
-| `--label` / `-l` | | `dataset` | Dataset label |
+| `--label` / `-l` | | `dataset` | Dataset label (when left at the default it is replaced by the type-specific default label, e.g. `color_strip`, `heatmap`) |
 | `--id-column` | | `id` | ID column name |
-| `--separator` / `-s` | | `TAB` | Data separator |
-| `--palette` | | | Color palette preset |
+| `--separator` / `-s` | | `TAB` | Data separator (field separator for the template's data lines, not the rank separator inside a tip name) |
+| `--palette` | | | Color palette preset (only `color-strip` reads this value, and it is currently reserved and has no effect — see the subcommand reference) |
 | `--data-file` / `-d` | | | Data file path |
 | `--force` / `-f` | | `False` | Overwrite existing output file |
 | `--no-clobber` | | `False` | Skip existing output file |
@@ -181,6 +183,8 @@ pyitol template create collapse \
 | `--taxon` | Taxon name to collapse (requires `--taxonomy` and `--tree`) |
 | `--rank` | Taxonomic rank (e.g., Phylum, Class) |
 | `--strict` | Strict mode: abort if not monophyletic (skips by default) |
+
+> **Note**: `--strict` is accepted only by the dedicated `template create-collapse` subcommand; the unified entry `template create collapse` does not have this option.
 
 ### `pyitol template bundle`
 
@@ -256,9 +260,9 @@ pyitol taxonomy extract-from-names --tree tree.nwk \
 | `--tree` / `-r` | | Tree file path |
 | `--output` / `-o` | `taxonomy_from_names.csv` | Output taxonomy table path |
 | `--format` / `-f` | `auto` | Naming format: `auto`/`gtdb`/`embedded`/`ncbi` |
-| `--delimiter` / `-d` | `_` | Name delimiter |
+| `--delimiter` / `-d` | `_` | Name segment delimiter (splits the rank segments inside a tip name) |
 | `--taxonomy-levels` | | Custom taxonomy level prefixes |
-| `--taxonomy-delimiter-mode` | Embedded format parsing strategy | `segment` (default) / `reverse` / `greedy` |
+| `--taxonomy-delimiter-mode` | `segment` | Name parsing strategy for the embedded format: `segment` (default, forward segment-by-segment matching) / `reverse` (strict reverse order) / `greedy` (cut from the first `_d_`) |
 
 **Supported formats**:
 - **GTDB (Format B)**: `d__Bacteria;p__Proteobacteria;c__Gammaproteobacteria;...`
@@ -291,7 +295,8 @@ pyitol taxonomy monophyly --taxonomy taxonomy.csv --tree tree.nwk \
 | `--taxa-file` | File containing taxon names (one per line) |
 | `--output` / `-o` | Output file path |
 | `--id-column` | ID column name |
-| `--multi-tree-mode` / `-m` | Multi-tree processing strategy: `ask`/`first`/`last`/`random`/`split` |
+| `--multi-tree-mode` / `-m` | Accepted but currently has **no effect**: declared for future use and never forwarded to the tree-loading code. The strategies `ask`/`first`/`last`/`split` (`all` being an internal alias for `split`) are a library capability of `core/parser.load_tree` |
+| `--polytomy-mode` | Polytomy handling strategy: `strict`/`relaxed`/`data-insufficient`, default `strict`. When a group's members occupy only some child branches of a polytomous LCA: `strict` (default) and `data-insufficient` return data_insufficient; `relaxed` returns paraphyletic instead of polyphyletic |
 
 **Special identifiers**:
 - `LUCA`: MRCA of all bacteria and archaea
@@ -320,17 +325,19 @@ pyitol taxonomy check-and-style \
 | Parameter | Description |
 |------|------|
 | `--tree` / `-r` | Tree file path |
-| `--taxonomy` / `-t` | Taxonomy table file path (optional) |
+| `--taxonomy` / `-t` | Taxonomy table file path (optional; if omitted, taxonomy is extracted from tip names) |
 | `--taxon` | Taxon name to check (supports LUCA/LACA/LBCA/ROOT) |
 | `--rank` | Taxonomic rank (default Genus) |
-| `--action` / `-a` | Style action: `color-branch`/`highlight`/`color-strip` |
-| `--color` | Specified color (HEX) |
-| `--output` / `-o` | Output template file path |
-| `--name-format` | Naming format: `auto`/`gtdb`/`embedded`/`ncbi` |
-| `--palette` | Color palette preset |
+| `--action` / `-a` | Style action: `color-branch`/`highlight`/`color-strip` (default `color-branch`) |
+| `--color` | Specified color (HEX); auto-assigned if omitted |
+| `--output` / `-o` | Output template file path (default `styled_template.txt`) |
+| `--id-column` | ID column name (default `id`) |
+| `--name-format` | Naming format: `auto`/`gtdb`/`embedded`/`ncbi` (default `auto`, used only when `--taxonomy` is absent) |
+| `--palette` | Color palette preset (default `nature`) |
+| `--separator` | Data separator: `TAB`/`SPACE`/`COMMA` (default `TAB`) |
 | `--domain-column` | Domain column name (used for LUCA/LACA/LBCA resolution) |
-| `--multi-tree-mode` / `-m` | Multi-tree processing strategy |
-| `--taxonomy-source-priority` | Mixed-source priority | `table` (default) / `embedded` |
+| `--multi-tree-mode` / `-m` | Accepted but currently has **no effect**: declared for future use and never forwarded to the tree-loading code. The strategies `ask`/`first`/`last`/`split` (`all` being an internal alias for `split`) are a library capability of `core/parser.load_tree` |
+| `--taxonomy-source-priority` | Mixed-source priority: `table` (default, table takes precedence) / `embedded` (tree names take precedence) |
 
 ### `pyitol taxonomy style`
 
@@ -377,13 +384,44 @@ pyitol task upload --tree tree.nwk \
   --api-key YOUR_KEY --dataset-name MyTree
 ```
 
+| Parameter | Shortcut | Default | Description |
+|------|------|--------|------|
+| `--tree` | `-r` | | Tree file path (required) |
+| `--config` | `-c` | | Template/configuration file path (can be specified multiple times) |
+| `--api-key` | | | iTOL API key |
+| `--api-key-file` | | | API key file path |
+| `--dataset-name` | | | Dataset (tree) name; defaults to the tree file name stem |
+| `--tree-description` | | | Tree description |
+| `--verbose` | | `False` | Show detailed response |
+| `--retry` | | `3` | Number of network request retries |
+| `--wait` | | `60` | Fixed number of seconds to wait for iTOL rendering after upload (a fixed delay, not a timeout/deadline; only takes effect with `--download`) |
+| `--download` | `-d` | | If set, export images to this directory once the upload finishes |
+| `--parameters-file` | | | Export parameters file (one `key=value` per line) |
+| `--parameter` | | | Export parameter `key=value` (can be specified multiple times) |
+
+> **Note**: `task upload` has no `--format` option; when exporting via `--download`, the format must be given as `--parameter format=svg` (defaults to `pdf`).
+
 ### `pyitol task export`
 
 Exports iTOL visualization images.
 
 ```bash
-pyitol task export --upload-id TREE_ID --download ./output --format svg
+pyitol task export --upload-id TREE_ID --download ./output \
+  --parameter format=svg
 ```
+
+| Parameter | Shortcut | Default | Description |
+|------|------|--------|------|
+| `--upload-id` | `-u` | | Upload ID (required) |
+| `--download` | `-d` | | Download output directory (required) |
+| `--api-key` | | | iTOL API key |
+| `--api-key-file` | | | API key file path |
+| `--parameters-file` | | | Export parameters file (one `key=value` per line) |
+| `--parameter` | | | Export parameter `key=value` (can be specified multiple times) |
+| `--wait` | | `60` | Accepted but currently has no effect: the value is parsed and discarded, no delay is performed and it is not a timeout/deadline; the export request is issued immediately (a fixed wait only happens in `task upload --download` and `task upload-and-export`) |
+| `--retry` | | `3` | Number of retries |
+
+> **Note**: `task export` does **not** provide the `--format`, `--dpi`, `--width` or `--height` options. The export format must be given as `--parameter format=svg` (one of `svg`/`png`/`pdf`/`tiff`/`eps`/`newick`/`nexus`/`phyloxml`, defaults to `pdf`), and dimensions likewise as `--parameter dpi=300`, `--parameter width=2400`, etc. Use `pyitol task upload-and-export` if you want those standalone options.
 
 ### `pyitol task upload-and-export`
 
@@ -394,6 +432,25 @@ pyitol task upload-and-export \
   --tree tree.nwk --config colors.txt \
   --output output.svg --format svg --wait 60
 ```
+
+| Parameter | Shortcut | Default | Description |
+|------|------|--------|------|
+| `--tree` | `-r` | | Tree file path (required) |
+| `--output` | `-o` | | Output image path (required) |
+| `--config` | `-c` | | Template/configuration file path (can be specified multiple times) |
+| `--api-key` | | | iTOL API key |
+| `--api-key-file` | | | API key file path |
+| `--dataset-name` | | | Dataset (tree) name |
+| `--tree-description` | | | Tree description |
+| `--verbose` | | `False` | Show detailed response |
+| `--wait` | | `60` | Fixed number of seconds to wait for iTOL rendering after upload and before issuing the export (a fixed delay, not a timeout/deadline) |
+| `--retry` | | `3` | Number of retries |
+| `--format` | `-f` | `svg` | Export format: `svg`/`png`/`pdf` |
+| `--dpi` | | | Image DPI (only applies to PNG/PDF) |
+| `--width` | | | Image width (pixels) |
+| `--height` | | | Image height (pixels) |
+| `--parameters-file` | | | Export parameters file (one `key=value` per line) |
+| `--parameter` | | | Export parameter `key=value` (can be specified multiple times) |
 
 Supports `--parameter` for passing iTOL export parameters (e.g., `datasets_visible`, `display_mode`, `background`), consistent with `task export`:
 
@@ -406,14 +463,17 @@ pyitol task upload-and-export \
   --parameter background=ffffff
 ```
 
-Common `--parameter` values: `datasets_visible`, `display_mode` (0=rectangular/1=circular/2=unrooted circular/3=unrooted rectangular), `background`, `ignore_branch_length`, `line_width`, `current_font_size`, `margin`, `arc`.
+Common `--parameter` values: `datasets_visible` (dataset visibility), `display_mode` (0=rectangular/1=circular/2=unrooted circular/3=unrooted rectangular), `background` (background color), `ignore_branch_length` (ignore branch lengths), `line_width` (line width), `current_font_size` (current font size), `margin` (page margin), `arc` (arc).
 
 ### `pyitol task delete`
 
-Deletes uploaded trees.
+Deletes uploaded trees or projects.
 
 ```bash
 pyitol task delete --upload-id ID1 --upload-id ID2 --api-key YOUR_KEY
+
+# Delete an entire project
+pyitol task delete --project MyProject --confirm
 ```
 
 ### `pyitol task status`
@@ -421,8 +481,10 @@ pyitol task delete --upload-id ID1 --upload-id ID2 --api-key YOUR_KEY
 Queries the status of an uploaded tree.
 
 ```bash
-pyitol task status --upload-id TREE_ID --api-key YOUR_KEY
+pyitol task status --tree-name TREE_NAME --api-key YOUR_KEY
 ```
+
+> **Note**: `task status` takes the tree name via `--tree-name/-n` (not `--upload-id`).
 
 ### `pyitol task run`
 
@@ -459,7 +521,7 @@ pyitol tree format-support-values --tree tree.nwk --output formatted.nwk
 
 ### `pyitol utils tree-info`
 
-Displays basic tree file information.
+Displays basic tree file information. **Deprecated**: duplicated by `pyitol tree info` (the canonical command); kept only for backward compatibility and emits a DeprecationWarning when run.
 
 ```bash
 pyitol utils tree-info --tree tree.nwk
@@ -483,7 +545,7 @@ pyitol utils taxonomy-parse --taxonomy tax.csv
 
 ### `pyitol utils learn-template`
 
-Reverse-learns configuration from an existing iTOL template file.
+Learns the configuration back from an existing iTOL template file. **Deprecated**: duplicated by `pyitol learn template` (the canonical command); kept only for backward compatibility and emits a DeprecationWarning when run.
 
 ```bash
 pyitol utils learn-template --template colors.txt --output learned.json
@@ -548,11 +610,11 @@ pyitol utils preview --taxonomy tax.csv --tree tree.nwk --column Phylum
 
 ---
 
-## learn - Template Reverse Learning
+## learn - Learning from Existing Templates
 
 ### `pyitol learn template`
 
-Reverse-learns configuration from template files.
+Learns the configuration back from template files.
 
 ```bash
 pyitol learn template --template t1.txt --template t2.txt --output learned.json
@@ -586,6 +648,12 @@ Replays a previous operation record.
 pyitol replay --session ~/.pyitol/session_logs/pyitol_20240115_120000.yaml
 ```
 
+| Parameter | Shortcut | Default | Description |
+|------|------|--------|------|
+| `--session` | `-s` | | Snapshot (session.yaml) file path (required) |
+| `--dry-run` | | `False` | Only show the suggested commands without executing them |
+| `--use-cli` | | `True` | Prefer replaying the recorded command line as-is (when disabled, actions are rebuilt parameter by parameter) |
+
 ---
 
 ## Configuration File Format
@@ -594,7 +662,7 @@ PyiTOL supports passing a YAML/JSON configuration file via `--config` to overrid
 
 `--config` is used to override CLI default parameters (such as `tree`, `taxonomy`, `api_key`, etc.).
 
-`pyitol task run` uses an independent task configuration file format, with each item specifying the operation via the `command` field, supporting `upload`/`export`/`extract`/`monophyly`/`convert-binary`, etc. See [API Usage Guide](api.md#batch-operations) for details.
+`pyitol task run` uses an independent task configuration file format, with each item specifying the operation via the `command` field, supporting `upload`/`export`/`extract`/`monophyly`/`convert-binary`, etc. See [API Usage Guide](api_en.md#batch-operations) for details.
 
 Task configuration file example `batch.yaml` (list format):
 

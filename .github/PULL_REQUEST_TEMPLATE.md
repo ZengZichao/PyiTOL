@@ -5,7 +5,7 @@ Brief description of the changes in this PR.
 
 ## Related Issue / 关联Issue
 
-Closes #  <!-- link the issue this PR addresses -->
+Closes #  <!-- link the issue this PR addresses / 关联本 PR 对应的 issue -->
 
 ## Type of Change / 变更类型
 
@@ -19,8 +19,9 @@ Closes #  <!-- link the issue this PR addresses -->
 
 ## Checklist / 检查清单
 
-- [ ] Tests pass locally (`pytest tests/ -v`)
-- [ ] Linter passes (`ruff check src/ tests/`)
+- [ ] Tests pass locally (`pytest tests/ -m "not integration"`) / 本地测试通过
+- [ ] Linter and formatter pass (`ruff check src/ tests/ && ruff format --check src/ tests/`) / 代码检查与格式化通过
+- [ ] Type checks pass (`mypy src/pyitol`) / 类型检查通过
 - [ ] New code has type hints / 新增代码包含类型注解
 - [ ] Documentation updated / 文档已更新
 - [ ] CHANGELOG updated (if applicable) / CHANGELOG已更新（如适用）

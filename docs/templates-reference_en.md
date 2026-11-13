@@ -1,29 +1,41 @@
 # Template Generation Subcommand Reference (`template create-*`)
 
-This page documents all **34 dedicated subcommands** under `pyitol template` (`pyitol template create-*`). They are functionally equivalent to the unified entry point `pyitol template create <type>`, but each command accepts only its type-specific parameters — ideal for precise scripting and pipelines, with no need to remember the `template_type` string.
+[中文](templates-reference.md) | English
 
-> The unified entry `pyitol template create` supports 31 types; `external-shape-bubble` is only available through the dedicated subcommand on this page. Use the unified entry for occasional template generation; use dedicated subcommands for fixed-type batch calls in pipelines.
+This page documents all **34 dedicated subcommands** under `pyitol template` (`pyitol template create-*`). They are functionally equivalent to the unified entry point `pyitol template create <type>`, but each command accepts only its type-specific parameters — ideal for precise scripting, with no need to remember the `template_type` string.
+
+> The 34 dedicated subcommands on this page cover the 33 types supported by the unified entry `pyitol template create` plus the `external-shape-bubble` variant (which is not part of the unified entry and is only available through the dedicated subcommand documented here). Use the unified entry for occasional template generation; use dedicated subcommands for fixed-type batch calls in pipelines.
 
 ## Common options
 
-Unless noted otherwise, the following options apply to every command on this page (defaults taken from source):
+These 5 options are accepted by **all 34** commands on this page (defaults taken from source):
 
 | Option | Short | Default | Description |
 |--------|-------|---------|-------------|
 | `--output` | `-o` | `config_template.txt` | Output template file path |
-| `--taxonomy` | `-t` | (required by most) | Taxonomy table file path |
-| `--tree` | `-r` | (required by most) | Newick tree file path |
 | `--label` | `-l` | varies by type | Dataset label |
-| `--id-column` | | `id` | ID column name |
-| `--separator` | `-s` | `TAB` | Data separator: `TAB`/`SPACE`/`COMMA` |
-| `--colors` | | | Custom color map; JSON (`{"A":"#ff0000"}`) or shorthand (`A:#ff0000,B:#00ff00`) |
+| `--separator` | `-s` | `TAB` | Data field separator: `TAB`/`SPACE`/`COMMA` |
+| `--force` | `-f` | off | Overwrite an existing output file |
+| `--no-clobber` | | off | Skip an existing output file |
 
-> Unlike the unified entry, dedicated subcommands do **not** support `--force` / `--no-clobber`: if the output file exists, the command errors out. Use a different `--output` or delete the old file first.
+The remaining options are **not available on every command**; measured applicability per command signature:
 
-By input dependency, the commands are grouped into three classes:
-- **Datasets**: generated from "tree + taxonomy" columns; most require `--tree` and `--taxonomy`.
-- **Tree structure**: collapse, prune, spacing, coloring, styling, etc.
-- **Advanced**: require an external data file (`--data` / `--connections`); do not depend on tree or taxonomy.
+| Option | Short | Default | Description | Commands (measured) |
+|--------|-------|---------|-------------|---------------------|
+| `--taxonomy` | `-t` | required | Taxonomy table file path | 24/34 commands; optional on `create-collapse`; **absent** on these 10: `create-connections`, `create-domains`, `create-tanglegram`, `create-placement`, `create-timescale`, `create-meme`, `create-manual`, `create-prune`, `create-spacing`, `create-arrow` |
+| `--tree` | `-r` | required | Newick tree file path | Same group as `--taxonomy` (24/34 commands, optional on `create-collapse`) |
+| `--id-column` | | `id` | ID column name | The same 24 commands as `--taxonomy` |
+| `--colors` | | none | Custom color map; JSON (`{"A":"#ff0000"}`) or shorthand (`A:#ff0000,B:#00ff00`) | Only 10/34 commands: `create-color-strip`, `create-branch`, `create-multi-bar`, `create-symbols`, `create-pie`, `create-external-shape`, `create-tree-colors`, `create-ranges`, `create-highlight`, `create-style` |
+| `--palette` | | none | Palette subset name; **currently has no effect** (see the `create-color-strip` entry) | Only `create-color-strip` |
+
+> An option absent from a command's signature makes Typer abort with `No such option`, so the two tables in this section are the authority on which command accepts what; "required" means the option is declared as `typer.Option(...)` in those commands. `--separator` only sets the field separator of template data rows and is unrelated to `--delimiter` (the name-segment delimiter that splits rank segments inside a leaf name) used by the `taxonomy` commands.
+
+> As with the unified entry, dedicated subcommands **also support** `--force`/`-f` and `--no-clobber`: `--force` overwrites an existing output file, `--no-clobber` skips it (the command returns without rewriting the file). If neither is set and the output file already exists, the command errors out.
+
+By **required inputs** taken from each command signature, the commands fall into three classes (16 + 9 + 9 = 34):
+- **Datasets**: 14 of them require "tree + taxonomy" as mandatory input (`--tree` and `--taxonomy`); the two exceptions are `create-connections` and `create-domains`, whose mandatory input is an external JSON file (`--connections` / `--data`) with zero dependency on `--tree` and `--taxonomy`.
+- **Tree structure**: these commands alter the tree itself. `create-tree-colors`, `create-branch-gradient`, `create-ranges`, `create-highlight`, `create-style` require `--tree` and `--taxonomy`; `create-collapse` keeps both optional (`--node-ids` or `--taxon`+`--rank`, one of the two); `create-prune` needs only `--node-ids`; `create-spacing` and `create-arrow` need only an external data file (`--data` / `--data-file`).
+- **Advanced**: extra annotations attached to the tree. `create-linechart`, `create-image`, `create-alignment`, `create-external-shape-bubble` require `--tree` and `--taxonomy`; `create-tanglegram` needs only `--connections`; `create-placement`, `create-timescale`, `create-meme`, `create-manual` need only `--data-file`, reading neither `--tree` nor `--taxonomy`.
 
 ---
 
@@ -31,9 +43,9 @@ By input dependency, the commands are grouped into three classes:
 
 ### `pyitol template create-color-strip`
 
-Add a classification color strip to terminal branches.
+Add a classification color strip to each leaf (terminal branch).
 
-**Specific options**: `--column`/`-c` (required, category column), `--colors`, `--strip-width` (default `50`), `--palette` (palette subset name).
+**Specific options**: `--column`/`-c` (required, category column), `--colors`, `--strip-width` (default `50`), `--palette` (palette subset name; **accepted yet inert** — `generate_color_strip_template()` has no `palette` parameter, the call site drops the value, and the generated file is identical with or without it).
 
 ```bash
 pyitol template create-color-strip \
@@ -95,7 +107,7 @@ pyitol template create-heatmap \
 
 Symbol markers.
 
-**Specific options**: `--column`/`-c` (required), `--symbol-type` (default `diamond`; `diamond`/`circle`/`square`/`triangle`/`star`), `--colors`, `--size` (default `30`).
+**Specific options**: `--column`/`-c` (required), `--symbol-type` (default `diamond`; `diamond`/`circle`/`square`/`triangle`/`star` — iTOL has no diamond symbol, so `diamond` warns and falls back to `square`), `--colors`, `--size` (default `30`).
 
 ```bash
 pyitol template create-symbols \
@@ -130,7 +142,7 @@ pyitol template create-boxplot \
 
 ### `pyitol template create-gradient`
 
-Numeric gradient color strip.
+Color gradient strip based on a numeric column (gradient strip).
 
 **Specific options**: `--column`/`-c` (required), `--color-min` (default `#ff0000`), `--color-max` (default `#0000ff`), `--strip-width` (default `25`), `--use-mid-color` (flag, enable mid color), `--color-mid` (default `#ffff00`).
 
@@ -143,7 +155,7 @@ pyitol template create-gradient \
 
 ### `pyitol template create-labels`
 
-Rename / customize terminal labels.
+Rename / customize leaf labels.
 
 **Specific options**: `--column`/`-c` (required, label column).
 
@@ -169,7 +181,7 @@ pyitol template create-popup-info \
 
 Binary dataset; converts category columns to 0/1 fields.
 
-**Specific options**: `--columns`/`-c` (required, comma-separated category columns), `--field-colors` (default `#ff0000,#00ff00,#0000ff`), `--field-shapes` (default `1,2,3`, values 1–6), `--color` (default `#ff0000`), `--show-internal` (default `1`).
+**Specific options**: `--columns`/`-c` (required, comma-separated category columns), `--field-colors` (default `#ff0000,#00ff00,#0000ff`), `--field-shapes` (default `1,2,3`, values 1-6), `--color` (default `#ff0000`), `--show-internal` (default `1`, whether to show internal nodes; `0`/`1`).
 
 ```bash
 pyitol template create-binary \
@@ -192,7 +204,7 @@ pyitol template create-text \
 
 ### `pyitol template create-external-shape`
 
-External shape markers drawn outside the tree.
+External shapes: markers drawn outside the tree.
 
 **Specific options**: `--column`/`-c` (required), `--shape-type` (default `circle`; `circle`/`square`/`star`/`triangle_right`/`triangle_left`/`checkmark`), `--colors`, `--size` (default `20`).
 
@@ -206,22 +218,22 @@ pyitol template create-external-shape \
 
 Connection lines. **Does not depend on tree or taxonomy**; reads a connections JSON file.
 
-**Specific options**: `--connections`/`-c` (required, JSON file path, format `[[id1,id2],...]`), `--color` (default `#e64b35`), `--line-width` (default `2`), `--line-type` (default `solid`; `solid`/`dotted`/`dashed`), `--arrow-head-size` (default `1`).
+**Specific options**: `--connections`/`-c` (required, JSON file path, format `[[id1,id2],...]`), `--color` (default `#e64b35`), `--line-width` (default `2`), `--line-type` (default `solid`; only `solid` (curve) and `straight` (line) actually take effect — the `dotted`/`dashed` values listed in `--help` are not supported by iTOL, they warn and fall back to `solid`), `--arrow-head-size` (default `1`).
 
 ```bash
 # pairs.json: [["TaxonA","TaxonB"], ["TaxonC","TaxonD"]]
 pyitol template create-connections \
-  --connections pairs.json --color "#e64b35" --line-type dashed --output connections.txt
+  --connections pairs.json --color "#e64b35" --line-type straight --output connections.txt
 ```
 
 ### `pyitol template create-domains`
 
 Protein domains. **Does not depend on tree or taxonomy**; reads a JSON data file.
 
-**Specific options**: `--data`/`-d` (required, JSON file path), `--color` (default `#ff00aa`), `--scale` (optional).
+**Specific options**: `--data`/`-d` (required, JSON file path), `--color` (default `#ff00aa`), `--scale` (scale, optional).
 
 ```bash
-# domains.json: [{"id":"TaxonA","domains":[{"start":1,"end":50,"name":"PF001","color":"#ff0000"}]}]
+# domains.json: one record per domain [{"id":"TaxonA","from":"10","to":"50","type":"PF001","color":"#ff0000"}]
 pyitol template create-domains \
   --data domains.json --color "#ff00aa" --output domains.txt
 ```
@@ -232,7 +244,7 @@ pyitol template create-domains \
 
 ### `pyitol template create-tree-colors`
 
-Tree colors; supports branch, label, branch-width, range, and gradient coloring.
+Tree colors; supports six coloring types: `clade` (default), `label`, `branch`, `width` (branch line width), `range`, `gradient`.
 
 **Specific options**: `--column`/`-c` (required), `--colors`, `--color-type` (default `clade`; `clade`/`label`/`branch`/`width`/`range`/`gradient`), `--width-value` (default `3`, only for `width` type).
 
@@ -445,16 +457,16 @@ pyitol template create-meme --data-file meme.csv --show-labels 1 --output meme.t
 
 Manual annotation with free-form custom data. **Does not depend on tree or taxonomy**; reads an arbitrary-column CSV.
 
-**Specific options**: `--data-file`/`-d` (required, CSV file path), `--color` (default `#ff0000`), `--custom-header` (custom header JSON, e.g. `{"KEY":"VALUE"}`).
+**Specific options**: `--data-file`/`-d` (required, CSV file path), `--color` (default `#ff0000`), `--custom-header` (custom header JSON, e.g. `{"KEY":"VALUE"}`; keys are written to the template verbatim, so a misspelled key yields one extra line that iTOL ignores — the keywords the generator really emits are `FIELD_LABELS`, `FIELD_COLORS`, `FIELD_SHAPES`).
 
 ```bash
 pyitol template create-manual \
-  --data-file custom.csv --custom-header '{"FIELD_SHAPE":"1"}' --output manual.txt
+  --data-file custom.csv --custom-header '{"FIELD_SHAPES":"1,2,3"}' --output manual.txt
 ```
 
 ### `pyitol template create-external-shape-bubble`
 
-Multi-column bubble external shapes.
+Bubble external shapes (external shape bubble): draws bubbles for multiple numeric columns.
 
 **Specific options**: `--columns`/`-c` (required, comma-separated numeric columns).
 
@@ -469,5 +481,5 @@ pyitol template create-external-shape-bubble \
 ## Related pages
 
 - [CLI Reference](cli_en.md): command overview, the unified `template create` entry, global options, and exit codes.
-- [Template Tutorial](tutorials/templates_en.md): selecting and combining 30+ template types.
+- [Template Tutorial](tutorials/templates_en.md): selecting and combining the 33 unified-entry types plus the `external-shape-bubble` variant.
 - [API Guide](api_en.md): iTOL batch API and Python API usage.

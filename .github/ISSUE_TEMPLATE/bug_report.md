@@ -14,9 +14,9 @@ A clear and concise description of what the bug is.
 Steps to reproduce the behavior:
 复现问题的步骤：
 
-1. Run command '...'
-2. With input file '...'
-3. See error
+1. Run command '...' / 运行命令 '...'
+2. With input file '...' / 使用输入文件 '...'
+3. See error / 观察报错
 
 ```bash
 # Paste the exact command you ran here
@@ -41,7 +41,7 @@ What actually happened. Include the full error traceback if applicable.
 
 - **OS / 操作系统**: [e.g., macOS 14, Ubuntu 22.04, Windows 11]
 - **Python version / Python版本**: [e.g., 3.11.5]
-- **PyiTOL version / PyiTOL版本**: [e.g., 1.0.0] (run `pyitol --version`)
+- **PyiTOL version / PyiTOL版本**: [e.g., 1.0.3] (run `pyitol --version`)
 - **Installation method / 安装方式**: [e.g., pip, editable install]
 
 ## Input Files / 输入文件

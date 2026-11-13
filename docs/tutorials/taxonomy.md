@@ -1,5 +1,7 @@
 # 分类分析教程
 
+[English](taxonomy_en.md) | 中文
+
 PyiTOL 提供完整的分类分析工具链：等级识别、信息提取、单系性检测和自动化美化。
 
 ## 1. 分类等级识别
@@ -8,7 +10,7 @@ PyiTOL 提供完整的分类分析工具链：等级识别、信息提取、单�
 pyitol taxonomy ranks --taxonomy taxonomy.csv
 ```
 
-自动识别标准分类等级（domain, phylum, class, order, family, genus, species）以及自定义列。
+`taxonomy ranks` 列出分类表格中除 ID 列（`--id-column`，默认 `id`）之外的所有列名：标准分类等级（domain、phylum、class、order、family、genus、species 等）与自定义列一视同仁，既不做识别判断，也不筛选。列名不一定保持表格中的原始顺序：列名精确命中标准等级名（`Domain`、`Kingdom`、`Phylum`、`Class`、`Order`、`Family`、`Genus`、`Species`）时会按该固定等级顺序重排，其余列（包括小写写法与自定义列）保持原有相对顺序并排在最后；若表格只有 ID 列加一列 GTDB 分号分隔谱系串，该串会先被解析为标准等级列再列出。
 
 ## 2. 分类信息提取
 
@@ -20,7 +22,7 @@ pyitol taxonomy extract \
   --rank Phylum --output phylum_tips.txt
 ```
 
-输出格式：每行一个末端节点，包含 ID 和分类名。
+输出格式：每行一个末端（叶），包含 ID 和分类名。
 
 ### 统计提取（含 LCA 和成员数）
 
@@ -34,7 +36,7 @@ pyitol taxonomy extract-stats \
 
 ### 从树末端名称提取
 
-无需预先准备分类表格，直接从树末端（叶节点）名称自动提取分类学信息：
+无需预先准备分类表格，直接从树末端（叶）名称自动提取分类学信息：
 
 ```bash
 pyitol taxonomy extract-from-names \
@@ -42,7 +44,7 @@ pyitol taxonomy extract-from-names \
   --output taxonomy_from_names.csv
 ```
 
-支持六种命名格式（通过 `--format` 指定）：
+`--format` 的帮助文本只列出 4 种取值（`auto`/`gtdb`/`embedded`/`ncbi`），实现另支持 `underscore` 与 `mixed`，共六种命名格式：
 
 | 格式 | 说明 | 示例 |
 |------|------|------|
@@ -104,7 +106,7 @@ pyitol taxonomy monophyly \
 
 | 模式 | 说明 |
 |------|------|
-| `strict` | 严格模式（默认），按标准二叉树分类规则判定 |
+| `strict` | 严格模式（默认），按标准二叉树分类规则判定；但当 LCA 为多歧节点、成员仅占据部分子分支且存在混入节点时，同样判为 `data_insufficient` |
 | `relaxed` | 宽松模式，若成员仅占据多歧节点的部分子分支，判为并系而非复系 |
 | `data-insufficient` | 数据不足模式，上述情况判为 `data_insufficient`，表示拓扑未解析、无法定论 |
 
@@ -117,27 +119,30 @@ pyitol taxonomy monophyly \
 
 ### 多棵树处理
 
-当树文件包含多棵树时，通过 `--multi-tree-mode` 指定处理策略：
+`--multi-tree-mode`（帮助文本列出 `ask`/`first`/`last`/`split`，默认 `ask`）在 `taxonomy monophyly` 与 `taxonomy check-and-style` 上只是被接收：`monophyly` 会解析该取值（并允许被配置文件覆盖），`check-and-style` 甚至不读取它；两者都不会把它传给单系性检测的读树代码（源码注释标注该参数 reserved for future use）。这两个命令直接用 `dendropy.Tree.get_from_path` 载入树，因此既不提示选择、也不拆分输出，任何取值当前都没有效果。
+
+各策略本身的语义如下（由 `pyitol/core/parser.py::load_tree` 实现）：
 
 | 策略 | 说明 |
 |------|------|
 | `ask` | 默认，提示用户选择（非交互环境自动回退到 `first`） |
 | `first` | 仅使用第一棵树 |
 | `last` | 仅使用最后一棵树 |
-| `random` | 随机选择一棵树 |
-| `split` | 分别处理所有树，结果文件添加数字后缀 |
-| `all` | 同 `split`，返回所有树分别处理 |
+| `split` | 返回全部树的列表，由调用方逐棵处理 |
+| `all` | 代码内部别名，与 `split` 等价：返回全部树并分别处理（帮助文本未列出） |
+
+只有经 `pyitol/core/parser.py::load_tree` 加载树的代码路径才会真正执行上述策略；这些路径目前由内部以固定值调用（`validate` 内部使用 `first` 与 `all`），命令行尚未把本选项的取值传进去。因此下面的命令无论是否加上 `--multi-tree-mode`，行为都完全相同：
 
 ```bash
 pyitol taxonomy monophyly \
   --taxonomy taxonomy.csv --tree trees.nexus \
-  --rank Phylum --multi-tree-mode split \
+  --rank Phylum \
   --output monophyly.csv
 ```
 
 ## 4. 单系性判定原理
 
-PyiTOL 对每组末端节点执行以下算法：
+PyiTOL 对每组末端（叶）执行以下算法：
 
 1. **找 LCA**：计算类群所有成员的最近共同祖先
 2. **算差集**：
@@ -145,19 +150,19 @@ PyiTOL 对每组末端节点执行以下算法：
    - `M = 类群成员 \ LCA后代`（缺失节点）
 3. **判定**：
    - `E=∅` 且 `M=∅` → **单系群 (monophyletic)**
-   - `M=∅` 且 `E≠∅` → **并系群 (paraphyletic)**
-   - `M≠∅` → **多系群 (polyphyletic)**
-   - `--polytomy-mode=data-insufficient` 且 LCA 为多歧节点、成员仅占据部分子分支且存在混入节点 → **数据不足 (data_insufficient)**
+   - `M≠∅`（部分成员不在树中） → **取样不全 (incomplete_sampling)**
+   - `M=∅` 且 `E≠∅` → 依拓扑判为 **并系群 (paraphyletic)** 或 **复系群 (polyphyletic)**；若混入节点全部映射到同一类群则仍判单系，若全部无法映射则判 `data_insufficient`
+   - LCA 为多歧节点、成员仅占据部分子分支且 `E≠∅` → 默认 `strict` 与 `data-insufficient` 模式判为 **数据不足 (data_insufficient)**，`relaxed` 模式判为并系群
 
-第四种状态 `data_insufficient` 仅在 `--polytomy-mode data-insufficient` 下出现：当 LCA 是多歧节点（未解析的多分叉），且类群成员散布于其中部分但非全部子分支，并伴随混入节点时，拓扑关系未充分解析，无法做出可靠的单系/并系/复系判定。此时输出 `data_insufficient` 状态以提示用户需补充数据或改用 `relaxed`/`strict` 模式。
+`data_insufficient` 有两种来源：一是上述多歧节点情形（默认 `strict` 与 `data-insufficient` 模式都会返回它，只有 `relaxed` 不会）；二是非多歧情形下混入节点全部不在分类映射中、无法判断其归属。此时输出 `data_insufficient` 以提示用户补齐分类表，或在多歧节点情形下改用 `relaxed` 模式。
 
-多系群会进一步分解为亚组，输出每个亚组的 LCA 和成员。
+复系群会进一步分解为亚组，输出每个亚组的 LCA 和成员。
 
 ## 5. 美化配置生成
 
 根据单系性检测结果，自动生成 iTOL 模板：
 
-### 为不同门类生成颜色条带
+### 为不同门类生成色带
 
 ```bash
 pyitol taxonomy style \
@@ -174,7 +179,7 @@ pyitol taxonomy style \
   --color "#e64b35" --output highlight.txt
 ```
 
-### 为高门类群添加符号标记
+### 为属级类群添加符号标记
 
 ```bash
 pyitol taxonomy style \
@@ -189,18 +194,18 @@ pyitol taxonomy style \
 | `color-branch` | TREE_COLORS (clade) | 分支着色 |
 | `color-label` | TREE_COLORS (label) | 标签着色 |
 | `color-range` | TREE_COLORS (range) | 范围着色 |
-| `color-strip` | DATASET_COLORSTRIP | 颜色条带 |
+| `color-strip` | DATASET_COLORSTRIP | 色带 |
 | `style-branch` | DATASET_STYLE | 分支线型 |
 | `style-label` | DATASET_STYLE | 标签样式 |
-| `width` | TREE_COLORS (width) | 分支宽度 |
+| `width` | DATASET_STYLE | 分支宽度 |
 | `highlight` | DATASET_STYLE | 标签背景高亮 |
-| `symbol` | DATASET_SYMBOLS | 符号标记 |
+| `symbol` | DATASET_SYMBOL | 符号标记 |
 | `range` | DATASET_RANGE | 彩色范围 |
 | `gradient` | DATASET_GRADIENT | 渐变色带 |
 
 ### 检查并美化（一步到位）
 
-`check-and-style` 命令将单系性检查与美化模板生成合并为一步：先检查指定类群是否为单系群，若是则生成美化模板，否则发出警告并跳过。
+`check-and-style` 命令将单系性检查与美化模板生成合并为一步：先检查指定类群是否为单系群，若是则生成美化模板；否则输出警告或错误并以状态码 1 退出，不写出任何模板文件。
 
 ```bash
 pyitol taxonomy check-and-style \
@@ -215,7 +220,7 @@ pyitol taxonomy check-and-style \
 |------|------|
 | `color-branch` | 分支着色（默认） |
 | `highlight` | 标签背景高亮 |
-| `color-strip` | 颜色条带 |
+| `color-strip` | 色带 |
 
 通过 `--taxonomy-source-priority` 控制同时提供外部分类表格和树名嵌入分类信息时的合并优先级：
 
@@ -228,14 +233,16 @@ pyitol taxonomy check-and-style \
 
 #### 特殊标识符
 
-`--taxon` 支持四个特殊标识符，用于定位生命树根部的关键祖先节点（需提供 `--taxonomy` 与 `--domain-column`）：
+`--taxon` 支持四个特殊标识符，用于定位生命树根部的关键祖先节点。使用任一标识符都必须提供 `--taxonomy`；`--domain-column` 是可选的，默认取列名 `Domain`（表格中列名大小写不一致时会自动匹配），但 `LUCA`/`LACA`/`LBCA` 要求分类表格确实含有域列，否则抛出 `MetadataParseError`：
 
 | 标识符 | 含义 |
 |--------|------|
 | `LUCA` | 所有古菌和细菌的最近共同祖先 |
 | `LACA` | 所有古菌的最近共同祖先 |
 | `LBCA` | 所有细菌的最近共同祖先 |
-| `ROOT` | 全树根，返回树中所有末端节点，无需指定域 |
+| `ROOT` | 全树根，返回分类表格中与树末端（叶）标签相交的那部分 ID，不使用域列 |
+
+`taxonomy monophyly` 的 `--taxa`/`--taxa-file` 接受同一组标识符（`LUCA`/`LACA`/`LBCA`/`ROOT`，其帮助文本只列出前三个），但该命令没有 `--domain-column` 选项，域列名固定按 `Domain` 查找。
 
 ```bash
 pyitol taxonomy check-and-style \
@@ -246,7 +253,7 @@ pyitol taxonomy check-and-style \
 
 ## 6. 二元数据转换
 
-将分类数据转换为 0/1 矩阵：
+将 `--columns` 指定各列的存在/缺失数据（如基因有无）转换为 0/1 矩阵：
 
 ```bash
 pyitol taxonomy convert-binary \

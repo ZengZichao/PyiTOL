@@ -15,11 +15,11 @@ English | [中文](README_CN.md)
 
 ### Core Features
 
-- **31 iTOL template types** (plus `external-shape-bubble`, a variant of `external-shape`): color strips, heatmaps, bar charts, pie charts, symbols, binary matrices, gradients, protein domains, connections, and more
+- **33 iTOL template types** via the unified entry `pyitol template create <type>` (plus `external-shape-bubble`, a variant of `external-shape`, for 34 dedicated subcommands in total): color strips, heatmaps, bar charts, pie charts, symbols, binary matrices, gradients, protein domains, connections, and more
 - **Full API client**: upload, export PDF/SVG/PNG/TIFF/EPS/Newick/Nexus/PhyloXML, delete, and batch operations via iTOL batch endpoints
 - **Taxonomy & monophyly analysis**: built-in dendropy integration for monophyletic/paraphyletic/polyphyletic group classification
 - **Extract taxonomy from tip names**: supports GTDB (`d__Bacteria;p__Proteobacteria;...`), embedded (`_d_Bacteria_p_...`), NCBI (`Genus_species`), auto-detection, underscore, and mixed formats
-- **Monophyly check → conditional styling**: check if a taxon is monophyletic, then automatically generate beautification templates
+- **Monophyly check → conditional styling**: check if a taxon is monophyletic, then automatically decide whether to generate beautification templates
 - **Color-blind friendly palettes**: `tol_bright`, `tol_vibrant`, `wong`, `okabeito`, and more
 - **Auto legend positioning**: legends placed in bottom-right corner to avoid tree overlap
 - **Session snapshots & replay**: YAML-based operation recording for reproducible workflows
@@ -59,16 +59,17 @@ pyitol template create-collapse --taxon Proteobacteria --rank Phylum \
 
 ### Multi-tree Handling
 
-```bash
-# Default: prompt user when multiple trees detected
-pyitol template create color-strip --tree multi.nwk ...
+Multi-tree strategy selection is a **library capability**, implemented by `pyitol.core.parser.load_tree()`:
 
-# Specify processing strategy
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode first ...
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode last ...
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode random ...
-pyitol template create color-strip --tree multi.nwk --multi-tree-mode split ...
+```python
+# load one tree out of a multi-tree file, or all of them
+from pyitol.core.parser import load_tree
+
+tree = load_tree("trees.nwk", multi_tree="first")
+trees = load_tree("trees.nwk", multi_tree="split")
 ```
+
+Strategies: `ask` (default, prompts on an interactive terminal and falls back to `first` otherwise), `first` (first tree), `last` (last tree), `split` (return every tree for separate processing). `all` is an internal alias equivalent to `split`. The tool is deliberately deterministic, so there is no `random` strategy. On the CLI, only `taxonomy monophyly` and `taxonomy check-and-style` declare `--multi-tree-mode` / `-m`, and both currently ignore the value (the source marks the parameter as reserved for future use); no `template create <type>` or `template create-*` command accepts it, and all other commands call the library with a hard-coded strategy.
 
 ### Input File Validation
 
@@ -81,7 +82,7 @@ pyitol validate --tree tree.nwk --alphabet DNA
 ```
 
 Validation includes:
-- Trees: bracket balance, negative branch lengths (CRITICAL), empty names (ERROR), duplicate tips (ERROR), multi-root (CRITICAL)
+- Trees: bracket balance, negative branch lengths (CRITICAL), empty names (ERROR), duplicate tips (ERROR), multi-root (ERROR)
 - Sequences: alphabet detection (DNA/RNA/protein), ID uniqueness, length consistency
 - Adversarial protection: malicious characters (control/bidi), circular dependencies, empty files
 
@@ -138,7 +139,7 @@ docker build -t pyitol:latest .
 
 # Run with mounted data directory
 docker run -v $(pwd)/data:/data pyitol:latest \
-  pyitol template create color-strip --tree /data/tree.nwk \
+  template create color-strip --tree /data/tree.nwk \
   --taxonomy /data/tax.csv --column Phylum -o /data/output.txt
 ```
 
@@ -158,7 +159,7 @@ pyitol self-test
 
 Expected output:
 ```
-pyitol 1.0.0
+pyitol 1.0.3
 license: MIT
 ...
 ```
@@ -172,6 +173,56 @@ license: MIT
   [PASS] Monophyly detection (G1=mono, G2=mono)
   ...
   All checks passed.
+```
+
+## Example Data
+
+The project ships example data under `examples/data/`:
+
+| File | Description |
+|------|-------------|
+| `synthetic_130tips.nwk` | Synthetic phylogenetic tree with 130 tips |
+| `synthetic_130tips_taxonomy.csv` | Corresponding taxonomy table (Phylum → Genus) |
+| `synthetic_130tips_amr.csv` | Synthetic antimicrobial resistance gene data |
+| `synthetic_130tips_auto_taxonomy.csv` | Auto-extracted taxonomy table |
+| `synthetic_130tips_enriched.csv` | Enriched analysis data |
+| `synthetic_32tips.nwk` | Synthetic 32-tip tree for monophyly tests |
+| `synthetic_32tips_taxonomy.csv` | Corresponding taxonomy table |
+| `synthetic_32tips_auto_taxonomy.csv` | Auto-extracted taxonomy table |
+| `synthetic_32tips_enriched.csv` | Enriched analysis data |
+| `synthetic_4096tips.nwk` | Large synthetic tree with 4096 tips (stress testing) |
+| `synthetic_4096tips_taxonomy.csv` | Corresponding taxonomy table |
+| `synthetic_4096tips_traits.csv` | Trait data |
+| `synthetic_5000tips.nwk` | Large synthetic tree with 5000 tips (stress testing) |
+| `synthetic_5000tips_taxonomy.csv` | Corresponding taxonomy table |
+| `synthetic_5000tips_traits.csv` | Trait data |
+
+Quick trial with the example data:
+
+```bash
+# Show tree info
+pyitol tree info --tree examples/data/synthetic_130tips.nwk
+
+# Validate input files
+pyitol validate --tree examples/data/synthetic_130tips.nwk \
+  --taxonomy examples/data/synthetic_130tips_taxonomy.csv
+
+# Generate a color-strip template
+pyitol template create color-strip \
+  --tree examples/data/synthetic_130tips.nwk \
+  --taxonomy examples/data/synthetic_130tips_taxonomy.csv \
+  --column Phylum -o phylum_strip.txt
+
+# Check monophyly
+pyitol taxonomy monophyly \
+  --tree examples/data/synthetic_32tips.nwk \
+  --taxonomy examples/data/synthetic_32tips_taxonomy.csv \
+  --rank Genus -o monophyly.csv
+
+# Extract taxonomy from tip names
+pyitol taxonomy extract-from-names \
+  --tree examples/data/synthetic_130tips.nwk \
+  --format auto -o extracted_taxonomy.csv
 ```
 
 ## Quick Start
@@ -210,9 +261,9 @@ pyitol --version
 
 Output example:
 ```
-pyitol 1.0.0
+pyitol 1.0.3
 license: MIT
-date: 2026-08-13
+date: 2026-08-26
 git: abc1234
 dependencies:
   typer: 0.25.1 (MIT)
@@ -241,10 +292,10 @@ export ITOL_API_KEY=YOUR_KEY
 pyitol task upload --tree tree.nwk --api-key-file /path/to/key.txt
 ```
 
-> **Credential security / 凭据安全**
+> **Credential security**
 >
 > - **Never commit key files to version control.** Patterns `*.key`, `itolapi.key`, and `.itolapi.key` are already listed in `.gitignore`, but a key file can still leak through other channels — do not place it in cloud-synced folders (e.g. cloud-drive sync directories) or shared directories.
-> - **Prefer `~/.config/pyitol/` (mode 600) or your system keychain** for storing key files, rather than the project root.
+> - **Prefer `~/.config/pyitol/` (mode 600)** for storing key files, rather than the project root.
 > - Session snapshots and logs automatically redact key material (`***REDACTED***`), so snapshots are safe to share.
 > - If a key may have been exposed (committed, synced, or shared), **rotate it immediately** in your iTOL account settings.
 
@@ -365,7 +416,7 @@ pyitol taxonomy ranks --taxonomy tax.csv
 ```bash
 # Color strip - categorical coloring by taxonomic rank (legend auto-positioned)
 pyitol template create color-strip --tree tree.nwk --taxonomy tax.csv \
-  --column Phylum --palette tol_bright -o strip.txt
+  --column Phylum -o strip.txt
 
 # Heatmap - numeric data visualization
 pyitol template create heatmap --tree tree.nwk --taxonomy tax.csv \
@@ -384,18 +435,18 @@ pyitol template create connections --connections connections.json -o connections
 
 # Branch gradient - continuous coloring
 pyitol template create branch-gradient --tree tree.nwk --taxonomy tax.csv \
-  --column gc_content --gradient "#313695,#a50026" -o gradient.txt
+  --column gc_content --color-min "#313695" --color-max "#a50026" -o gradient.txt
 
 # Domain architecture
 pyitol template create domains --data-file domains.json -o domain.txt
 
-# Multi-column bubble external shape (numeric column visualization)
-pyitol template create external-shape-bubble --tree tree.nwk --taxonomy tax.csv \
+# Multi-column bubble external shape (dedicated subcommand only, not a unified-entry type)
+pyitol template create-external-shape-bubble --tree tree.nwk --taxonomy tax.csv \
   --columns "gc_content,genome_size,gene_count" -o bubble.txt
 
 # Bundle multiple templates at once
 pyitol template bundle --tree tree.nwk --taxonomy tax.csv \
-  --config '[{"type":"color-strip","column":"Phylum"},{"type":"heatmap","columns":"gc,genome_size"}]' \
+  --config '[{"type":"color-strip","column":"Phylum"},{"type":"heatmap","columns":["gc","genome_size"]}]' \
   --output-dir ./templates/
 ```
 
@@ -422,24 +473,99 @@ TaxonA	#4477AA	Proteobacteria
 TaxonB	#EE6677	Firmicutes
 ```
 
+## Tree File Operations
+
+```bash
+# Show basic tree info (number of tips, internal nodes, whether branch lengths are present, etc.)
+pyitol tree info --tree examples/data/synthetic_130tips.nwk
+
+# Format support values (IQ-TREE bootstrap/aLRT style; RAxML etc. need the library API)
+pyitol tree format-support-values --tree input.nwk -o output.nwk
+```
+
+## Utility Tools
+
+```bash
+# Search tree files in a directory
+pyitol utils search-tree-file --dir ./data/
+
+# Parse taxonomy info
+pyitol utils taxonomy-parse --taxonomy tax.csv
+
+# Data format conversion: wide table -> long table
+pyitol utils wide-to-long --data wide.csv --id-column id -o long.csv
+
+# Data format conversion: long table -> wide table
+pyitol utils long-to-wide --data long.csv --id-column id -o wide.csv
+
+# Counts data to tree
+pyitol utils count-to-tree --data counts.csv -o tree.nwk
+
+# Group columns
+pyitol utils group-columns --data data.csv --group-regex '^col' -o grouped.csv
+
+# Preview data files
+pyitol utils preview --taxonomy tax.csv --tree tree.nwk --column Phylum
+
+# DataFrame to tree
+pyitol utils df-tree --data data.csv --columns col1,col2 -o tree.nwk
+```
+
+> **Note**: `utils tree-info` is deprecated, use `tree info` instead; `utils learn-template` is deprecated, use `learn template` instead.
+
+## Learning from Existing Templates
+
+```bash
+# Learn parameters from an existing iTOL template file
+pyitol learn template --template existing_template.txt
+
+# Inspect a color palette preset
+pyitol learn palette --preset-name nature
+
+# Train a theme
+pyitol learn train-theme --dir templates_dir/ --output theme.json
+```
+
+## Configuration File Management
+
+```bash
+# Initialize a configuration file
+pyitol config init
+
+# Or copy the bundled example template
+cp config.example.yaml pyitol_config.yaml
+
+# Use a configuration file
+pyitol --config pyitol.yaml template create color-strip \
+  --tree tree.nwk --taxonomy tax.csv --column Phylum
+```
+
+Example configuration file (`pyitol.yaml`):
+```yaml
+tree: examples/data/synthetic_130tips.nwk
+taxonomy: examples/data/synthetic_130tips_taxonomy.csv
+id_column: id
+separator: TAB
+palette: tol_bright
+```
+
+The project root provides a `config.example.yaml` template documenting all configurable options with comments (API key, export formats, tree parsing parameters, taxonomy parsing parameters, etc.); copy and edit it as needed. Its `multi_tree_mode` key is only read by `taxonomy monophyly`, which currently ignores it (see Multi-tree Handling). The `palette` key feeds the `--palette` option, which is likewise accepted but not used when writing templates: strip/branch colors come from the built-in `DEFAULT_PALETTE` (cycled per category) unless `--colors` supplies a JSON mapping.
+
 ## Workflow
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│  Input Files │     │   Taxonomy  │     │  Templates  │
-│             │     │   Parsing   │     │  Generation │
-│ tree.nwk    │────>│ From names  │────>│ color-strip │
-│ tax.csv     │     │ or table    │     │ heatmap     │
-│ seqs.fasta  │     │             │     │ bar/pie/... │
-└─────────────┘     └─────────────┘     └─────────────┘
-                           │                   │
-                           v                   v
-                    ┌─────────────┐     ┌─────────────┐
+│ Input Files │     │  Taxonomy   │     │  Templates  │
+│             │     │   Parsing   │     │ Generation  │
+│  tree.nwk   │────>│ From names  │────>│ color-strip │
+│   tax.csv   │     │  or table   │     │   heatmap   │
+│ seqs.fasta  │     │             │     │  bar / pie  │
+└─────────────┘     └──────┬──────┘     └──────┬──────┘
+                    ┌──────┴──────┐     ┌──────┴──────┐
                     │  Monophyly  │     │  Upload to  │
-                    │   Check     │     │    iTOL     │
-                    │             │     │             │
-                    │ monophyly   │     │ upload      │
-                    │ check       │     │ export PDF  │
+                    │    Check    │     │    iTOL     │
+                    │  taxonomy   │     │   upload    │
+                    │  monophyly  │     │ export PDF  │
                     └─────────────┘     └─────────────┘
 ```
 
@@ -460,14 +586,15 @@ Typical workflow:
 | `okabeito` | #E69F00 #56B4E9 #009E73 #F0E442 #0072B2 #D55E00 #CC79A7 #000000 | Okabe & Ito (2008) |
 | `ibm` | #648FFF #785EF0 #DC267F #FE6100 #FFB000 | IBM Design |
 
-Usage: `--palette wong`
+These names are read through the presets API (`get_palette("colorblind", "wong")`) or listed by `pyitol learn palette --preset-name colorblind`. The `--palette` option of `template create` and `create-color-strip` is accepted but currently unused, so passing a name there changes nothing; use `--colors colors.json` to control the colors that are actually written.
 
 ## Session Snapshots & Reproducibility
 
 ```bash
 # After a workflow, session snapshot is saved automatically
 pyitol task upload --tree tree.nwk --config template.txt
-# Snapshot saved to ~/.pyitol/session_logs/
+# Snapshot directory: $XDG_DATA_HOME/pyitol/session_logs when XDG_DATA_HOME is set,
+# otherwise ~/.pyitol/session_logs
 
 # Replay a previous session
 pyitol replay --session session.yaml
@@ -498,14 +625,14 @@ pyitol --log-file pyitol.log template create color-strip --tree tree.nwk ...
 # Default: error if output file exists (all subcommands are now protected)
 pyitol template create color-strip --tree tree.nwk -o output.txt
 
-# Force overwrite (unified entry 'template create' only)
+# Force overwrite (every dedicated create-* subcommand takes it too)
 pyitol template create color-strip --tree tree.nwk -o output.txt --force
 
-# Skip existing files (unified entry 'template create' only)
+# Skip existing files (same option set on the create-* subcommands)
 pyitol template create color-strip --tree tree.nwk -o output.txt --no-clobber
 ```
 
-> All standalone subcommands (e.g., `create-color-strip`, `create-heatmap`, etc.) now check if the output file already exists to prevent accidental overwrites. To overwrite, use the unified entry `template create` with `--force`.
+> Every template command — the unified entry `template create` and all 34 dedicated `create-*` subcommands — refuses to overwrite an existing output file. Pass `--force`/`-f` to overwrite it, or `--no-clobber` to leave it untouched.
 
 ## Graceful Interrupt
 
@@ -525,7 +652,7 @@ Press `Ctrl+C` to gracefully terminate:
 | 3 | Data Error | Input file format/content error |
 | 130 | User Interrupt | SIGINT (Ctrl+C) received |
 
-See [Error Codes Documentation](docs/error_codes.md) for details.
+See [Error Codes Documentation](docs/error_codes_en.md) for details.
 
 ## CLI Overview
 
@@ -534,13 +661,14 @@ pyitol
 ├── --version             Display version, Git hash and dependency versions
 ├── --verbose             Enable verbose logging
 ├── --quiet               Show only critical info
+├── --config              Load YAML/JSON config file (can be specified multiple times)
 ├── --log-file            Log file path
 ├── --low-memory          Low memory mode
 ├── self-test             Run self-test
 ├── validate              Validate input files
 ├── config                Configuration file management
 ├── template              Create and manage iTOL template files
-│   ├── create-*          31 template creation subcommands
+│   ├── create-*          34 dedicated subcommands (33 types + external-shape-bubble)
 │   ├── create-collapse   Collapse branches (with --taxon monophyly check)
 │   ├── bundle            Batch-generate multiple templates
 │   └── validate          Validate template format
@@ -577,7 +705,7 @@ PyiTOL/
 │   ├── core/                   Core algorithms (parser, monophyly, taxonomy)
 │   ├── templates/              Template generators and schema definitions
 │   └── utils/                  Utility functions (color, I/O, session, logging, shutdown)
-├── tests/                      Test suite (1702 tests)
+├── tests/                      Test suite (1500+ tests)
 │   ├── data/                   Test data files
 │   ├── core/                   Core algorithm tests
 │   ├── cli/                    CLI command tests
@@ -587,33 +715,40 @@ PyiTOL/
 ├── examples/
 │   └── data/                   Demo data files
 ├── docs/                       Documentation
-│   └── error_codes.md          Error codes reference
+│   ├── cli_en.md               CLI reference
+│   ├── api_en.md               API guide
+│   ├── error_codes_en.md       Error codes reference
+│   └── tutorials/              Tutorials
+│       ├── quickstart_en.md    Quick start guide
+│       ├── templates_en.md     Template type overview
+│       └── taxonomy_en.md      Taxonomy analysis tutorial
 ├── benchmarks/                 Performance benchmarks
 └── pyproject.toml              Project configuration
 ```
 
 ## Documentation
 
-- [Quick Start Guide](docs/tutorials/quickstart.md)
-- [Template Type Overview](docs/tutorials/templates.md)
-- [Taxonomy Analysis Tutorial](docs/tutorials/taxonomy.md)
-- [CLI Reference](docs/cli.md)
-- [API Guide](docs/api.md)
-- [Error Codes Reference](docs/error_codes.md)
+- [Quick Start Guide](docs/tutorials/quickstart_en.md)
+- [Template Type Overview](docs/tutorials/templates_en.md)
+- [Taxonomy Analysis Tutorial](docs/tutorials/taxonomy_en.md)
+- [CLI Reference](docs/cli_en.md)
+- [API Guide](docs/api_en.md)
+- [Error Codes Reference](docs/error_codes_en.md)
 - [Contributing](CONTRIBUTING.md)
 
 ## Dependency Licenses
 
 | Library | Version | License |
 |---------|---------|---------|
-| typer | >=0.15.0 | MIT |
+| typer | >=0.15.0,<1.0 | MIT |
 | rich | ~=13.0 | MIT |
 | pandas | ~=2.0 | BSD-3-Clause |
-| dendropy | ~=4.6 | BSD-3-Clause |
-| numpy | >=1.24 | BSD-3-Clause |
+| dendropy | >=4.6,<6.0 | BSD-3-Clause |
+| numpy | >=1.24,<3.0 | BSD-3-Clause |
 | requests | ~=2.32 | Apache-2.0 |
 | PyYAML | ~=6.0 | MIT |
 | pydantic | ~=2.5 | MIT |
+| scipy | ~=1.11 | BSD-3-Clause |
 
 ## Citation
 
