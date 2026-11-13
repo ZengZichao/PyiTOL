@@ -27,12 +27,12 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 TREE_FILE = str(DATA_DIR / "synthetic_32tips.nwk")
 OUTPUT_DIR = str(Path(__file__).parent / "outputs")
 FMT = "pdf"
-POLL_INTERVAL = 10      # seconds; the single fixed wait taken before exporting
-WAIT_TIME = 120         # seconds; upper bound for that wait
+POLL_INTERVAL = 10  # seconds; the single fixed wait taken before exporting
+WAIT_TIME = 120  # seconds; upper bound for that wait
 PROJECT_NAME = "pyitol_basic_demo"
 
 
-def main():
+def main() -> None:
     if not Path(TREE_FILE).exists():
         print(f"Error: Tree file not found: {TREE_FILE}")
         sys.exit(1)

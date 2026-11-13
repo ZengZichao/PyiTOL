@@ -25,13 +25,13 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 from pyitol.api.client import ITOLAPIClient
+from pyitol.exceptions import APIKeyError
 from pyitol.templates.generator import (
     generate_color_strip_template,
     generate_heatmap_template,
     generate_simple_bar_template,
 )
 from pyitol.templates.presets import get_palette
-from pyitol.exceptions import APIKeyError
 
 DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 TREE_FILE = str(DATA_DIR / "synthetic_32tips.nwk")
@@ -53,7 +53,7 @@ def _wait_until_ready(tree_id: str, max_wait: int = 120) -> None:
     time.sleep(wait)
 
 
-def main():
+def main() -> None:
     for f in [TREE_FILE, TAXONOMY_FILE]:
         if not Path(f).exists():
             print(f"Error: File not found: {f}")
@@ -77,21 +77,34 @@ def main():
         "Phylum_03": palette[2],
     }
     generate_color_strip_template(
-        cs_path, TAXONOMY_FILE, TREE_FILE, "Phylum",
-        label="Phylum", colors=phylum_colors, strip_width="50",
+        cs_path,
+        TAXONOMY_FILE,
+        TREE_FILE,
+        "Phylum",
+        label="Phylum",
+        colors=phylum_colors,
+        strip_width="50",
     )
 
     # 2. Simple bar - genome size (Size column in the enriched CSV)
     bar_path = OUTPUT_DIR / "pub_simple_bar.txt"
     generate_simple_bar_template(
-        bar_path, TAXONOMY_FILE, TREE_FILE, "Size",
-        label="Genome Size (Mb)", bar_color=palette[3], bar_width="50",
+        bar_path,
+        TAXONOMY_FILE,
+        TREE_FILE,
+        "Size",
+        label="Genome Size (Mb)",
+        bar_color=palette[3],
+        bar_width="50",
     )
 
     # 3. Heatmap - Size + GC + Genes
     hm_path = OUTPUT_DIR / "pub_heatmap.txt"
     generate_heatmap_template(
-        hm_path, TAXONOMY_FILE, TREE_FILE, ["Size", "GC", "Genes"],
+        hm_path,
+        TAXONOMY_FILE,
+        TREE_FILE,
+        ["Size", "GC", "Genes"],
         label="Genomic Features",
     )
 

@@ -40,7 +40,7 @@ def _wait_until_ready(tree_id: str, max_wait: int = 120) -> None:
     time.sleep(wait)
 
 
-def main():
+def main() -> None:
     if not Path(TREE_FILE).exists():
         print(f"Error: Tree file not found: {TREE_FILE}")
         sys.exit(1)

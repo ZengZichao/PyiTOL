@@ -35,7 +35,7 @@ WAIT_TIME = 15
 TEMPLATE_GLOB = "template_*.txt"
 
 
-def main():
+def main() -> None:
     if not Path(TREE_FILE).exists():
         print(f"Error: Tree file not found: {TREE_FILE}")
         sys.exit(1)

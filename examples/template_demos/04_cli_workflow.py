@@ -30,8 +30,9 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 def run(cmd: list[str]) -> None:
     """Invoke the pyitol CLI (installed entry point) and print output."""
     print(f"$ pyitol {' '.join(cmd)}")
-    result = subprocess.run(
-        ["pyitol"] + cmd,
+    # Deliberately un-hardened: fixed argv, `pyitol` resolved from PATH as in a shell.
+    result = subprocess.run(  # noqa: S603
+        ["pyitol", *cmd],  # noqa: S607
         cwd=str(PROJECT_ROOT),
         capture_output=True,
         text=True,
@@ -43,42 +44,72 @@ def run(cmd: list[str]) -> None:
         print("OK\n")
 
 
-def main():
+def main() -> None:
     # 1. Validate inputs
-    run([
-        "validate",
-        "--tree", str(TREE_FILE),
-        "--taxonomy", str(TAXONOMY_FILE),
-        "--color", "#e64b35",
-        "--color", "#4dbbd5",
-    ])
+    run(
+        [
+            "validate",
+            "--tree",
+            str(TREE_FILE),
+            "--taxonomy",
+            str(TAXONOMY_FILE),
+            "--color",
+            "#e64b35",
+            "--color",
+            "#4dbbd5",
+        ]
+    )
 
     # 2. Generate color-strip template (column 'phylum' in the taxonomy CSV)
-    run([
-        "template", "create", "color-strip",
-        "--taxonomy", str(TAXONOMY_FILE),
-        "--tree", str(TREE_FILE),
-        "--column", "phylum",
-        "--output", str(OUTPUT_DIR / "colorstrip.txt"),
-    ])
+    run(
+        [
+            "template",
+            "create",
+            "color-strip",
+            "--taxonomy",
+            str(TAXONOMY_FILE),
+            "--tree",
+            str(TREE_FILE),
+            "--column",
+            "phylum",
+            "--output",
+            str(OUTPUT_DIR / "colorstrip.txt"),
+        ]
+    )
 
     # 3. Generate heatmap template (multiple numeric columns)
-    run([
-        "template", "create", "heatmap",
-        "--taxonomy", str(TAXONOMY_FILE),
-        "--tree", str(TREE_FILE),
-        "--columns", "genome_size,gc_content",
-        "--output", str(OUTPUT_DIR / "heatmap.txt"),
-    ])
+    run(
+        [
+            "template",
+            "create",
+            "heatmap",
+            "--taxonomy",
+            str(TAXONOMY_FILE),
+            "--tree",
+            str(TREE_FILE),
+            "--columns",
+            "genome_size,gc_content",
+            "--output",
+            str(OUTPUT_DIR / "heatmap.txt"),
+        ]
+    )
 
     # 4. Generate simple-bar template (single numeric column)
-    run([
-        "template", "create", "simple-bar",
-        "--taxonomy", str(TAXONOMY_FILE),
-        "--tree", str(TREE_FILE),
-        "--column", "genome_size",
-        "--output", str(OUTPUT_DIR / "simplebar.txt"),
-    ])
+    run(
+        [
+            "template",
+            "create",
+            "simple-bar",
+            "--taxonomy",
+            str(TAXONOMY_FILE),
+            "--tree",
+            str(TREE_FILE),
+            "--column",
+            "genome_size",
+            "--output",
+            str(OUTPUT_DIR / "simplebar.txt"),
+        ]
+    )
 
     print(f"\nAll CLI outputs written to: {OUTPUT_DIR}")
 

@@ -29,7 +29,7 @@ OUTPUT_DIR = Path(__file__).parent / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def main():
+def main() -> None:
     # 1. Learn a single template. Pick the first template_*.txt that exists.
     template_files = sorted(TEMPLATE_DIR.glob("template_*.txt"))
     if not template_files:
