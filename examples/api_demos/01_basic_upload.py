@@ -5,7 +5,7 @@ Basic API Demo: Upload a phylogenetic tree to iTOL and export as PDF.
 This example demonstrates the minimal workflow:
   1. Initialize ITOLAPIClient (reads .itolapi.key or accepts api_key parameter)
   2. Upload a Newick tree file
-  3. Wait for server-side rendering (built-in polling)
+  3. Wait once for server-side rendering (iTOL exposes no readiness API)
   4. Export the rendered tree as a publication-ready PDF
 
 Requirements:
@@ -27,7 +27,8 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "data"
 TREE_FILE = str(DATA_DIR / "synthetic_32tips.nwk")
 OUTPUT_DIR = str(Path(__file__).parent / "outputs")
 FMT = "pdf"
-WAIT_TIME = 120         # seconds; increase for large trees
+POLL_INTERVAL = 10      # seconds; the single fixed wait taken before exporting
+WAIT_TIME = 120         # seconds; upper bound for that wait
 PROJECT_NAME = "pyitol_basic_demo"
 
 
@@ -49,13 +50,14 @@ def main():
     print(f"Uploading tree: {TREE_FILE}")
 
     try:
-        # upload_and_export() handles upload, polling, and export in one call.
+        # upload_and_export() does upload -> one fixed wait -> one export.
         # It uses fmt= (not format=) to avoid shadowing the built-in.
         result_path = client.upload_and_export(
             tree_file=TREE_FILE,
             template_files=[],
             fmt=FMT,
             output_dir=OUTPUT_DIR,
+            poll_interval=POLL_INTERVAL,
             wait_time=WAIT_TIME,
             project_name=PROJECT_NAME,
         )

@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Documentation**: the bilingual document pairs were reconciled with each
+  other and with the code — corrected the `create-domains` data-file columns,
+  the scope of `--multi-tree-mode` / `--palette` / `--wait`, the multi-root
+  severity (ERROR, not CRITICAL), the template counts (33 types, 34 dedicated
+  subcommands), and translation drift across the README, CLI, API,
+  troubleshooting and tutorial pages.
+- **Examples**: the API and template demos no longer poll `query_status()`
+  before an export. iTOL exposes no readiness endpoint and every
+  `query_status()` call performs one full SVG export, so the demos now take a
+  single fixed wait, matching `ITOLAPIClient.upload_and_export()`. The basic
+  upload demo also passes `poll_interval` explicitly, because that — not
+  `wait_time` — sets the length of the pre-export wait.
+
 ## [1.0.3] - 2026-08-26
 
 ### Added
